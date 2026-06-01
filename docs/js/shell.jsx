@@ -6,9 +6,9 @@ const RxShell = React;
 const NAV = [
   { label: 'Home', href: 'home.html' },
   { label: 'About', href: 'about.html' },
-  { label: 'Jr. Mustangs', href: 'https://mundyball.com/feeder-home', external: true },
   { label: 'Training', href: 'training.html' },
   { label: 'Alumni', href: 'alumni.html' },
+  { label: 'Jr. Mustangs', href: 'https://mundyball.com/feeder-home', external: true },
   { label: 'Gallery', href: 'gallery.html' },
   { label: 'Contact', href: 'contact.html' },
 ];
