@@ -1,0 +1,169 @@
+/* global React, SectionHead, Star6 */
+function Hero() {
+  return (
+    <section className="lsl-hero">
+      <div className="lsl-hero__glow"></div>
+      <img className="lsl-hero__spire" src="assets/mark-spire-stars.png" alt="" aria-hidden="true" />
+      <div className="lsl-hero__grid">
+        <div className="lsl-hero__copy">
+          <span className="lsl-eyebrow lsl-eyebrow--light">A Training-First Basketball Program</span>
+          <h1 className="lsl-display">Chicago Roots,<br/><span className="lsl-display__accent">National Reach</span></h1>
+          <p className="lsl-lede">LakeShore Legends is a development-driven basketball organization built on elite training standards and long-term athletic growth.</p>
+          <div className="lsl-hero__actions">
+            <a className="lsl-btn lsl-btn--primary" href="contact.html">Join the Program</a>
+            <a className="lsl-btn lsl-btn--ghost-light" href="about.html">Our Philosophy</a>
+          </div>
+        </div>
+        <div className="lsl-hero__media">
+          <img className="lsl-photo" src="uploads/mundeleinvshp-30.jpg" alt="Coach Gio leading a team huddle"
+            style={{ width: '100%', height: '420px', objectFit: 'cover', borderRadius: '20px', display: 'block' }} />
+          <div className="lsl-hero__badge">
+            <span className="lsl-hero__badge-num">2×</span>
+            <span className="lsl-hero__badge-lbl">Practice<br/>vs. Play</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CountUp({ value }) {
+  const m = String(value).match(/^(\d+)(.*)$/);
+  const target = m ? parseInt(m[1], 10) : 0;
+  const suffix = m ? m[2] : '';
+  const [n, setN] = React.useState(0);
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    let raf, started = false;
+    const run = () => {
+      started = true;
+      const dur = 1400, t0 = performance.now();
+      const tick = (now) => {
+        const p = Math.min(1, (now - t0) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        setN(Math.round(eased * target));
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting && !started) run(); });
+    }, { threshold: 0.4 });
+    if (ref.current) io.observe(ref.current);
+    return () => { io.disconnect(); if (raf) cancelAnimationFrame(raf); };
+  }, [target]);
+  return <div className="lsl-stat__num" ref={ref}>{n}{suffix}</div>;
+}
+
+function StatsBand() {
+  const stats = [
+    ['24', 'Travel Teams Coached'],
+    ['250+', 'Dedicated Athletes Trained'],
+    ['25+', 'Unique College Recruitment Offers'],
+    ['7+', 'College Basketball Commitments'],
+  ];
+  return (
+    <section className="lsl-statsband">
+      {stats.map(([n, l]) => (
+        <div className="lsl-stat" key={l}>
+          <CountUp value={n} />
+          <div className="lsl-stat__lbl">{l}</div>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function Philosophy() {
+  return (
+    <section className="lsl-section lsl-section--cream">
+      <div className="lsl-wrap lsl-philosophy">
+        <div>
+          <SectionHead eyebrow="The Problem With Modern AAU"
+            title="Our Training-First Solution" />
+          <p className="lsl-body">In today's competitive landscape, many AAU programs focus on playing numerous games — often at the expense of skill development and athlete well-being. This short-term mindset hinders long-term potential.</p>
+          <p className="lsl-body">LakeShore Legends offers a refreshing alternative. We prioritize practice over excessive gameplay, preparing athletes for sustained success in high school, college, and beyond.</p>
+          <div className="lsl-rule"></div>
+          <p className="lsl-pullquote">"We don't just play the game. We study it."</p>
+        </div>
+        <img className="lsl-photo" src="uploads/S4A6259-scaled.jpg" alt="LakeShore Legends athlete defending on the ball"
+          style={{ width: '100%', height: '420px', objectFit: 'cover', borderRadius: '18px', display: 'block' }} />
+      </div>
+    </section>
+  );
+}
+
+function DevelopmentModel() {
+  const cols = [
+    { icon: 'calendar-x', tag: 'Typical AAU Model', title: 'Games Over Growth',
+      body: 'Most programs practice once or twice a week, prioritizing weekend tournaments over skill development and basketball IQ.', muted: true },
+    { icon: 'repeat', tag: 'Our Approach', title: 'Skill Over Volume',
+      body: 'A European-style model emphasizing repetition, fundamentals, decision-making, and long-term growth — building confident, capable players.' },
+    { icon: 'scale', tag: 'Our Standard', title: 'Practice 2× We Play',
+      body: 'More time training between competition lets athletes learn from mistakes, build real skills, and develop habits that translate up.' },
+  ];
+  return (
+    <section className="lsl-section lsl-section--cream" style={{ paddingTop: 0 }}>
+      <div className="lsl-wrap">
+        <SectionHead eyebrow="Our Development Model"
+          title="Built In The Gym, Not The Scoreboard"
+          sub="Our training structure is intentionally different — because the goal is long-term player growth, not short-term program victories." />
+        <div className="lsl-cards3">
+          {cols.map((c) => (
+            <div className={'lsl-fcard' + (c.muted ? ' lsl-fcard--muted' : '')} key={c.title}>
+              <div className="lsl-fcard__ico"><i data-lucide={c.icon}></i></div>
+              <span className="lsl-label">{c.tag}</span>
+              <h3 className="lsl-h3">{c.title}</h3>
+              <p className="lsl-body lsl-body--sm">{c.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SkillsGrid() {
+  const skills = [
+    ['target', 'Shooting'], ['footprints', 'Footwork'], ['circle-dot', 'Ball Handling'],
+    ['shield', 'Screening'], ['arrow-up-from-line', 'Rebounding'], ['send', 'Passing'],
+    ['hand', 'Defending'],
+  ];
+  return (
+    <section className="lsl-section lsl-section--ink">
+      <div className="lsl-wrap">
+        <SectionHead light eyebrow="Core Technical Skills"
+          title="What We Develop"
+          sub="Through structured training, intentional feedback, and game-realistic repetition." />
+        <div className="lsl-skills">
+          {skills.map(([ico, name]) => (
+            <div className="lsl-skill" key={name}>
+              <div className="lsl-skill__ico"><i data-lucide={ico}></i></div>
+              <span className="lsl-skill__name">{name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BasketballIQ() {
+  return (
+    <section className="lsl-section lsl-section--cream">
+      <div className="lsl-wrap lsl-philosophy">
+        <img className="lsl-photo" src="uploads/S4A6498-scaled.jpg" alt="Coach Gio breaking down a game-time huddle"
+          style={{ width: '100%', height: '440px', objectFit: 'cover', borderRadius: '18px', display: 'block' }} />
+        <div>
+          <SectionHead eyebrow="Basketball IQ & Game Mastery"
+            title="We Don't Just Play The Game. We Study It." />
+          <p className="lsl-body">Through purposeful film breakdown and competitive practice environments, players learn <em>why</em> plays work — not just how to run them. We teach athletes to read defenses, anticipate actions, and adapt in real time.</p>
+          <div className="lsl-rule"></div>
+          <p className="lsl-pullquote">"Talent gets you noticed, but sound decision-making keeps you on the floor."</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+Object.assign(window, { Hero, StatsBand, Philosophy, DevelopmentModel, SkillsGrid, BasketballIQ });

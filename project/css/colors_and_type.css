@@ -1,0 +1,188 @@
+/* ============================================================
+   LakeShore Legends — Colors & Type Foundations
+   Chicago-rooted, training-first basketball development brand.
+   Athletic / collegiate / vintage-modern.
+   ============================================================ */
+
+/* --- Webfonts (Google Fonts CDN — see README font substitution note) --- */
+@import url('https://fonts.googleapis.com/css2?family=Aleo:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+
+:root {
+  /* ---------- BRAND CORE PALETTE ---------- */
+  --legend-orange:   #e35802; /* primary action / energy */
+  --legend-sky:      #58c2f7; /* Chicago-flag light blue / accent */
+  --legend-navy:     #123053; /* primary dark / ink */
+  --legend-cream:    #fcf2e8; /* warm paper background */
+  --legend-white:    #ffffff;
+
+  /* ---------- EXTENDED TINTS / SHADES (oklch-harmonized) ---------- */
+  --orange-700:  #b84602;   /* pressed / deep */
+  --orange-600:  #e35802;   /* base */
+  --orange-500:  #f56a14;   /* hover lift */
+  --orange-100:  #fbe2d1;   /* soft fill */
+
+  --navy-900:    #0b1f38;   /* deepest ink */
+  --navy-800:    #123053;   /* base navy */
+  --navy-700:    #1d4373;   /* raised navy */
+  --navy-200:    #aebfd3;   /* muted navy text on dark */
+
+  --sky-400:     #58c2f7;   /* base sky */
+  --sky-300:     #8ad5fa;   /* light sky */
+  --sky-100:     #d8f0fd;   /* sky wash */
+
+  --cream-100:   #fcf2e8;   /* base paper */
+  --cream-200:   #f4e6d6;   /* paper shade / card edge */
+
+  /* ---------- SEMANTIC SURFACES ---------- */
+  --bg-page:        var(--cream-100);
+  --bg-surface:     var(--legend-white);
+  --bg-ink:         var(--navy-800);   /* dark sections */
+  --bg-ink-deep:    var(--navy-900);
+
+  /* ---------- SEMANTIC FOREGROUNDS ---------- */
+  --fg1:  #0b1f38;            /* primary text (near-navy ink) */
+  --fg2:  #3c526e;            /* secondary text */
+  --fg3:  #6b7e96;            /* tertiary / captions */
+  --fg-on-dark:   #f3f7fc;    /* text on navy */
+  --fg-on-dark-2: #aebfd3;    /* muted text on navy */
+  --fg-accent:    var(--legend-orange);
+
+  /* ---------- BORDERS / LINES ---------- */
+  --line-soft:   rgba(18,48,83,.12);
+  --line-med:    rgba(18,48,83,.20);
+  --line-strong: var(--navy-800);
+  --line-on-dark: rgba(255,255,255,.14);
+
+  /* ---------- STATUS ---------- */
+  --success: #1f8a5b;
+  --warning: #e3a002;
+  --danger:  #c8341f;
+
+  /* ---------- TYPE FAMILIES ---------- */
+  --font-display: 'Aleo', 'Recoleta', 'Georgia', serif;                /* warm rounded slab serif headings */
+  --font-cond:    'Poppins', system-ui, -apple-system, sans-serif;     /* eyebrows / labels (700-800) */
+  --font-body:    'Poppins', system-ui, -apple-system, sans-serif;     /* UI + prose */
+
+  /* ---------- TYPE SCALE (fluid-ish, px base) ---------- */
+  --fs-display:   clamp(48px, 7vw, 104px);
+  --fs-h1:        clamp(38px, 5vw, 64px);
+  --fs-h2:        clamp(28px, 3.4vw, 42px);
+  --fs-h3:        24px;
+  --fs-h4:        19px;
+  --fs-eyebrow:   14px;
+  --fs-body:      17px;
+  --fs-body-lg:   19px;
+  --fs-small:     14px;
+  --fs-tiny:      12px;
+
+  /* ---------- RADII ---------- */
+  --r-xs: 4px;
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+  --r-xl: 28px;
+  --r-pill: 999px;
+
+  /* ---------- SPACING (4px base) ---------- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
+
+  /* ---------- SHADOWS / ELEVATION ---------- */
+  --shadow-sm:  0 1px 2px rgba(11,31,56,.08), 0 1px 3px rgba(11,31,56,.06);
+  --shadow-md:  0 4px 12px rgba(11,31,56,.10), 0 2px 4px rgba(11,31,56,.06);
+  --shadow-lg:  0 18px 40px rgba(11,31,56,.16), 0 6px 14px rgba(11,31,56,.10);
+  --shadow-orange: 0 10px 26px rgba(227,88,2,.32);
+
+  /* ---------- MOTION ---------- */
+  --ease-out:   cubic-bezier(.2,.7,.3,1);
+  --ease-in-out: cubic-bezier(.65,0,.35,1);
+  --dur-fast: 130ms;
+  --dur-med:  240ms;
+  --dur-slow: 420ms;
+}
+
+/* ============================================================
+   SEMANTIC TYPE CLASSES
+   ============================================================ */
+.ds-display {
+  font-family: var(--font-display);
+  font-size: var(--fs-display);
+  font-weight: 800;
+  line-height: 1.0;
+  letter-spacing: -.015em;
+  color: var(--fg1);
+}
+.ds-h1 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -.015em;
+  color: var(--fg1);
+}
+.ds-h2 {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -.01em;
+  color: var(--fg1);
+}
+.ds-h3 {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: var(--fs-h3);
+  line-height: 1.15;
+  color: var(--fg1);
+}
+.ds-h4 {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--fs-h4);
+  line-height: 1.25;
+  color: var(--fg1);
+}
+.ds-eyebrow {
+  font-family: var(--font-cond);
+  font-weight: 800;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--fg-accent);
+}
+.ds-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--fs-body);
+  line-height: 1.6;
+  color: var(--fg2);
+}
+.ds-body-lg {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--fs-body-lg);
+  line-height: 1.6;
+  color: var(--fg2);
+}
+.ds-small {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: var(--fs-small);
+  line-height: 1.45;
+  color: var(--fg3);
+}
+.ds-label {
+  font-family: var(--font-cond);
+  font-weight: 700;
+  font-size: var(--fs-small);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--fg1);
+}
