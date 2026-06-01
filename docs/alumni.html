@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alumni | Lake Shore Legends</title>
+<link rel="icon" href="assets/monogram-lsl.png">
+<link rel="stylesheet" href="css/colors_and_type.css">
+<link rel="stylesheet" href="css/kit.css">
+<link rel="stylesheet" href="css/extra.css">
+<script src="js/dist/react.production.min.js"></script>
+<script src="js/dist/react-dom.production.min.js"></script>
+<script src="js/dist/lucide.min.js"></script>
+<script src="js/image-slot.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script src="js/dist/shell.js"></script>
+<script src="js/dist/alumni.js"></script>
+<script>
+(function () {
+  var Header = window.Header, PageHero = window.PageHero, CTA = window.CTA, Footer = window.Footer;
+  var ImpactBand = window.ImpactBand, AlumniStories = window.AlumniStories, Offers = window.Offers;
+
+  function App() {
+    React.useEffect(function () { if (window.lucide) window.lucide.createIcons(); }, []);
+    return React.createElement('div', { className: 'lsl-scroll', 'data-screen-label': 'Alumni' },
+      React.createElement(Header, { page: 'Alumni' }),
+      React.createElement(PageHero, {
+        eyebrow: 'Alumni Success',
+        accent: 'orange',
+        title: 'From Our Gym To The Next Level',
+        sub: 'Explore the journeys of former players who excelled on and off the court — built on the foundational skills and values instilled at LakeShore Legends.'
+      }),
+      React.createElement(ImpactBand, null),
+      React.createElement(AlumniStories, null),
+      React.createElement(Offers, null),
+      React.createElement(CTA, {
+        title: 'Start Your Legend Story',
+        sub: 'Every commitment started with a single training session. Take yours.',
+        btn: 'Get In Touch'
+      }),
+      React.createElement(Footer, null)
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App, null));
+})();
+</script>
+</body>
+</html>

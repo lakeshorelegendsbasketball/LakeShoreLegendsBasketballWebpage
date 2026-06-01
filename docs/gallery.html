@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gallery | Lake Shore Legends</title>
+<link rel="icon" href="assets/monogram-lsl.png">
+<link rel="stylesheet" href="css/colors_and_type.css">
+<link rel="stylesheet" href="css/kit.css">
+<link rel="stylesheet" href="css/extra.css">
+<script src="js/dist/react.production.min.js"></script>
+<script src="js/dist/react-dom.production.min.js"></script>
+<script src="js/dist/lucide.min.js"></script>
+<script src="js/image-slot.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script src="js/dist/shell.js"></script>
+<script src="js/dist/gallery.js"></script>
+<script>
+(function () {
+  var Header = window.Header, PageHero = window.PageHero, CTA = window.CTA, Footer = window.Footer;
+  var Gallery = window.Gallery;
+
+  function App() {
+    React.useEffect(function () { if (window.lucide) window.lucide.createIcons(); }, []);
+    return React.createElement('div', { className: 'lsl-scroll', 'data-screen-label': 'Gallery' },
+      React.createElement(Header, { page: 'Gallery' }),
+      React.createElement(PageHero, {
+        eyebrow: 'Gallery',
+        title: 'Inside The Program',
+        sub: 'Training sessions, game days, camps, and team moments. Photos by Eleni With A Camera.'
+      }),
+      React.createElement(Gallery, null),
+      React.createElement(CTA, {
+        title: 'Want To Be In The Next Frame?',
+        sub: 'Join a camp or training session and start building your game.',
+        btn: 'Join The Program',
+        href: 'training.html'
+      }),
+      React.createElement(Footer, null)
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App, null));
+})();
+</script>
+</body>
+</html>

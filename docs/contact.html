@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact | Lake Shore Legends</title>
+<link rel="icon" href="assets/monogram-lsl.png">
+<link rel="stylesheet" href="css/colors_and_type.css">
+<link rel="stylesheet" href="css/kit.css">
+<link rel="stylesheet" href="css/extra.css">
+<script src="js/dist/react.production.min.js"></script>
+<script src="js/dist/react-dom.production.min.js"></script>
+<script src="js/dist/lucide.min.js"></script>
+<script src="js/image-slot.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script src="js/dist/shell.js"></script>
+<script src="js/dist/contact.js"></script>
+<script>
+(function () {
+  var Header = window.Header, PageHero = window.PageHero, Footer = window.Footer;
+  var ContactSection = window.ContactSection, FAQ = window.FAQ;
+
+  function App() {
+    React.useEffect(function () { if (window.lucide) window.lucide.createIcons(); }, []);
+    return React.createElement('div', { className: 'lsl-scroll', 'data-screen-label': 'Contact' },
+      React.createElement(Header, { page: 'Contact' }),
+      React.createElement(PageHero, {
+        eyebrow: 'Contact',
+        accent: 'orange',
+        title: 'Connect With Us',
+        sub: 'Get in touch about training, camps, and the Jr. Mustangs feeder program — or just say hello.'
+      }),
+      React.createElement(ContactSection, null),
+      React.createElement(FAQ, null),
+      React.createElement(Footer, null)
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App, null));
+})();
+</script>
+</body>
+</html>

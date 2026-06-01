@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lake Shore Legends | Training-First Basketball</title>
+<link rel="icon" href="assets/monogram-lsl.png">
+<link rel="stylesheet" href="css/colors_and_type.css">
+<link rel="stylesheet" href="css/kit.css">
+<link rel="stylesheet" href="css/extra.css">
+<script src="js/dist/react.production.min.js"></script>
+<script src="js/dist/react-dom.production.min.js"></script>
+<script src="js/dist/lucide.min.js"></script>
+<script src="js/image-slot.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script src="js/dist/shell.js"></script>
+<script src="js/dist/home.js"></script>
+<script src="js/dist/testimonials.js"></script>
+<script>
+(function () {
+  var Header = window.Header, Hero = window.Hero, StatsBand = window.StatsBand;
+  var Philosophy = window.Philosophy, DevelopmentModel = window.DevelopmentModel;
+  var SkillsGrid = window.SkillsGrid, BasketballIQ = window.BasketballIQ;
+  var Testimonials = window.Testimonials, CTA = window.CTA, Footer = window.Footer;
+
+  function App() {
+    React.useEffect(function () { if (window.lucide) window.lucide.createIcons(); }, []);
+    return React.createElement('div', { className: 'lsl-scroll', 'data-screen-label': 'Home' },
+      React.createElement(Header, { page: 'Home' }),
+      React.createElement(Hero, null),
+      React.createElement(StatsBand, null),
+      React.createElement(Philosophy, null),
+      React.createElement(DevelopmentModel, null),
+      React.createElement(SkillsGrid, null),
+      React.createElement(BasketballIQ, null),
+      React.createElement(Testimonials, null),
+      React.createElement(CTA, null),
+      React.createElement(Footer, null)
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App, null));
+})();
+</script>
+</body>
+</html>
