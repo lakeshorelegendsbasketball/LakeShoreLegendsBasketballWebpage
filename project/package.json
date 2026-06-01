@@ -1,0 +1,22 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx babel js/shell.jsx js/home.jsx js/testimonials.jsx js/about.jsx js/training.jsx js/alumni.jsx js/gallery.jsx js/contact.jsx js/booking-store.jsx js/booking.jsx js/booking-admin.jsx --out-dir js/dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "@babel/preset-react": "^7.29.7"
+  },
+  "dependencies": {
+    "lucide": "^1.17.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

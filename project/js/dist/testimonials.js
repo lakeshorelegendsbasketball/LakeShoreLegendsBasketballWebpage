@@ -1,0 +1,67 @@
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+/* global React, SectionHead */
+var TESTIMONIALS = [{
+  quote: "Coach Gio shares his basketball knowledge in a way that works for his players on and off the court. He builds real relationships — that connection made me want to play harder for him.",
+  name: 'Keller McGovern',
+  loc: 'IL · Athlete'
+}, {
+  quote: "My son grew so much this past season. Coach Gio runs a well-organized practice and instills a strong work ethic. I'd recommend him to anyone willing to work hard.",
+  name: 'Jeremy Slater',
+  loc: 'IN · Parent'
+}, {
+  quote: "Gio brings a holistic approach — relationship building, character, skill, and competitiveness. Our daughter achieved goals we never dreamed possible.",
+  name: 'Vanessa Stoller',
+  loc: 'IN · Parent'
+}, {
+  quote: "No matter the drill, Coach Gio made every practice fun and engaging. He helped me gain real confidence on the court during games.",
+  name: 'Emily Bunger',
+  loc: 'IN · Athlete'
+}, {
+  quote: "His personable, approachable nature helped the girls feel comfortable — and they learned a LOT. Thank you for developing Emma's self-confidence.",
+  name: 'Kristin Bruce',
+  loc: 'IN · Parent'
+}];
+function Testimonials() {
+  var _React$useState = React.useState(0),
+    _React$useState2 = _slicedToArray(_React$useState, 2),
+    i = _React$useState2[0],
+    setI = _React$useState2[1];
+  var t = TESTIMONIALS[i];
+  return /*#__PURE__*/React.createElement("section", {
+    className: "lsl-section lsl-section--cream"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-wrap"
+  }, /*#__PURE__*/React.createElement(SectionHead, {
+    eyebrow: "What Our Community Says",
+    title: "Hear From Our Families"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-testimonial"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-quotemark"
+  }, "\u201C"), /*#__PURE__*/React.createElement("blockquote", {
+    className: "lsl-testimonial__quote"
+  }, t.quote), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-testimonial__by"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-avatar"
+  }, t.name.split(' ').map(s => s[0]).join('')), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-testimonial__name"
+  }, t.name), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-testimonial__loc"
+  }, t.loc))), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-dots"
+  }, TESTIMONIALS.map((_, k) => /*#__PURE__*/React.createElement("button", {
+    key: k,
+    className: 'lsl-dot' + (k === i ? ' is-active' : ''),
+    onClick: () => setI(k),
+    "aria-label": 'Testimonial ' + (k + 1)
+  }))))));
+}
+Object.assign(window, {
+  Testimonials
+});
