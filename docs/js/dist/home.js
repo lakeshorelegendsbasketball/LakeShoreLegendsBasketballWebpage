@@ -215,7 +215,7 @@ function PlayerGrowth() {
     className: "lsl-wrap"
   }, /*#__PURE__*/React.createElement(SectionHead, {
     eyebrow: "Player Growth within a Team Structure",
-    title: "Individual Development. Team Success."
+    title: ""
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
   }, "We emphasize individual development while teaching athletes how to contribute within a team system. Players learn how to compete with purpose, make sound decisions, and understand the game beyond just playing it."), /*#__PURE__*/React.createElement("p", {

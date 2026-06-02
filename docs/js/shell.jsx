@@ -91,7 +91,7 @@ function SectionHead({ eyebrow, title, sub, light, center }) {
   return (
     <div className={'lsl-secthead' + (center ? ' lsl-secthead--center' : '')}>
       {eyebrow && <span className={'lsl-eyebrow' + (light ? ' lsl-eyebrow--light' : '')}>{eyebrow}</span>}
-      <h2 className={'lsl-h2' + (light ? ' lsl-h2--light' : '')}>{title}</h2>
+      {title && <h2 className={'lsl-h2' + (light ? ' lsl-h2--light' : '')}>{title}</h2>}
       {sub && <p className={'lsl-body' + (light ? ' lsl-body--light' : '')}>{sub}</p>}
     </div>
   );

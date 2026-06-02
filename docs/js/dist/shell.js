@@ -211,7 +211,7 @@ function SectionHead(_ref5) {
     className: 'lsl-secthead' + (center ? ' lsl-secthead--center' : '')
   }, eyebrow && /*#__PURE__*/React.createElement("span", {
     className: 'lsl-eyebrow' + (light ? ' lsl-eyebrow--light' : '')
-  }, eyebrow), /*#__PURE__*/React.createElement("h2", {
+  }, eyebrow), title && /*#__PURE__*/React.createElement("h2", {
     className: 'lsl-h2' + (light ? ' lsl-h2--light' : '')
   }, title), sub && /*#__PURE__*/React.createElement("p", {
     className: 'lsl-body' + (light ? ' lsl-body--light' : '')
