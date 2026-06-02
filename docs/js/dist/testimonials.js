@@ -20,13 +20,21 @@ var TESTIMONIALS = [{
   name: 'Vanessa Stoller',
   loc: 'IN · Parent'
 }, {
-  quote: "No matter the drill, Coach Gio made every practice fun and engaging. He helped me gain real confidence on the court during games.",
+  quote: ["No matter what drills we were doing, Coach Gio made every practice fun and engaging. Whether we were winning or losing, he always stayed positive and encouraging, which really helped keep me mentally strong on the court.", "Coach Gio helped me greatly improve my shooting ability, and more importantly, helped me gain confidence on the court during games. I always looked forward to game days when he was coaching.", "Not only was he a great all-around coach, he was also someone who truly cared about us as players."],
   name: 'Emily Bunger',
   loc: 'IN · Athlete'
 }, {
-  quote: "His personable, approachable nature helped the girls feel comfortable — and they learned a LOT. Thank you for developing Emma's self-confidence.",
+  quote: ["Coach Gio gave Emma such a great start to her basketball career over the last two years! His personable and approachable nature helped the girls feel very comfortable with him in their training sessions, and they learned a LOT under his guidance!", "Seeing the girls come together and support each other both on and off the court has been so nice. Thank you for helping to develop Emma's self-confidence and for making her middle school basketball memories so fun!"],
   name: 'Kristin Bruce',
   loc: 'IN · Parent'
+}, {
+  quote: ["Before starting LakeShore Legends, Gio coached my program's 9th & 11th grade Legacy Force teams and did a wonderful job. His ability to connect with his players especially stood out, as they trusted him and bought into what he was teaching.", "Without that buy-in, there's no real influence to help elevate a player's game, but Gio achieved it consistently. He did a wonderful job leading and developing his teams all season long."],
+  name: 'Donte Wilburn',
+  loc: 'Program Director'
+}, {
+  quote: ["Coach Gio is great at teaching guard fundamentals and team play. He is extremely encouraging and helped me develop confidence in my own ability.", "Outside of team events, he often took the time to help me work on my jump shot and consistently gave me personalized drills to work on. Our private training sessions were always very intense and productive long-term."],
+  name: 'Sofia Paniagua',
+  loc: 'Athlete'
 }];
 function Testimonials() {
   var _React$useState = React.useState(0),
