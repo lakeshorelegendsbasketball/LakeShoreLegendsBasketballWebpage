@@ -99,8 +99,8 @@ function DevelopmentModel() {
   const cols = [
     { icon: 'calendar-x', tag: 'Typical AAU Model', title: null,
       body: ['Most AAU basketball programs only practice once or twice per week, prioritizing weekend tournaments over skill development and basketball IQ.', 'While we believe competition is important, over-competing without enough structured training often limits true improvement.'], muted: true },
-    { icon: 'repeat', tag: 'Our Approach', title: 'Skill Over Volume',
-      body: 'A European-style model emphasizing repetition, fundamentals, decision-making, and long-term growth — building confident, capable players.' },
+    { icon: 'repeat', tag: 'Our Approach', title: null,
+      body: ['We follow a more European-style basketball model that emphasizes repetition, fundamentals, decision-making, and long-term growth.', 'Our practices are designed to build technically sound, confident, and capable players long-term.'] },
     { icon: 'scale', tag: 'Our Standard', title: 'Practice 2× We Play',
       body: 'More time training between competition lets athletes learn from mistakes, build real skills, and develop habits that translate up.' },
   ];

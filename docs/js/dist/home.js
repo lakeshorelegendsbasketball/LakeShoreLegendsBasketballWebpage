@@ -162,8 +162,8 @@ function DevelopmentModel() {
   }, {
     icon: 'repeat',
     tag: 'Our Approach',
-    title: 'Skill Over Volume',
-    body: 'A European-style model emphasizing repetition, fundamentals, decision-making, and long-term growth — building confident, capable players.'
+    title: null,
+    body: ['We follow a more European-style basketball model that emphasizes repetition, fundamentals, decision-making, and long-term growth.', 'Our practices are designed to build technically sound, confident, and capable players long-term.']
   }, {
     icon: 'scale',
     tag: 'Our Standard',
