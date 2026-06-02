@@ -289,7 +289,9 @@ function WhyItMatters() {
     }
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap"
-  }, /*#__PURE__*/React.createElement(SectionHead, {
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "This approach builds players who are confident under pressure, trusted by coaches, and prepared for the speed and complexity of the high school and college game. Talent gets you noticed, but sound decision-making and basketball IQ will keep you on the floor."), /*#__PURE__*/React.createElement(SectionHead, {
     title: "Why This Matters"
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"

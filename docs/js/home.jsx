@@ -187,6 +187,7 @@ function WhyItMatters() {
   return (
     <section className="lsl-section lsl-section--cream" style={{ paddingTop: 0 }}>
       <div className="lsl-wrap">
+        <p className="lsl-body">This approach builds players who are confident under pressure, trusted by coaches, and prepared for the speed and complexity of the high school and college game. Talent gets you noticed, but sound decision-making and basketball IQ will keep you on the floor.</p>
         <SectionHead title="Why This Matters" />
         <p className="lsl-body">By emphasizing training, repetition, and true game mastery, LakeShore Legends prepares athletes to succeed at every level of competition.</p>
         <p className="lsl-body">From high school and prep school programs to collegiate athletics and professional basketball, our development model is designed to translate as the game becomes faster, more physical, and more demanding.</p>
