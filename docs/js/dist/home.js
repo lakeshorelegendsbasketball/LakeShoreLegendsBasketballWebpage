@@ -272,11 +272,13 @@ function BasketballIQ() {
     title: "We Don't Just Play The Game. We Study It."
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
-  }, "Through purposeful film breakdown and competitive practice environments, players learn ", /*#__PURE__*/React.createElement("em", null, "why"), " plays work \u2014 not just how to run them. We teach athletes to read defenses, anticipate actions, and adapt in real time."), /*#__PURE__*/React.createElement("div", {
+  }, "Our athletes develop strong decision-making habits, situational awareness, and a deeper understanding of basketball concepts that translate to higher levels of play. We don't just play the game. We study it."), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "Through structured training, purposeful film breakdown, and competitive practice environments, players learn why plays work, not just how to run them. We teach athletes how to read defenses, anticipate actions, communicate effectively, and adapt in real time."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-rule"
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-pullquote"
-  }, "\"Talent gets you noticed, but sound decision-making keeps you on the floor.\""))));
+  }, "This approach builds players who are confident under pressure, trusted by coaches, and prepared for the speed and complexity of the high school and college game. Talent gets you noticed, but sound decision-making and basketball IQ will keep you on the floor."))));
 }
 Object.assign(window, {
   Hero: Hero,
