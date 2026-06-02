@@ -48,7 +48,7 @@ function Testimonials() {
     className: "lsl-wrap"
   }, /*#__PURE__*/React.createElement(SectionHead, {
     eyebrow: "What Our Community Says",
-    title: "Hear From Our Families"
+    title: "Hear From The Families Who Have Experienced Our Development Model Firsthand"
   }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-testimonial"
   }, /*#__PURE__*/React.createElement("div", {
