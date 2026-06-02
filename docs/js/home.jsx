@@ -127,6 +127,19 @@ function DevelopmentModel() {
   );
 }
 
+function PlayerGrowth() {
+  return (
+    <section className="lsl-section lsl-section--cream" style={{ paddingTop: 0 }}>
+      <div className="lsl-wrap">
+        <SectionHead eyebrow="Player Growth within a Team Structure"
+          title="Individual Development. Team Success." />
+        <p className="lsl-body">We emphasize individual development while teaching athletes how to contribute within a team system. Players learn how to compete with purpose, make sound decisions, and understand the game beyond just playing it.</p>
+        <p className="lsl-body">By offering players game-realistic repetitions &amp; real, intentional feedback, our athletes develop the skills, confidence, and basketball abilities needed to succeed at the next level. We emphasize the development of strong fundamentals, disciplined habits, and the ability to adapt to different roles &amp; systems.</p>
+      </div>
+    </section>
+  );
+}
+
 function SkillsGrid() {
   const skills = [
     ['target', 'Shooting'], ['footprints', 'Footwork'], ['circle-dot', 'Ball Handling'],
@@ -170,4 +183,4 @@ function BasketballIQ() {
   );
 }
 
-Object.assign(window, { Hero, StatsBand, Philosophy, DevelopmentModel, SkillsGrid, BasketballIQ });
+Object.assign(window, { Hero, StatsBand, Philosophy, DevelopmentModel, PlayerGrowth, SkillsGrid, BasketballIQ });

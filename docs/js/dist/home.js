@@ -205,6 +205,23 @@ function DevelopmentModel() {
     }, c.body));
   }))));
 }
+function PlayerGrowth() {
+  return /*#__PURE__*/React.createElement("section", {
+    className: "lsl-section lsl-section--cream",
+    style: {
+      paddingTop: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-wrap"
+  }, /*#__PURE__*/React.createElement(SectionHead, {
+    eyebrow: "Player Growth within a Team Structure",
+    title: "Individual Development. Team Success."
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "We emphasize individual development while teaching athletes how to contribute within a team system. Players learn how to compete with purpose, make sound decisions, and understand the game beyond just playing it."), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "By offering players game-realistic repetitions & real, intentional feedback, our athletes develop the skills, confidence, and basketball abilities needed to succeed at the next level. We emphasize the development of strong fundamentals, disciplined habits, and the ability to adapt to different roles & systems.")));
+}
 function SkillsGrid() {
   var skills = [['target', 'Shooting'], ['footprints', 'Footwork'], ['circle-dot', 'Ball Handling'], ['shield', 'Screening'], ['arrow-up-from-line', 'Rebounding'], ['send', 'Passing'], ['hand', 'Defending']];
   return /*#__PURE__*/React.createElement("section", {
@@ -266,6 +283,7 @@ Object.assign(window, {
   StatsBand: StatsBand,
   Philosophy: Philosophy,
   DevelopmentModel: DevelopmentModel,
+  PlayerGrowth: PlayerGrowth,
   SkillsGrid: SkillsGrid,
   BasketballIQ: BasketballIQ
 });
