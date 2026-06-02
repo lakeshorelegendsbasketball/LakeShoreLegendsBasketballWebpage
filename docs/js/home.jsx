@@ -175,8 +175,6 @@ function BasketballIQ() {
             title="We Don't Just Play The Game. We Study It." />
           <p className="lsl-body">Our athletes develop strong decision-making habits, situational awareness, and a deeper understanding of basketball concepts that translate to higher levels of play. We don't just play the game. We study it.</p>
           <p className="lsl-body">Through structured training, purposeful film breakdown, and competitive practice environments, players learn why plays work, not just how to run them. We teach athletes how to read defenses, anticipate actions, communicate effectively, and adapt in real time.</p>
-          <div className="lsl-rule"></div>
-          <p className="lsl-pullquote">This approach builds players who are confident under pressure, trusted by coaches, and prepared for the speed and complexity of the high school and college game. Talent gets you noticed, but sound decision-making and basketball IQ will keep you on the floor.</p>
         </div>
       </div>
     </section>
