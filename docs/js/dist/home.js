@@ -156,8 +156,8 @@ function DevelopmentModel() {
   var cols = [{
     icon: 'calendar-x',
     tag: 'Typical AAU Model',
-    title: 'Games Over Growth',
-    body: 'Most programs practice once or twice a week, prioritizing weekend tournaments over skill development and basketball IQ.',
+    title: null,
+    body: ['Most AAU basketball programs only practice once or twice per week, prioritizing weekend tournaments over skill development and basketball IQ.', 'While we believe competition is important, over-competing without enough structured training often limits true improvement.'],
     muted: true
   }, {
     icon: 'repeat',
@@ -186,16 +186,21 @@ function DevelopmentModel() {
   }, cols.map(function (c) {
     return /*#__PURE__*/React.createElement("div", {
       className: 'lsl-fcard' + (c.muted ? ' lsl-fcard--muted' : ''),
-      key: c.title
+      key: c.tag
     }, /*#__PURE__*/React.createElement("div", {
       className: "lsl-fcard__ico"
     }, /*#__PURE__*/React.createElement("i", {
       "data-lucide": c.icon
     })), /*#__PURE__*/React.createElement("span", {
       className: "lsl-label"
-    }, c.tag), /*#__PURE__*/React.createElement("h3", {
+    }, c.tag), c.title && /*#__PURE__*/React.createElement("h3", {
       className: "lsl-h3"
-    }, c.title), /*#__PURE__*/React.createElement("p", {
+    }, c.title), Array.isArray(c.body) ? c.body.map(function (p, i) {
+      return /*#__PURE__*/React.createElement("p", {
+        key: i,
+        className: "lsl-body lsl-body--sm"
+      }, p);
+    }) : /*#__PURE__*/React.createElement("p", {
       className: "lsl-body lsl-body--sm"
     }, c.body));
   }))));

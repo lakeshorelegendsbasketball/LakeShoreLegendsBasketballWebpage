@@ -97,8 +97,8 @@ function Philosophy() {
 
 function DevelopmentModel() {
   const cols = [
-    { icon: 'calendar-x', tag: 'Typical AAU Model', title: 'Games Over Growth',
-      body: 'Most programs practice once or twice a week, prioritizing weekend tournaments over skill development and basketball IQ.', muted: true },
+    { icon: 'calendar-x', tag: 'Typical AAU Model', title: null,
+      body: ['Most AAU basketball programs only practice once or twice per week, prioritizing weekend tournaments over skill development and basketball IQ.', 'While we believe competition is important, over-competing without enough structured training often limits true improvement.'], muted: true },
     { icon: 'repeat', tag: 'Our Approach', title: 'Skill Over Volume',
       body: 'A European-style model emphasizing repetition, fundamentals, decision-making, and long-term growth — building confident, capable players.' },
     { icon: 'scale', tag: 'Our Standard', title: 'Practice 2× We Play',
@@ -112,11 +112,13 @@ function DevelopmentModel() {
           sub="Our training structure is intentionally different from the typical AAU approach, because our goal is long-term player growth, not short-term program victories." />
         <div className="lsl-cards3">
           {cols.map((c) => (
-            <div className={'lsl-fcard' + (c.muted ? ' lsl-fcard--muted' : '')} key={c.title}>
+            <div className={'lsl-fcard' + (c.muted ? ' lsl-fcard--muted' : '')} key={c.tag}>
               <div className="lsl-fcard__ico"><i data-lucide={c.icon}></i></div>
               <span className="lsl-label">{c.tag}</span>
-              <h3 className="lsl-h3">{c.title}</h3>
-              <p className="lsl-body lsl-body--sm">{c.body}</p>
+              {c.title && <h3 className="lsl-h3">{c.title}</h3>}
+              {Array.isArray(c.body)
+                ? c.body.map((p, i) => <p key={i} className="lsl-body lsl-body--sm">{p}</p>)
+                : <p className="lsl-body lsl-body--sm">{c.body}</p>}
             </div>
           ))}
         </div>
