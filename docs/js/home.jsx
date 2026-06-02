@@ -183,4 +183,18 @@ function BasketballIQ() {
   );
 }
 
-Object.assign(window, { Hero, StatsBand, Philosophy, DevelopmentModel, PlayerGrowth, SkillsGrid, BasketballIQ });
+function WhyItMatters() {
+  return (
+    <section className="lsl-section lsl-section--cream" style={{ paddingTop: 0 }}>
+      <div className="lsl-wrap">
+        <SectionHead eyebrow="Why This Matters" title="" />
+        <p className="lsl-body">By emphasizing training, repetition, and true game mastery, LakeShore Legends prepares athletes to succeed at every level of competition.</p>
+        <p className="lsl-body">From high school and prep school programs to collegiate athletics and professional basketball, our development model is designed to translate as the game becomes faster, more physical, and more demanding.</p>
+        <p className="lsl-body">Rather than prioritizing short-term results, we focus on building strong technical foundations, advanced basketball IQ, and consistent habits that support long-term performance and growth.</p>
+        <p className="lsl-body">At LakeShore Legends, we are committed to developing disciplined, well-rounded athletes equipped to compete and thrive in today's game and beyond.</p>
+      </div>
+    </section>
+  );
+}
+
+Object.assign(window, { Hero, StatsBand, Philosophy, DevelopmentModel, PlayerGrowth, SkillsGrid, BasketballIQ, WhyItMatters });

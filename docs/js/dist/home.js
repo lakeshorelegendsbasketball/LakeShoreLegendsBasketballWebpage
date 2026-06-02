@@ -280,6 +280,27 @@ function BasketballIQ() {
     className: "lsl-pullquote"
   }, "This approach builds players who are confident under pressure, trusted by coaches, and prepared for the speed and complexity of the high school and college game. Talent gets you noticed, but sound decision-making and basketball IQ will keep you on the floor."))));
 }
+function WhyItMatters() {
+  return /*#__PURE__*/React.createElement("section", {
+    className: "lsl-section lsl-section--cream",
+    style: {
+      paddingTop: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-wrap"
+  }, /*#__PURE__*/React.createElement(SectionHead, {
+    eyebrow: "Why This Matters",
+    title: ""
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "By emphasizing training, repetition, and true game mastery, LakeShore Legends prepares athletes to succeed at every level of competition."), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "From high school and prep school programs to collegiate athletics and professional basketball, our development model is designed to translate as the game becomes faster, more physical, and more demanding."), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "Rather than prioritizing short-term results, we focus on building strong technical foundations, advanced basketball IQ, and consistent habits that support long-term performance and growth."), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "At LakeShore Legends, we are committed to developing disciplined, well-rounded athletes equipped to compete and thrive in today's game and beyond.")));
+}
 Object.assign(window, {
   Hero: Hero,
   StatsBand: StatsBand,
@@ -287,5 +308,6 @@ Object.assign(window, {
   DevelopmentModel: DevelopmentModel,
   PlayerGrowth: PlayerGrowth,
   SkillsGrid: SkillsGrid,
-  BasketballIQ: BasketballIQ
+  BasketballIQ: BasketballIQ,
+  WhyItMatters: WhyItMatters
 });
