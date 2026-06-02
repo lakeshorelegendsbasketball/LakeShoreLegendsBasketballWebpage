@@ -16,7 +16,7 @@ var TESTIMONIALS = [{
   name: 'Jeremy Slater',
   loc: 'IN · Parent'
 }, {
-  quote: "Gio brings a holistic approach — relationship building, character, skill, and competitiveness. Our daughter achieved goals we never dreamed possible.",
+  quote: ["Over their last two seasons together, Coach Gio was a huge factor in my daughter's basketball development. Between coaching her school basketball team and private training in the off season, we saw tremendous growth in both her abilities and her love for the game.", "Gio brings a holistic approach to coaching with emphasis on relationship building, character development, basketball skill, and competitiveness. Our daughter has achieved goals we never dreamed possible with Gio playing a big part in her journey."],
   name: 'Vanessa Stoller',
   loc: 'IN · Parent'
 }, {
