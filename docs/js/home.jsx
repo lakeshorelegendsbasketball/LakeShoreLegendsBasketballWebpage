@@ -81,8 +81,9 @@ function Philosophy() {
         <div>
           <SectionHead eyebrow="The Problem With Modern AAU"
             title="Our Training-First Solution" />
-          <p className="lsl-body">In today's competitive landscape, many AAU programs focus on playing numerous games — often at the expense of skill development and athlete well-being. This short-term mindset hinders long-term potential.</p>
-          <p className="lsl-body">LakeShore Legends offers a refreshing alternative. We prioritize practice over excessive gameplay, preparing athletes for sustained success in high school, college, and beyond.</p>
+          <p className="lsl-body">LakeShore Legends is a development-driven basketball organization built on elite training standards and long-term athletic growth. We exist to build fundamentally sound, intelligent, and competitive basketball players prepared for the next level and beyond.</p>
+          <p className="lsl-body">In today's competitive basketball landscape, many AAU programs focus heavily on playing numerous games, often at the expense of skill development and athlete well-being. This short-term mindset can hinder players' long-term potential and growth.</p>
+          <p className="lsl-body">Lake Shore Legends offers a refreshing alternative. Our training-first philosophy emphasizes skill mastery, strategic thinking, and purposeful competition. By prioritizing practice over excessive gameplay, we prepare our athletes for sustained success, equipping them with the tools needed for high school, college, and beyond.</p>
           <div className="lsl-rule"></div>
           <p className="lsl-pullquote">"We don't just play the game. We study it."</p>
         </div>

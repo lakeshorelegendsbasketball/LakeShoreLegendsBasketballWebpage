@@ -1,8 +1,10 @@
+"use strict";
+
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 /* global React, SectionHead, Star6 */
 function Hero() {
@@ -66,30 +68,30 @@ function CountUp(_ref) {
     n = _React$useState2[0],
     setN = _React$useState2[1];
   var ref = React.useRef(null);
-  React.useEffect(() => {
+  React.useEffect(function () {
     var raf,
       started = false;
-    var run = () => {
+    var run = function run() {
       started = true;
       var dur = 1400,
         t0 = performance.now();
-      var tick = now => {
+      var _tick = function tick(now) {
         var p = Math.min(1, (now - t0) / dur);
         var eased = 1 - Math.pow(1 - p, 3);
         setN(Math.round(eased * target));
-        if (p < 1) raf = requestAnimationFrame(tick);
+        if (p < 1) raf = requestAnimationFrame(_tick);
       };
-      raf = requestAnimationFrame(tick);
+      raf = requestAnimationFrame(_tick);
     };
-    var io = new IntersectionObserver(entries => {
-      entries.forEach(e => {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
         if (e.isIntersecting && !started) run();
       });
     }, {
       threshold: 0.4
     });
     if (ref.current) io.observe(ref.current);
-    return () => {
+    return function () {
       io.disconnect();
       if (raf) cancelAnimationFrame(raf);
     };
@@ -103,7 +105,7 @@ function StatsBand() {
   var stats = [['24', 'Travel Teams Coached'], ['250+', 'Dedicated Athletes Trained'], ['25+', 'Unique College Recruitment Offers'], ['7+', 'College Basketball Commitments']];
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-statsband"
-  }, stats.map(_ref2 => {
+  }, stats.map(function (_ref2) {
     var _ref3 = _slicedToArray(_ref2, 2),
       n = _ref3[0],
       l = _ref3[1];
@@ -127,9 +129,11 @@ function Philosophy() {
     title: "Our Training-First Solution"
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
-  }, "In today's competitive landscape, many AAU programs focus on playing numerous games \u2014 often at the expense of skill development and athlete well-being. This short-term mindset hinders long-term potential."), /*#__PURE__*/React.createElement("p", {
+  }, "LakeShore Legends is a development-driven basketball organization built on elite training standards and long-term athletic growth. We exist to build fundamentally sound, intelligent, and competitive basketball players prepared for the next level and beyond."), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
-  }, "LakeShore Legends offers a refreshing alternative. We prioritize practice over excessive gameplay, preparing athletes for sustained success in high school, college, and beyond."), /*#__PURE__*/React.createElement("div", {
+  }, "In today's competitive basketball landscape, many AAU programs focus heavily on playing numerous games, often at the expense of skill development and athlete well-being. This short-term mindset can hinder players' long-term potential and growth."), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "Lake Shore Legends offers a refreshing alternative. Our training-first philosophy emphasizes skill mastery, strategic thinking, and purposeful competition. By prioritizing practice over excessive gameplay, we prepare our athletes for sustained success, equipping them with the tools needed for high school, college, and beyond."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-rule"
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-pullquote"
@@ -177,20 +181,22 @@ function DevelopmentModel() {
     sub: "Our training structure is intentionally different \u2014 because the goal is long-term player growth, not short-term program victories."
   }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-cards3"
-  }, cols.map(c => /*#__PURE__*/React.createElement("div", {
-    className: 'lsl-fcard' + (c.muted ? ' lsl-fcard--muted' : ''),
-    key: c.title
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-fcard__ico"
-  }, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": c.icon
-  })), /*#__PURE__*/React.createElement("span", {
-    className: "lsl-label"
-  }, c.tag), /*#__PURE__*/React.createElement("h3", {
-    className: "lsl-h3"
-  }, c.title), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-body lsl-body--sm"
-  }, c.body))))));
+  }, cols.map(function (c) {
+    return /*#__PURE__*/React.createElement("div", {
+      className: 'lsl-fcard' + (c.muted ? ' lsl-fcard--muted' : ''),
+      key: c.title
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "lsl-fcard__ico"
+    }, /*#__PURE__*/React.createElement("i", {
+      "data-lucide": c.icon
+    })), /*#__PURE__*/React.createElement("span", {
+      className: "lsl-label"
+    }, c.tag), /*#__PURE__*/React.createElement("h3", {
+      className: "lsl-h3"
+    }, c.title), /*#__PURE__*/React.createElement("p", {
+      className: "lsl-body lsl-body--sm"
+    }, c.body));
+  }))));
 }
 function SkillsGrid() {
   var skills = [['target', 'Shooting'], ['footprints', 'Footwork'], ['circle-dot', 'Ball Handling'], ['shield', 'Screening'], ['arrow-up-from-line', 'Rebounding'], ['send', 'Passing'], ['hand', 'Defending']];
@@ -205,7 +211,7 @@ function SkillsGrid() {
     sub: "Through structured training, intentional feedback, and game-realistic repetition."
   }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-skills"
-  }, skills.map(_ref4 => {
+  }, skills.map(function (_ref4) {
     var _ref5 = _slicedToArray(_ref4, 2),
       ico = _ref5[0],
       name = _ref5[1];
@@ -249,10 +255,10 @@ function BasketballIQ() {
   }, "\"Talent gets you noticed, but sound decision-making keeps you on the floor.\""))));
 }
 Object.assign(window, {
-  Hero,
-  StatsBand,
-  Philosophy,
-  DevelopmentModel,
-  SkillsGrid,
-  BasketballIQ
+  Hero: Hero,
+  StatsBand: StatsBand,
+  Philosophy: Philosophy,
+  DevelopmentModel: DevelopmentModel,
+  SkillsGrid: SkillsGrid,
+  BasketballIQ: BasketballIQ
 });
