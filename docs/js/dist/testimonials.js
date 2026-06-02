@@ -12,7 +12,7 @@ var TESTIMONIALS = [{
   name: 'Keller McGovern',
   loc: 'IL · Athlete'
 }, {
-  quote: "My son grew so much this past season. Coach Gio runs a well-organized practice and instills a strong work ethic. I'd recommend him to anyone willing to work hard.",
+  quote: ["My son had the opportunity to play for Coach Gio last season as a 7th grader, and I was very impressed with his ability to instill such a strong work ethic and mature attitude in his boys. He runs a well-organized practice and always ensures his players are working hard.", "I've always been one to say \"you play how you practice,\" and my son surely grew as a player this past season. I'd recommend Coach Gio to anyone willing to work hard that's looking to develop their skills."],
   name: 'Jeremy Slater',
   loc: 'IN · Parent'
 }, {
