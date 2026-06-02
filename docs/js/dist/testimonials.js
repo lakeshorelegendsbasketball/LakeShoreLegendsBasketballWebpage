@@ -1,12 +1,14 @@
+"use strict";
+
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 /* global React, SectionHead */
 var TESTIMONIALS = [{
-  quote: "Coach Gio shares his basketball knowledge in a way that works for his players on and off the court. He builds real relationships — that connection made me want to play harder for him.",
+  quote: ["While many coaches are knowledgeable about basketball, most struggle to get their messages across and implement their ideas effectively. However, Coach Gio is able to share his basketball knowledge and analytical skill in a way that works well for his players on and off the court.", "What really makes him stand out, though, is his ability to establish strong connections with his players. He builds real relationships, and because of that, he understands us on a deeper level. That connection makes a huge difference in how he trains & coaches us, and it made me want to play harder for him.", "Overall, Coach Gio is a genuine guy who knows how to bring the best out of his players and his teams."],
   name: 'Keller McGovern',
   loc: 'IL · Athlete'
 }, {
@@ -45,23 +47,33 @@ function Testimonials() {
     className: "lsl-quotemark"
   }, "\u201C"), /*#__PURE__*/React.createElement("blockquote", {
     className: "lsl-testimonial__quote"
-  }, t.quote), /*#__PURE__*/React.createElement("div", {
+  }, Array.isArray(t.quote) ? t.quote.map(function (p, i) {
+    return /*#__PURE__*/React.createElement("p", {
+      key: i
+    }, p);
+  }) : t.quote), /*#__PURE__*/React.createElement("div", {
     className: "lsl-testimonial__by"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-avatar"
-  }, t.name.split(' ').map(s => s[0]).join('')), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+  }, t.name.split(' ').map(function (s) {
+    return s[0];
+  }).join('')), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "lsl-testimonial__name"
   }, t.name), /*#__PURE__*/React.createElement("div", {
     className: "lsl-testimonial__loc"
   }, t.loc))), /*#__PURE__*/React.createElement("div", {
     className: "lsl-dots"
-  }, TESTIMONIALS.map((_, k) => /*#__PURE__*/React.createElement("button", {
-    key: k,
-    className: 'lsl-dot' + (k === i ? ' is-active' : ''),
-    onClick: () => setI(k),
-    "aria-label": 'Testimonial ' + (k + 1)
-  }))))));
+  }, TESTIMONIALS.map(function (_, k) {
+    return /*#__PURE__*/React.createElement("button", {
+      key: k,
+      className: 'lsl-dot' + (k === i ? ' is-active' : ''),
+      onClick: function onClick() {
+        return setI(k);
+      },
+      "aria-label": 'Testimonial ' + (k + 1)
+    });
+  })))));
 }
 Object.assign(window, {
-  Testimonials
+  Testimonials: Testimonials
 });
