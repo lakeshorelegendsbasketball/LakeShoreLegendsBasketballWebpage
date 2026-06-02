@@ -178,6 +178,7 @@ function DevelopmentModel() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap"
   }, /*#__PURE__*/React.createElement(SectionHead, {
+    center: true,
     eyebrow: "Our Development Model",
     title: "Real Development Is Built In The Gym, Not On The Scoreboard",
     sub: "Our training structure is intentionally different from the typical AAU approach, because our goal is long-term player growth, not short-term program victories."

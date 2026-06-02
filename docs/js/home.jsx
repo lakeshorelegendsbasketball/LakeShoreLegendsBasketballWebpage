@@ -107,7 +107,7 @@ function DevelopmentModel() {
   return (
     <section className="lsl-section lsl-section--cream" style={{ paddingTop: 0 }}>
       <div className="lsl-wrap">
-        <SectionHead eyebrow="Our Development Model"
+        <SectionHead center eyebrow="Our Development Model"
           title="Real Development Is Built In The Gym, Not On The Scoreboard"
           sub="Our training structure is intentionally different from the typical AAU approach, because our goal is long-term player growth, not short-term program victories." />
         <div className="lsl-cards3">
