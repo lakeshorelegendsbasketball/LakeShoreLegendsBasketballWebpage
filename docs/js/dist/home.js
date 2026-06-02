@@ -166,9 +166,9 @@ function DevelopmentModel() {
     body: ['We follow a more European-style basketball model that emphasizes repetition, fundamentals, decision-making, and long-term growth.', 'Our practices are designed to build technically sound, confident, and capable players long-term.']
   }, {
     icon: 'scale',
-    tag: 'Our Standard',
-    title: 'Practice 2× We Play',
-    body: 'More time training between competition lets athletes learn from mistakes, build real skills, and develop habits that translate up.'
+    tag: 'Our Standard Ratio',
+    title: null,
+    body: ['Our goal is simple: Practice twice as much as we play.', 'Allowing more time for training between competition gives our athletes the opportunity to learn from their mistakes, build real skills, and develop habits that directly translate to higher levels of competition.']
   }];
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-section lsl-section--cream",
