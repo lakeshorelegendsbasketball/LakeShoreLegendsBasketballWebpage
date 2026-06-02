@@ -179,8 +179,8 @@ function DevelopmentModel() {
     className: "lsl-wrap"
   }, /*#__PURE__*/React.createElement(SectionHead, {
     eyebrow: "Our Development Model",
-    title: "Built In The Gym, Not The Scoreboard",
-    sub: "Our training structure is intentionally different \u2014 because the goal is long-term player growth, not short-term program victories."
+    title: "Real Development Is Built In The Gym, Not On The Scoreboard",
+    sub: "Our training structure is intentionally different from the typical AAU approach, because our goal is long-term player growth, not short-term program victories."
   }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-cards3"
   }, cols.map(function (c) {
