@@ -90,10 +90,10 @@ body { font-family: var(--font-body); color: var(--fg1); background: var(--legen
 .lsl-philosophy { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; }
 
 .lsl-cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-.lsl-fcard { background: #fff; border: 1px solid var(--line-soft); border-radius: var(--r-lg); padding: 28px 26px 30px; box-shadow: var(--shadow-md); transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med); }
+.lsl-fcard { background: #fff; border: 1px solid var(--line-soft); border-radius: var(--r-lg); padding: 28px 26px 30px; box-shadow: var(--shadow-md); transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med); text-align: center; }
 .lsl-fcard:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 .lsl-fcard--muted { background: var(--cream-200); box-shadow: none; }
-.lsl-fcard__ico { width: 52px; height: 52px; border-radius: var(--r-md); background: var(--navy-800); color: var(--sky-400); display: flex; align-items: center; justify-content: center; margin-bottom: 18px; }
+.lsl-fcard__ico { width: 52px; height: 52px; border-radius: var(--r-md); background: var(--navy-800); color: var(--sky-400); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; }
 .lsl-fcard--muted .lsl-fcard__ico { background: var(--navy-200); color: var(--navy-800); }
 .lsl-fcard__ico i { width: 26px; height: 26px; }
 
