@@ -84,6 +84,7 @@ function Philosophy() {
           <p className="lsl-body">LakeShore Legends is a development-driven basketball organization built on elite training standards and long-term athletic growth. We exist to build fundamentally sound, intelligent, and competitive basketball players prepared for the next level and beyond.</p>
           <p className="lsl-body">In today's competitive basketball landscape, many AAU programs focus heavily on playing numerous games, often at the expense of skill development and athlete well-being. This short-term mindset can hinder players' long-term potential and growth.</p>
           <p className="lsl-body">Lake Shore Legends offers a refreshing alternative. Our training-first philosophy emphasizes skill mastery, strategic thinking, and purposeful competition. By prioritizing practice over excessive gameplay, we prepare our athletes for sustained success, equipping them with the tools needed for high school, college, and beyond.</p>
+          <p className="lsl-body">Training is the foundation of our program. While competition matters, development comes first. Long-term basketball growth requires a strong technical and mental base. Our practices are intentional, structured, and skill-focused, designed to build fundamentals before chasing outcomes. Better training creates better players, and better players naturally elevate teams.</p>
           <div className="lsl-rule"></div>
           <p className="lsl-pullquote">"We don't just play the game. We study it."</p>
         </div>
