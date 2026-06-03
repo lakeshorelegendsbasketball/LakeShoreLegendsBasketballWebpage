@@ -6,8 +6,8 @@ function AboutHero() {
       <img className="lsl-pagehero__spire" src="assets/mark-spire-stars.png" alt="" aria-hidden="true" />
       <div className="lsl-pagehero__inner">
         <span className="lsl-eyebrow lsl-eyebrow--light">Who We Are</span>
-        <h1 className="lsl-display lsl-display--md">About LakeShore Legends</h1>
-        <p className="lsl-lede" style={{ maxWidth: '100%', color: 'var(--fg-on-dark-2)' }}>A development-driven basketball organization built on elite training standards, intentional teaching, and long-term athlete growth — developing complete players, on and off the court.</p>
+        <h1 className="lsl-display lsl-display--md">About LakeShore Legends Basketball</h1>
+        <p className="lsl-lede" style={{ maxWidth: '100%', color: 'var(--fg-on-dark-2)' }}>A development-driven basketball organization built on elite training standards, intentional teaching, and long-term athlete growth —<br/>developing complete players, on and off the court.</p>
       </div>
     </section>
   );
@@ -17,7 +17,7 @@ function MissionVision() {
   const items = [
     ['Mission', 'To develop complete basketball players through elite training, intentional teaching, and purposeful competition.'],
     ['Vision', 'To become a nationally respected development program known for skilled, intelligent, and disciplined athletes prepared to succeed at every level.'],
-    ['Engagement', 'We set a new standard for youth basketball with a training-first mindset. Practices are demanding by design — so that games feel simple.'],
+    ['Engagement', 'We set a new standard for youth basketball with a training-first mindset. Practices are demanding by design so that games feel simple.'],
   ];
   return (
     <section className="lsl-section lsl-section--cream">
