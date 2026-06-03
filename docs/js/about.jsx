@@ -36,7 +36,7 @@ function MissionVision() {
 
 function CorePrinciples() {
   const vals = [
-    ['Leadership', 'Taking ownership of preparation, effort, and growth — both on and off the court.'],
+    ['Leadership', <>Taking ownership of preparation, effort, and growth — both on and off<br/>the court.</>],
     ['Effort', 'Competing with intention and purpose in every rep, drill, and game.'],
     ['Grit', 'Embracing adversity, staying resilient, working through challenges.'],
     ['Energy', 'Showing up committed and ready, day after day, regardless of circumstances.'],

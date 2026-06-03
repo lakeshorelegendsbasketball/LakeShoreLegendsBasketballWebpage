@@ -57,7 +57,7 @@ function MissionVision() {
   })));
 }
 function CorePrinciples() {
-  var vals = [['Leadership', 'Taking ownership of preparation, effort, and growth — both on and off the court.'], ['Effort', 'Competing with intention and purpose in every rep, drill, and game.'], ['Grit', 'Embracing adversity, staying resilient, working through challenges.'], ['Energy', 'Showing up committed and ready, day after day, regardless of circumstances.'], ['No Excuses', 'Focus, drive, and resolve in the relentless pursuit of development.'], ['Discipline', 'Habits and decisions that support structure, growth, and team success.'], ['Sportsmanship', 'Respect and a willingness to learn in everything we do.']];
+  var vals = [['Leadership', /*#__PURE__*/React.createElement(React.Fragment, null, "Taking ownership of preparation, effort, and growth \u2014 both on and off", /*#__PURE__*/React.createElement("br", null), "the court.")], ['Effort', 'Competing with intention and purpose in every rep, drill, and game.'], ['Grit', 'Embracing adversity, staying resilient, working through challenges.'], ['Energy', 'Showing up committed and ready, day after day, regardless of circumstances.'], ['No Excuses', 'Focus, drive, and resolve in the relentless pursuit of development.'], ['Discipline', 'Habits and decisions that support structure, growth, and team success.'], ['Sportsmanship', 'Respect and a willingness to learn in everything we do.']];
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-section lsl-section--ink"
   }, /*#__PURE__*/React.createElement("div", {
