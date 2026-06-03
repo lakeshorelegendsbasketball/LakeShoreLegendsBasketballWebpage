@@ -104,7 +104,7 @@ function Programs() {
     { slot: 'prog-summer', img: 'uploads/gio-group-cafeteria.jpg', mediaH: 240, tag: 'Summer', tagClass: 'lsl-pill--orange', title: 'Jr. Mustangs Feeder Basketball Summer Camp', age: 'Rising 3rd–8th · Ages 8–14',
       points: ['Core skills: shooting, footwork, ball handling & more', 'Guided instruction, competitive games & interactive drills', 'Builds positive habits, effort, and love for the game'], btn: 'Sign Up Now', href: 'https://mundyball.com/camps', external: true },
     { slot: 'prog-dayoff', img: 'uploads/IMG_2971.jpeg', mediaH: 240, tag: 'Holidays', tagClass: 'lsl-pill--navy', title: 'School Day-Off Camps', age: 'MLK Day · Labor Day & More',
-      points: ['High-intensity training on scheduled school closures', 'Focused skill work and competitive drills', 'Centered on basketball IQ and game transfer'], btn: 'Inquire Now', href: 'contact.html', external: false },
+      points: ['High-intensity training on scheduled school closures', 'Focused skill work and competitive drills', 'Centered on basketball IQ and game transfer'], btn: 'Coming Soon', scrollTo: 'book', external: false },
   ];
   return (
     <section className="lsl-section lsl-section--cream" style={{ paddingTop: 'var(--sp-7)' }}>

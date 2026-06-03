@@ -246,8 +246,8 @@ function Programs() {
     title: 'School Day-Off Camps',
     age: 'MLK Day · Labor Day & More',
     points: ['High-intensity training on scheduled school closures', 'Focused skill work and competitive drills', 'Centered on basketball IQ and game transfer'],
-    btn: 'Inquire Now',
-    href: 'contact.html',
+    btn: 'Coming Soon',
+    scrollTo: 'book',
     external: false
   }];
   return /*#__PURE__*/React.createElement("section", {
