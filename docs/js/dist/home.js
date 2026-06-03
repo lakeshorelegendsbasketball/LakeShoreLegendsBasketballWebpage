@@ -294,7 +294,17 @@ function WhyItMatters() {
     }
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap lsl-philosophy"
-  }, /*#__PURE__*/React.createElement("img", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
+    title: "Why This Matters"
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "By emphasizing training, repetition, and true game mastery, LakeShore Legends prepares athletes to succeed at every level of competition."), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "From high school and prep school programs to collegiate athletics and professional basketball, our development model is designed to translate as the game becomes faster, more physical, and more demanding."), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "Rather than prioritizing short-term results, we focus on building strong technical foundations, advanced basketball IQ, and consistent habits that support long-term performance and growth."), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "At LakeShore Legends, we are committed to developing disciplined, well-rounded athletes equipped to compete and thrive in today's game and beyond.")), /*#__PURE__*/React.createElement("img", {
     className: "lsl-photo",
     src: "uploads/S4A6326-scaled.jpg",
     alt: "LakeShore Legends team and coaches on the bench",
@@ -305,17 +315,7 @@ function WhyItMatters() {
       borderRadius: '18px',
       display: 'block'
     }
-  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
-    title: "Why This Matters"
-  }), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-body"
-  }, "By emphasizing training, repetition, and true game mastery, LakeShore Legends prepares athletes to succeed at every level of competition."), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-body"
-  }, "From high school and prep school programs to collegiate athletics and professional basketball, our development model is designed to translate as the game becomes faster, more physical, and more demanding."), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-body"
-  }, "Rather than prioritizing short-term results, we focus on building strong technical foundations, advanced basketball IQ, and consistent habits that support long-term performance and growth."), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-body"
-  }, "At LakeShore Legends, we are committed to developing disciplined, well-rounded athletes equipped to compete and thrive in today's game and beyond."))));
+  })));
 }
 Object.assign(window, {
   Hero: Hero,
