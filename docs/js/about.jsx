@@ -46,7 +46,7 @@ function CorePrinciples() {
   return (
     <section className="lsl-section lsl-section--ink">
       <div className="lsl-wrap">
-        <SectionHead light eyebrow="Core Principles"
+        <SectionHead center wide light eyebrow="Core Principles"
           title="What Turns Players Into Legends"
           sub="Foundational expectations within our program — for every athlete, every day." />
         <div className="lsl-principles">
@@ -80,8 +80,9 @@ function CoachCard() {
               <span className="lsl-pill lsl-pill--sky">Jr. Mustangs Director</span>
               <span className="lsl-pill lsl-pill--outline">Shooting Specialist</span>
             </div>
-            <p className="lsl-body">A passionate coach from Park Ridge, Illinois and Co-Owner of LakeShore Legends. A former student-athlete and Purdue M.S. graduate, Coach Gio has spent over a decade refining his craft — coaching and training athletes of all ages and skill levels since age 14.</p>
-            <p className="lsl-body">He has coached top 17U AAU teams on the Adidas 3SSB Gold and NY2LA circuits with ALL IN Athletics, and held head coaching roles with Legacy Force AAU, Klondike Middle School, and Harrison High School feeder programs. As a skills trainer, he serves as a shooting specialist known for his attention to detail, player-first mentality, and commitment to maximizing potential — on and off the court.</p>
+            <p className="lsl-body">Gio Paganis is a passionate basketball coach from Park Ridge, Illinois and the proud Owner of LakeShore Legends Basketball. A former student-athlete and Purdue M.S. graduate, Coach Gio has spent over a decade refining his craft, coaching and training athletes of all ages and skill levels since age 14.</p>
+            <p className="lsl-body">Gio has coached top 17U AAU teams on the Adidas 3SSB Gold and NY2LA circuits with ALL IN Athletics, and held head coaching roles with Legacy Force AAU, Klondike Middle School, and Harrison High School feeder programs. He is currently the head Junior Varsity basketball coach at Mundelein High School and the director of the Jr. Mustangs Feeder Basketball program.</p>
+            <p className="lsl-body">As a skills trainer, he serves as a shooting specialist known for his attention to detail, player-first mentality, and commitment to maximizing player potential both on and off the court.</p>
             <div className="lsl-coach__creds">
               <div><strong>Purdue University</strong><span>M.S. Human Resource Mgmt</span></div>
               <div><strong>10+ Years</strong><span>Coaching &amp; Training</span></div>

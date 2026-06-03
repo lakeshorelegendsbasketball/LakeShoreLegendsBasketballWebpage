@@ -147,10 +147,10 @@ body { font-family: var(--font-body); color: var(--fg1); background: var(--legen
 .lsl-abouthero__glow { position: absolute; top: -120px; left: -100px; width: 560px; height: 560px; background: radial-gradient(circle, rgba(227,88,2,.22), transparent 62%); }
 .lsl-abouthero .lsl-display { color: #fff; }
 .lsl-mvgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-.lsl-mvcard { background: #fff; border: 1px solid var(--line-soft); border-radius: var(--r-lg); padding: 30px 28px; box-shadow: var(--shadow-sm); border-top: 4px solid var(--legend-orange); }
+.lsl-mvcard { background: #fff; border: 1px solid var(--line-soft); border-radius: var(--r-lg); padding: 30px 28px; box-shadow: var(--shadow-sm); border-top: 4px solid var(--legend-orange); text-align: center; }
 .lsl-mvcard .lsl-body { margin: 0; }
-.lsl-principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-.lsl-principle { background: var(--navy-700); border: 1px solid var(--line-on-dark); border-radius: var(--r-lg); padding: 24px 22px; }
+.lsl-principles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; justify-items: center; }
+.lsl-principle { background: var(--navy-700); border: 1px solid var(--line-on-dark); border-radius: var(--r-lg); padding: 24px 22px; text-align: center; width: 100%; }
 .lsl-principle__num { font-family: var(--font-display); font-size: 30px; color: var(--legend-orange); display: block; margin-bottom: 10px; }
 .lsl-principle .lsl-body { margin: 0; }
 .lsl-coach { display: grid; grid-template-columns: .85fr 1.15fr; gap: 48px; align-items: start; }

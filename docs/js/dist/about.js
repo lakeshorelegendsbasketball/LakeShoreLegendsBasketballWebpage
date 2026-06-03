@@ -1,8 +1,10 @@
+"use strict";
+
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 /* global React, SectionHead */
 function AboutHero() {
@@ -35,7 +37,7 @@ function MissionVision() {
     className: "lsl-section lsl-section--cream"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap lsl-mvgrid"
-  }, items.map(_ref => {
+  }, items.map(function (_ref) {
     var _ref2 = _slicedToArray(_ref, 2),
       h = _ref2[0],
       b = _ref2[1];
@@ -56,13 +58,15 @@ function CorePrinciples() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap"
   }, /*#__PURE__*/React.createElement(SectionHead, {
+    center: true,
+    wide: true,
     light: true,
     eyebrow: "Core Principles",
     title: "What Turns Players Into Legends",
     sub: "Foundational expectations within our program \u2014 for every athlete, every day."
   }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-principles"
-  }, vals.map((_ref3, idx) => {
+  }, vals.map(function (_ref3, idx) {
     var _ref4 = _slicedToArray(_ref3, 2),
       h = _ref4[0],
       b = _ref4[1];
@@ -116,15 +120,17 @@ function CoachCard() {
     className: "lsl-pill lsl-pill--outline"
   }, "Shooting Specialist")), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
-  }, "A passionate coach from Park Ridge, Illinois and Co-Owner of LakeShore Legends. A former student-athlete and Purdue M.S. graduate, Coach Gio has spent over a decade refining his craft \u2014 coaching and training athletes of all ages and skill levels since age 14."), /*#__PURE__*/React.createElement("p", {
+  }, "Gio Paganis is a passionate basketball coach from Park Ridge, Illinois and the proud Owner of LakeShore Legends Basketball. A former student-athlete and Purdue M.S. graduate, Coach Gio has spent over a decade refining his craft, coaching and training athletes of all ages and skill levels since age 14."), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
-  }, "He has coached top 17U AAU teams on the Adidas 3SSB Gold and NY2LA circuits with ALL IN Athletics, and held head coaching roles with Legacy Force AAU, Klondike Middle School, and Harrison High School feeder programs. As a skills trainer, he serves as a shooting specialist known for his attention to detail, player-first mentality, and commitment to maximizing potential \u2014 on and off the court."), /*#__PURE__*/React.createElement("div", {
+  }, "Gio has coached top 17U AAU teams on the Adidas 3SSB Gold and NY2LA circuits with ALL IN Athletics, and held head coaching roles with Legacy Force AAU, Klondike Middle School, and Harrison High School feeder programs. He is currently the head Junior Varsity basketball coach at Mundelein High School and the director of the Jr. Mustangs Feeder Basketball program."), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body"
+  }, "As a skills trainer, he serves as a shooting specialist known for his attention to detail, player-first mentality, and commitment to maximizing player potential both on and off the court."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-coach__creds"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Purdue University"), /*#__PURE__*/React.createElement("span", null, "M.S. Human Resource Mgmt")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "10+ Years"), /*#__PURE__*/React.createElement("span", null, "Coaching & Training")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Former"), /*#__PURE__*/React.createElement("span", null, "Collegiate Athlete")))))));
 }
 Object.assign(window, {
-  AboutHero,
-  MissionVision,
-  CorePrinciples,
-  CoachCard
+  AboutHero: AboutHero,
+  MissionVision: MissionVision,
+  CorePrinciples: CorePrinciples,
+  CoachCard: CoachCard
 });
