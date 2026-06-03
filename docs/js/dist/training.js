@@ -238,6 +238,7 @@ function Programs() {
     external: true
   }, {
     slot: 'prog-dayoff',
+    img: 'uploads/IMG_2971.jpeg',
     mediaH: 240,
     tag: 'Holidays',
     tagClass: 'lsl-pill--navy',
