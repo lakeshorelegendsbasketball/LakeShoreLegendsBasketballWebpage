@@ -275,7 +275,7 @@ function BasketballIQ() {
     }
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
     wide: true,
-    title: "Basketball IQ & Game Mastery"
+    title: /*#__PURE__*/React.createElement(React.Fragment, null, "Basketball IQ", /*#__PURE__*/React.createElement("br", null), "& Game Mastery")
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
   }, "Our athletes develop strong decision-making habits, situational awareness, and a deeper understanding of basketball concepts that translate to higher levels of play."), /*#__PURE__*/React.createElement("p", {
