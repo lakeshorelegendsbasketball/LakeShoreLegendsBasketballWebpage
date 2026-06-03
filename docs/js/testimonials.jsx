@@ -23,23 +23,35 @@ function Testimonials() {
       <div className="lsl-wrap">
         <SectionHead full eyebrow="What Our Community Says"
           title={<>Hear From The Families Who Have Experienced<br/>Our Development Model Firsthand</>} />
-        <div className="lsl-testimonial">
-          <div className="lsl-quotemark">&ldquo;</div>
-          <blockquote className="lsl-testimonial__quote">
-            {Array.isArray(t.quote) ? t.quote.map((p, i) => <p key={i}>{p}</p>) : t.quote}
-          </blockquote>
-          <div className="lsl-testimonial__by">
-            <div className="lsl-avatar">{t.name.split(' ').map(s => s[0]).join('')}</div>
-            <div>
-              <div className="lsl-testimonial__name">{t.name}</div>
-              <div className="lsl-testimonial__loc">{t.loc}</div>
+        <div className="lsl-testimonial-wrap">
+          <button className="lsl-testimonial-arrow lsl-testimonial-arrow--prev"
+            onClick={() => setI((i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length)}
+            aria-label="Previous testimonial">
+            <i data-lucide="chevron-left"></i>
+          </button>
+          <div className="lsl-testimonial">
+            <div className="lsl-quotemark">&ldquo;</div>
+            <blockquote className="lsl-testimonial__quote">
+              {Array.isArray(t.quote) ? t.quote.map((p, i) => <p key={i}>{p}</p>) : t.quote}
+            </blockquote>
+            <div className="lsl-testimonial__by">
+              <div className="lsl-avatar">{t.name.split(' ').map(s => s[0]).join('')}</div>
+              <div>
+                <div className="lsl-testimonial__name">{t.name}</div>
+                <div className="lsl-testimonial__loc">{t.loc}</div>
+              </div>
+            </div>
+            <div className="lsl-dots">
+              {TESTIMONIALS.map((_, k) => (
+                <button key={k} className={'lsl-dot' + (k === i ? ' is-active' : '')} onClick={() => setI(k)} aria-label={'Testimonial ' + (k + 1)}></button>
+              ))}
             </div>
           </div>
-          <div className="lsl-dots">
-            {TESTIMONIALS.map((_, k) => (
-              <button key={k} className={'lsl-dot' + (k === i ? ' is-active' : '')} onClick={() => setI(k)} aria-label={'Testimonial ' + (k + 1)}></button>
-            ))}
-          </div>
+          <button className="lsl-testimonial-arrow lsl-testimonial-arrow--next"
+            onClick={() => setI((i + 1) % TESTIMONIALS.length)}
+            aria-label="Next testimonial">
+            <i data-lucide="chevron-right"></i>
+          </button>
         </div>
       </div>
     </section>

@@ -108,7 +108,10 @@ body { font-family: var(--font-body); color: var(--fg1); background: var(--legen
 .lsl-skill__name { font-family: var(--font-cond); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-size: 13px; color: var(--fg-on-dark); }
 
 /* ---------- testimonials ---------- */
-.lsl-testimonial { position: relative; background: #fff; border: 1px solid var(--line-soft); border-radius: var(--r-xl); padding: 56px 56px 40px; box-shadow: var(--shadow-lg); max-width: 100%; }
+.lsl-testimonial-wrap { display: flex; align-items: center; gap: 16px; }
+.lsl-testimonial-arrow { flex-shrink: 0; width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--legend-navy); background: #fff; color: var(--legend-navy); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .2s, color .2s; }
+.lsl-testimonial-arrow:hover { background: var(--legend-navy); color: #fff; }
+.lsl-testimonial { position: relative; background: #fff; border: 1px solid var(--line-soft); border-radius: var(--r-xl); padding: 56px 56px 40px; box-shadow: var(--shadow-lg); flex: 1; min-width: 0; }
 .lsl-quotemark { position: absolute; top: 8px; left: 30px; font-family: var(--font-display); font-size: 120px; color: var(--orange-100); line-height: 1; pointer-events: none; }
 .lsl-testimonial__quote { position: relative; font-size: 23px; line-height: 1.5; color: var(--fg1); margin: 0 0 28px; font-weight: 500; }
 .lsl-testimonial__by { display: flex; align-items: center; gap: 14px; }

@@ -61,6 +61,16 @@ function Testimonials() {
     eyebrow: "What Our Community Says",
     title: /*#__PURE__*/React.createElement(React.Fragment, null, "Hear From The Families Who Have Experienced", /*#__PURE__*/React.createElement("br", null), "Our Development Model Firsthand")
   }), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-testimonial-wrap"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "lsl-testimonial-arrow lsl-testimonial-arrow--prev",
+    onClick: function onClick() {
+      return setI((i - 1 + TESTIMONIALS.length) % TESTIMONIALS.length);
+    },
+    "aria-label": "Previous testimonial"
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "chevron-left"
+  })), /*#__PURE__*/React.createElement("div", {
     className: "lsl-testimonial"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-quotemark"
@@ -91,6 +101,14 @@ function Testimonials() {
       },
       "aria-label": 'Testimonial ' + (k + 1)
     });
+  }))), /*#__PURE__*/React.createElement("button", {
+    className: "lsl-testimonial-arrow lsl-testimonial-arrow--next",
+    onClick: function onClick() {
+      return setI((i + 1) % TESTIMONIALS.length);
+    },
+    "aria-label": "Next testimonial"
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "chevron-right"
   })))));
 }
 Object.assign(window, {
