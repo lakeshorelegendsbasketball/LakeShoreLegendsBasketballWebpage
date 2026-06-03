@@ -129,7 +129,7 @@ function PlayerGrowth() {
     <section className="lsl-section lsl-section--cream">
       <div className="lsl-wrap lsl-philosophy">
         <div>
-          <SectionHead wide smTitle title="Player Growth In A Team Structure" />
+          <SectionHead wide title="Player Growth In A Team Structure" />
           <p className="lsl-body">We emphasize individual development while teaching athletes how to contribute within a team system. Players learn how to compete with purpose, make sound decisions, and understand the game beyond just playing it.</p>
           <p className="lsl-body">By offering players game-realistic repetitions &amp; real, intentional feedback, our athletes develop the skills, confidence, and basketball abilities needed to succeed at the next level. We emphasize the development of strong fundamentals, disciplined habits, and the ability to adapt to different roles &amp; systems.</p>
         </div>
@@ -174,7 +174,7 @@ function BasketballIQ() {
             style={{ width: '100%', height: '440px', objectFit: 'cover', borderRadius: '18px', display: 'block' }} />
         </div>
         <div>
-          <SectionHead wide smTitle title="Basketball IQ & Game Mastery" />
+          <SectionHead wide title="Basketball IQ & Game Mastery" />
           <p className="lsl-body">Our athletes develop strong decision-making habits, situational awareness, and a deeper understanding of basketball concepts that translate to higher levels of play.</p>
           <p className="lsl-body">Through structured training, purposeful film breakdown, and competitive practice environments, players learn why plays work, not just how to run them. We teach athletes how to read defenses, anticipate actions, communicate effectively, and adapt in real time. This approach builds players who are confident under pressure, trusted by coaches, and prepared for the speed and complexity of the high school and college game. Talent gets you noticed, but sound decision-making and basketball IQ will keep you on the floor.</p>
         </div>
