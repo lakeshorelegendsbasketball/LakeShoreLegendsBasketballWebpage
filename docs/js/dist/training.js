@@ -215,6 +215,7 @@ function Programs() {
   const progs = [{
     slot: 'prog-private',
     img: 'uploads/gio-highfive-23.jpg',
+    mediaH: 240,
     tag: '1-on-1',
     tagClass: 'lsl-pill--sky',
     title: 'Private & Small Group Training',
@@ -226,6 +227,7 @@ function Programs() {
   }, {
     slot: 'prog-summer',
     img: 'uploads/gio-group-cafeteria.jpg',
+    mediaH: 240,
     tag: 'Summer',
     tagClass: 'lsl-pill--orange',
     title: 'Jr. Mustangs Feeder Basketball Summer Camp',
@@ -236,6 +238,7 @@ function Programs() {
     external: true
   }, {
     slot: 'prog-dayoff',
+    mediaH: 240,
     tag: 'Holidays',
     tagClass: 'lsl-pill--navy',
     title: 'School Day-Off Camps',
@@ -264,7 +267,10 @@ function Programs() {
     className: "lsl-program",
     key: p.title
   }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-program__media"
+    className: "lsl-program__media",
+    style: p.mediaH ? {
+      height: p.mediaH
+    } : undefined
   }, p.img ? /*#__PURE__*/React.createElement("img", {
     src: p.img,
     alt: p.title

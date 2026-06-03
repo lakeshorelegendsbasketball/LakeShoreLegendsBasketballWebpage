@@ -99,11 +99,11 @@ function UpcomingEvents() {
 
 function Programs() {
   const progs = [
-    { slot: 'prog-private', img: 'uploads/gio-highfive-23.jpg', tag: '1-on-1', tagClass: 'lsl-pill--sky', title: 'Private & Small Group Training', age: 'All Ages & Skill Levels',
+    { slot: 'prog-private', img: 'uploads/gio-highfive-23.jpg', mediaH: 240, tag: '1-on-1', tagClass: 'lsl-pill--sky', title: 'Private & Small Group Training', age: 'All Ages & Skill Levels',
       points: ['Individual skill-development plans', 'Position-specific training and reads', 'Direct feedback, accountability & consistency'], btn: 'Inquire Now', href: 'contact.html', external: false },
-    { slot: 'prog-summer', img: 'uploads/gio-group-cafeteria.jpg', tag: 'Summer', tagClass: 'lsl-pill--orange', title: 'Jr. Mustangs Feeder Basketball Summer Camp', age: 'Rising 3rd–8th · Ages 8–14',
+    { slot: 'prog-summer', img: 'uploads/gio-group-cafeteria.jpg', mediaH: 240, tag: 'Summer', tagClass: 'lsl-pill--orange', title: 'Jr. Mustangs Feeder Basketball Summer Camp', age: 'Rising 3rd–8th · Ages 8–14',
       points: ['Core skills: shooting, footwork, ball handling & more', 'Guided instruction, competitive games & interactive drills', 'Builds positive habits, effort, and love for the game'], btn: 'Sign Up Now', href: 'https://mundyball.com/camps', external: true },
-    { slot: 'prog-dayoff', tag: 'Holidays', tagClass: 'lsl-pill--navy', title: 'School Day-Off Camps', age: 'MLK Day · Labor Day & More',
+    { slot: 'prog-dayoff', mediaH: 240, tag: 'Holidays', tagClass: 'lsl-pill--navy', title: 'School Day-Off Camps', age: 'MLK Day · Labor Day & More',
       points: ['High-intensity training on scheduled school closures', 'Focused skill work and competitive drills', 'Centered on basketball IQ and game transfer'], btn: 'Inquire Now', href: 'contact.html', external: false },
   ];
   return (
@@ -115,7 +115,7 @@ function Programs() {
         <div className="lsl-programs">
           {progs.map((p) => (
             <div className="lsl-program" key={p.title}>
-              <div className="lsl-program__media">
+              <div className="lsl-program__media" style={p.mediaH ? { height: p.mediaH } : undefined}>
                 {p.img
                   ? <img src={p.img} alt={p.title} />
                   : <image-slot id={p.slot} shape="rect" placeholder={'Drop a ' + p.title + ' photo'}></image-slot>}
