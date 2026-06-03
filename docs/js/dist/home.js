@@ -33,8 +33,8 @@ function Hero() {
     className: "lsl-hero__actions"
   }, /*#__PURE__*/React.createElement("a", {
     className: "lsl-btn lsl-btn--primary",
-    href: "contact.html"
-  }, "Join the Program"), /*#__PURE__*/React.createElement("a", {
+    href: "training.html"
+  }, "Schedule Training"), /*#__PURE__*/React.createElement("a", {
     className: "lsl-btn lsl-btn--ghost-light",
     href: "about.html"
   }, "Our Philosophy"))), /*#__PURE__*/React.createElement("div", {

@@ -10,7 +10,7 @@ function Hero() {
           <h1 className="lsl-display">Chicago Roots,<br/><span className="lsl-display__accent">National Reach</span></h1>
           <p className="lsl-lede">LakeShore Legends is a development-driven basketball organization built on elite training standards and long-term athletic growth.</p>
           <div className="lsl-hero__actions">
-            <a className="lsl-btn lsl-btn--primary" href="contact.html">Join the Program</a>
+            <a className="lsl-btn lsl-btn--primary" href="training.html">Schedule Training</a>
             <a className="lsl-btn lsl-btn--ghost-light" href="about.html">Our Philosophy</a>
           </div>
         </div>
