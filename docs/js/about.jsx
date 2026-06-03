@@ -58,6 +58,9 @@ function CorePrinciples() {
             </div>
           ))}
         </div>
+        <p style={{ textAlign: 'center', marginTop: '36px', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '22px', color: '#fff', letterSpacing: '-.01em' }}>
+          These principles are what turn our athletes into <span style={{ color: 'var(--legend-orange)' }}>LEGENDS</span>
+        </p>
       </div>
     </section>
   );

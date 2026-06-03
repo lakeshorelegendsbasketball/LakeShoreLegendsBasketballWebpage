@@ -80,7 +80,21 @@ function CorePrinciples() {
     }, h), /*#__PURE__*/React.createElement("p", {
       className: "lsl-body lsl-body--sm lsl-body--light"
     }, b));
-  }))));
+  })), /*#__PURE__*/React.createElement("p", {
+    style: {
+      textAlign: 'center',
+      marginTop: '36px',
+      fontFamily: 'var(--font-display)',
+      fontWeight: 800,
+      fontSize: '22px',
+      color: '#fff',
+      letterSpacing: '-.01em'
+    }
+  }, "These principles are what turn our athletes into ", /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'var(--legend-orange)'
+    }
+  }, "LEGENDS"))));
 }
 function CoachCard() {
   return /*#__PURE__*/React.createElement("section", {
