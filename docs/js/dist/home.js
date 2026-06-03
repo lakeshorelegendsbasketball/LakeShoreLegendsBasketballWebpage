@@ -129,11 +129,7 @@ function Philosophy() {
     className: "lsl-body"
   }, "Lake Shore Legends offers a refreshing alternative. Our training-first philosophy emphasizes skill mastery, strategic thinking, and purposeful competition. By prioritizing practice over excessive gameplay, we prepare our athletes for sustained success, equipping them with the tools needed for high school, college, and beyond."), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
-  }, "Training is the foundation of our program. While competition matters, development comes first. Long-term basketball growth requires a strong technical and mental base. Our practices are intentional, structured, and skill-focused, designed to build fundamentals before chasing outcomes. Better training creates better players, and better players naturally elevate teams."), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-rule"
-  }), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-pullquote"
-  }, "\"We don't just play the game. We study it.\"")), /*#__PURE__*/React.createElement("img", {
+  }, "Training is the foundation of our program. While competition matters, development comes first. Long-term basketball growth requires a strong technical and mental base. Our practices are intentional, structured, and skill-focused, designed to build fundamentals before chasing outcomes. Better training creates better players, and better players naturally elevate teams.")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("img", {
     className: "lsl-photo",
     src: "uploads/S4A6259-scaled.jpg",
     alt: "LakeShore Legends athlete defending on the ball",
@@ -144,7 +140,12 @@ function Philosophy() {
       borderRadius: '18px',
       display: 'block'
     }
-  })));
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-pullquote",
+    style: {
+      marginTop: '20px'
+    }
+  }, "\u201CWe don\u2019t just play the game. We study it.\u201D"))));
 }
 function DevelopmentModel() {
   var cols = [{
@@ -275,12 +276,7 @@ function BasketballIQ() {
       borderRadius: '18px',
       display: 'block'
     }
-  }), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-pullquote",
-    style: {
-      marginTop: '20px'
-    }
-  }, "\u201CWe don\u2019t just play the game. We study it.\u201D")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
     eyebrow: "Basketball IQ & Game Mastery",
     title: "We Don't Just Play The Game. We Study It."
   }), /*#__PURE__*/React.createElement("p", {
