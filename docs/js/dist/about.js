@@ -26,7 +26,7 @@ function AboutHero() {
   }, "About LakeShore Legends"), /*#__PURE__*/React.createElement("p", {
     className: "lsl-lede",
     style: {
-      maxWidth: 780,
+      maxWidth: '100%',
       color: 'var(--fg-on-dark-2)'
     }
   }, "A development-driven basketball organization built on elite training standards, intentional teaching, and long-term athlete growth \u2014 developing complete players, on and off the court.")));

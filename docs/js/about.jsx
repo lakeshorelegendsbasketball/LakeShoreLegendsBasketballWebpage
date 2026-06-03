@@ -7,7 +7,7 @@ function AboutHero() {
       <div className="lsl-pagehero__inner">
         <span className="lsl-eyebrow lsl-eyebrow--light">Who We Are</span>
         <h1 className="lsl-display lsl-display--md">About LakeShore Legends</h1>
-        <p className="lsl-lede" style={{ maxWidth: 780, color: 'var(--fg-on-dark-2)' }}>A development-driven basketball organization built on elite training standards, intentional teaching, and long-term athlete growth — developing complete players, on and off the court.</p>
+        <p className="lsl-lede" style={{ maxWidth: '100%', color: 'var(--fg-on-dark-2)' }}>A development-driven basketball organization built on elite training standards, intentional teaching, and long-term athlete growth — developing complete players, on and off the court.</p>
       </div>
     </section>
   );
