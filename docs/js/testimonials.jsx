@@ -12,6 +12,12 @@ const TESTIMONIALS = [
 function Testimonials() {
   const [i, setI] = React.useState(0);
   const t = TESTIMONIALS[i];
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setI(prev => (prev + 1) % TESTIMONIALS.length);
+    }, 8000);
+    return () => clearInterval(timer);
+  }, []);
   return (
     <section className="lsl-section lsl-section--cream">
       <div className="lsl-wrap">

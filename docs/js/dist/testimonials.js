@@ -42,6 +42,16 @@ function Testimonials() {
     i = _React$useState2[0],
     setI = _React$useState2[1];
   var t = TESTIMONIALS[i];
+  React.useEffect(function () {
+    var timer = setInterval(function () {
+      setI(function (prev) {
+        return (prev + 1) % TESTIMONIALS.length;
+      });
+    }, 8000);
+    return function () {
+      return clearInterval(timer);
+    };
+  }, []);
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-section lsl-section--cream"
   }, /*#__PURE__*/React.createElement("div", {
