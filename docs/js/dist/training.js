@@ -1,22 +1,9 @@
-"use strict";
-
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
-function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 /* global React, SectionHead, Star6 */
-var _React = React,
-  useStateTr = _React.useState;
-var EVENTS = [{
+const {
+  useState: useStateTr
+} = React;
+const EVENTS = [{
   mon: 'Jun',
   day: '15',
   yr: '2026',
@@ -61,33 +48,27 @@ var EVENTS = [{
   ages: 'Rising 4th–9th',
   spots: 'open'
 }];
-var SPOT_TEXT = {
+const SPOT_TEXT = {
   open: 'Spots Available',
   low: 'Almost Full',
   full: 'Waitlist Only'
 };
-function RegisterModal(_ref) {
-  var event = _ref.event,
-    onClose = _ref.onClose;
-  var _useStateTr = useStateTr({
-      parent: '',
-      athlete: '',
-      email: '',
-      grade: ''
-    }),
-    _useStateTr2 = _slicedToArray(_useStateTr, 2),
-    form = _useStateTr2[0],
-    setForm = _useStateTr2[1];
-  var _useStateTr3 = useStateTr(false),
-    _useStateTr4 = _slicedToArray(_useStateTr3, 2),
-    sent = _useStateTr4[0],
-    setSent = _useStateTr4[1];
-  var set = function set(k) {
-    return function (e) {
-      return setForm(_objectSpread(_objectSpread({}, form), {}, _defineProperty({}, k, e.target.value)));
-    };
-  };
-  var submit = function submit(e) {
+function RegisterModal({
+  event,
+  onClose
+}) {
+  const [form, setForm] = useStateTr({
+    parent: '',
+    athlete: '',
+    email: '',
+    grade: ''
+  });
+  const [sent, setSent] = useStateTr(false);
+  const set = k => e => setForm({
+    ...form,
+    [k]: e.target.value
+  });
+  const submit = e => {
     e.preventDefault();
     setSent(true);
   };
@@ -100,9 +81,7 @@ function RegisterModal(_ref) {
       maxWidth: 460,
       width: '100%'
     },
-    onClick: function onClick(e) {
-      return e.stopPropagation();
-    }
+    onClick: e => e.stopPropagation()
   }, /*#__PURE__*/React.createElement("button", {
     className: "lsl-lightbox__close",
     onClick: onClose,
@@ -179,11 +158,8 @@ function RegisterModal(_ref) {
   }, "Confirm Registration"))));
 }
 function UpcomingEvents() {
-  var _useStateTr5 = useStateTr(null),
-    _useStateTr6 = _slicedToArray(_useStateTr5, 2),
-    active = _useStateTr6[0],
-    setActive = _useStateTr6[1];
-  React.useEffect(function () {
+  const [active, setActive] = useStateTr(null);
+  React.useEffect(() => {
     if (window.lucide) window.lucide.createIcons();
   }, [active]);
   return /*#__PURE__*/React.createElement("section", {
@@ -196,54 +172,49 @@ function UpcomingEvents() {
     sub: "New sessions are added throughout the season. Registration takes under a minute \u2014 pick a date and we'll handle the rest."
   }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-events"
-  }, EVENTS.map(function (ev) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "lsl-event",
-      key: ev.title
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "lsl-event__date"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "lsl-event__mon"
-    }, ev.mon), /*#__PURE__*/React.createElement("div", {
-      className: "lsl-event__day"
-    }, ev.day), /*#__PURE__*/React.createElement("div", {
-      className: "lsl-event__yr"
-    }, ev.yr)), /*#__PURE__*/React.createElement("div", {
-      className: "lsl-event__body"
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "lsl-event__tags"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: 'lsl-pill ' + ev.typeClass
-    }, ev.type)), /*#__PURE__*/React.createElement("h3", {
-      className: "lsl-event__title"
-    }, ev.title), /*#__PURE__*/React.createElement("div", {
-      className: "lsl-event__meta"
-    }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
-      "data-lucide": "clock"
-    }), ev.when), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
-      "data-lucide": "map-pin"
-    }), ev.where), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
-      "data-lucide": "users"
-    }), ev.ages))), /*#__PURE__*/React.createElement("div", {
-      className: "lsl-event__cta"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: 'lsl-event__spots' + (ev.spots === 'low' ? ' is-low' : ev.spots === 'full' ? ' is-full' : '')
-    }, SPOT_TEXT[ev.spots]), /*#__PURE__*/React.createElement("button", {
-      className: "lsl-btn lsl-btn--primary lsl-btn--sm",
-      onClick: function onClick() {
-        return setActive(ev);
-      }
-    }, "Register")));
-  }))), active && /*#__PURE__*/React.createElement(RegisterModal, {
+  }, EVENTS.map(ev => /*#__PURE__*/React.createElement("div", {
+    className: "lsl-event",
+    key: ev.title
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-event__date"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-event__mon"
+  }, ev.mon), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-event__day"
+  }, ev.day), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-event__yr"
+  }, ev.yr)), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-event__body"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-event__tags"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: 'lsl-pill ' + ev.typeClass
+  }, ev.type)), /*#__PURE__*/React.createElement("h3", {
+    className: "lsl-event__title"
+  }, ev.title), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-event__meta"
+  }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "clock"
+  }), ev.when), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "map-pin"
+  }), ev.where), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "users"
+  }), ev.ages))), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-event__cta"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: 'lsl-event__spots' + (ev.spots === 'low' ? ' is-low' : ev.spots === 'full' ? ' is-full' : '')
+  }, SPOT_TEXT[ev.spots]), /*#__PURE__*/React.createElement("button", {
+    className: "lsl-btn lsl-btn--primary lsl-btn--sm",
+    onClick: () => setActive(ev)
+  }, "Register")))))), active && /*#__PURE__*/React.createElement(RegisterModal, {
     event: active,
-    onClose: function onClose() {
-      return setActive(null);
-    }
+    onClose: () => setActive(null)
   }));
 }
 function Programs() {
-  var progs = [{
+  const progs = [{
     slot: 'prog-private',
+    img: 'uploads/gio-highfive-23.jpg',
     tag: '1-on-1',
     tagClass: 'lsl-pill--sky',
     title: 'Private & Small Group Training',
@@ -254,6 +225,7 @@ function Programs() {
     external: false
   }, {
     slot: 'prog-summer',
+    img: 'uploads/gio-group-cafeteria.jpg',
     tag: 'Summer',
     tagClass: 'lsl-pill--orange',
     title: 'Jr. Mustangs Feeder Basketball Summer Camp',
@@ -288,45 +260,44 @@ function Programs() {
     sub: /*#__PURE__*/React.createElement(React.Fragment, null, "Every offering meets athletes where they are while setting clear standards for", /*#__PURE__*/React.createElement("br", null), "effort, accountability, and long-term growth.")
   }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-programs"
-  }, progs.map(function (p) {
-    return /*#__PURE__*/React.createElement("div", {
-      className: "lsl-program",
-      key: p.title
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "lsl-program__media"
-    }, /*#__PURE__*/React.createElement("image-slot", {
-      id: p.slot,
-      shape: "rect",
-      placeholder: 'Drop a ' + p.title + ' photo'
-    }), /*#__PURE__*/React.createElement("span", {
-      className: 'lsl-program__tag lsl-pill ' + p.tagClass
-    }, p.tag)), /*#__PURE__*/React.createElement("div", {
-      className: "lsl-program__body"
-    }, /*#__PURE__*/React.createElement("h3", {
-      className: "lsl-program__title"
-    }, p.title), /*#__PURE__*/React.createElement("div", {
-      className: "lsl-program__age"
-    }, p.age), /*#__PURE__*/React.createElement("ul", {
-      className: "lsl-program__list"
-    }, p.points.map(function (pt) {
-      return /*#__PURE__*/React.createElement("li", {
-        key: pt
-      }, /*#__PURE__*/React.createElement(Star6, {
-        size: 13
-      }), pt);
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "lsl-program__foot"
-    }, /*#__PURE__*/React.createElement("a", _extends({
-      className: "lsl-btn lsl-btn--primary lsl-btn--sm",
-      href: p.href
-    }, p.external ? {
-      target: '_blank',
-      rel: 'noopener'
-    } : {}), p.btn))));
-  }))));
+  }, progs.map(p => /*#__PURE__*/React.createElement("div", {
+    className: "lsl-program",
+    key: p.title
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-program__media"
+  }, p.img ? /*#__PURE__*/React.createElement("img", {
+    src: p.img,
+    alt: p.title
+  }) : /*#__PURE__*/React.createElement("image-slot", {
+    id: p.slot,
+    shape: "rect",
+    placeholder: 'Drop a ' + p.title + ' photo'
+  }), /*#__PURE__*/React.createElement("span", {
+    className: 'lsl-program__tag lsl-pill ' + p.tagClass
+  }, p.tag)), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-program__body"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "lsl-program__title"
+  }, p.title), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-program__age"
+  }, p.age), /*#__PURE__*/React.createElement("ul", {
+    className: "lsl-program__list"
+  }, p.points.map(pt => /*#__PURE__*/React.createElement("li", {
+    key: pt
+  }, /*#__PURE__*/React.createElement(Star6, {
+    size: 13
+  }), pt))), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-program__foot"
+  }, /*#__PURE__*/React.createElement("a", _extends({
+    className: "lsl-btn lsl-btn--primary lsl-btn--sm",
+    href: p.href
+  }, p.external ? {
+    target: '_blank',
+    rel: 'noopener'
+  } : {}), p.btn))))))));
 }
 function SkillsFocus() {
-  var skills = [['target', 'Shooting'], ['footprints', 'Footwork'], ['circle-dot', 'Ball Handling'], ['shield', 'Screening'], ['arrow-up-from-line', 'Rebounding'], ['send', 'Passing'], ['hand', 'Defending']];
+  const skills = [['target', 'Shooting'], ['footprints', 'Footwork'], ['circle-dot', 'Ball Handling'], ['shield', 'Screening'], ['arrow-up-from-line', 'Rebounding'], ['send', 'Passing'], ['hand', 'Defending']];
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-section lsl-section--ink"
   }, /*#__PURE__*/React.createElement("div", {
@@ -339,24 +310,19 @@ function SkillsFocus() {
     title: "The Fundamentals That Translate"
   }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-skills"
-  }, skills.map(function (_ref2) {
-    var _ref3 = _slicedToArray(_ref2, 2),
-      ico = _ref3[0],
-      name = _ref3[1];
-    return /*#__PURE__*/React.createElement("div", {
-      className: "lsl-skill",
-      key: name
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "lsl-skill__ico"
-    }, /*#__PURE__*/React.createElement("i", {
-      "data-lucide": ico
-    })), /*#__PURE__*/React.createElement("span", {
-      className: "lsl-skill__name"
-    }, name));
-  }))));
+  }, skills.map(([ico, name]) => /*#__PURE__*/React.createElement("div", {
+    className: "lsl-skill",
+    key: name
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-skill__ico"
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": ico
+  })), /*#__PURE__*/React.createElement("span", {
+    className: "lsl-skill__name"
+  }, name))))));
 }
 Object.assign(window, {
-  UpcomingEvents: UpcomingEvents,
-  Programs: Programs,
-  SkillsFocus: SkillsFocus
+  UpcomingEvents,
+  Programs,
+  SkillsFocus
 });

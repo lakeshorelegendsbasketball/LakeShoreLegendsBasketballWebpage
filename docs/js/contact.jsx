@@ -100,7 +100,6 @@ function InfoCard() {
     ['instagram', 'https://www.instagram.com/coachgiopag/', 'Instagram'],
     ['x', 'https://x.com/CoachGioPag', 'X'],
     ['linkedin', 'https://www.linkedin.com/in/gio-paganis/', 'LinkedIn'],
-    ['facebook', '#', 'Facebook'],
   ];
   return (
     <div className="lsl-infocard">

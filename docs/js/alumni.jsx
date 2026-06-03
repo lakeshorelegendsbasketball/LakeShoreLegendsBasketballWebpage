@@ -29,10 +29,10 @@ function CountUpAlumni({ value }) {
 
 function ImpactBand() {
   const stats = [
-    ['28', 'Travel Teams Coached'],
-    ['300+', 'Athletes Trained'],
-    ['45', 'Recruitment Offers'],
-    ['12', 'College Commitments'],
+    ['24', 'Travel Teams Coached'],
+    ['250+', 'Dedicated Athletes Trained'],
+    ['25+', 'Unique College Recruitment Offers'],
+    ['7+', 'College Basketball Commitments'],
   ];
   return (
     <section className="lsl-statsband">

@@ -19,7 +19,7 @@ a.lsl-btn { line-height: 1; }
 .lsl-pagehero__glow.is-orange { background: radial-gradient(circle, rgba(227,88,2,.22), transparent 62%); left: -100px; right: auto; }
 .lsl-pagehero__spire { position: absolute; right: 4%; bottom: 10px; height: 320px; opacity: .08; filter: brightness(0) invert(1); pointer-events: none; }
 .lsl-pagehero .lsl-display { color: #fff; }
-.lsl-pagehero .lsl-lede { color: var(--fg-on-dark-2); }
+.lsl-pagehero .lsl-lede { color: var(--fg-on-dark-2); max-width: none; }
 .lsl-pagehero__inner { position: relative; max-width: 1180px; margin: 0 auto; padding: 0 32px; }
 
 .lsl-divider-stars { display: flex; align-items: center; justify-content: center; gap: 14px; margin: 0 auto; }
