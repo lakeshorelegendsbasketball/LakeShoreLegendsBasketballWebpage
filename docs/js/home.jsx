@@ -33,7 +33,7 @@ function CountUp({ value }) {
     let raf, started = false;
     const run = () => {
       started = true;
-      const dur = 1400, t0 = performance.now();
+      const dur = 2400, t0 = performance.now();
       const tick = (now) => {
         const p = Math.min(1, (now - t0) / dur);
         const eased = 1 - Math.pow(1 - p, 3);

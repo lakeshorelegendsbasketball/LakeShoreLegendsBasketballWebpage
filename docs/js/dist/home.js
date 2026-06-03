@@ -67,7 +67,7 @@ function CountUp(_ref) {
       started = false;
     var run = function run() {
       started = true;
-      var dur = 1400,
+      var dur = 2400,
         t0 = performance.now();
       var _tick = function tick(now) {
         var p = Math.min(1, (now - t0) / dur);
