@@ -100,11 +100,11 @@ function UpcomingEvents() {
 function Programs() {
   const progs = [
     { slot: 'prog-private', tag: '1-on-1', tagClass: 'lsl-pill--sky', title: 'Private & Small Group Training', age: 'All Ages & Skill Levels',
-      points: ['Individual skill-development plans', 'Position-specific training and reads', 'Direct feedback, accountability & consistency'] },
+      points: ['Individual skill-development plans', 'Position-specific training and reads', 'Direct feedback, accountability & consistency'], btn: 'Inquire Now', href: 'contact.html', external: false },
     { slot: 'prog-summer', tag: 'Summer', tagClass: 'lsl-pill--orange', title: 'Jr. Mustangs Feeder Basketball Summer Camp', age: 'Rising 3rd–8th · Ages 8–14',
-      points: ['Core skills: shooting, footwork, ball handling & more', 'Guided instruction, competitive games & interactive drills', 'Builds positive habits, effort, and love for the game'] },
+      points: ['Core skills: shooting, footwork, ball handling & more', 'Guided instruction, competitive games & interactive drills', 'Builds positive habits, effort, and love for the game'], btn: 'Sign Up Now', href: 'https://mundyball.com/camps', external: true },
     { slot: 'prog-dayoff', tag: 'Holidays', tagClass: 'lsl-pill--navy', title: 'School Day-Off Camps', age: 'MLK Day · Labor Day & More',
-      points: ['High-intensity training on scheduled school closures', 'Focused skill work and competitive drills', 'Centered on basketball IQ and game transfer'] },
+      points: ['High-intensity training on scheduled school closures', 'Focused skill work and competitive drills', 'Centered on basketball IQ and game transfer'], btn: 'Inquire Now', href: 'contact.html', external: false },
   ];
   return (
     <section className="lsl-section lsl-section--cream" style={{ paddingTop: 'var(--sp-7)' }}>
@@ -128,7 +128,7 @@ function Programs() {
                   ))}
                 </ul>
                 <div className="lsl-program__foot">
-                  <a className="lsl-btn lsl-btn--primary lsl-btn--sm" href="contact.html">Inquire Now</a>
+                  <a className="lsl-btn lsl-btn--primary lsl-btn--sm" href={p.href} {...(p.external ? { target: '_blank', rel: 'noopener' } : {})}>{p.btn}</a>
                 </div>
               </div>
             </div>

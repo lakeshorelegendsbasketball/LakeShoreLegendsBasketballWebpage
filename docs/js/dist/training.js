@@ -1,6 +1,7 @@
 "use strict";
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
@@ -247,21 +248,30 @@ function Programs() {
     tagClass: 'lsl-pill--sky',
     title: 'Private & Small Group Training',
     age: 'All Ages & Skill Levels',
-    points: ['Individual skill-development plans', 'Position-specific training and reads', 'Direct feedback, accountability & consistency']
+    points: ['Individual skill-development plans', 'Position-specific training and reads', 'Direct feedback, accountability & consistency'],
+    btn: 'Inquire Now',
+    href: 'contact.html',
+    external: false
   }, {
     slot: 'prog-summer',
     tag: 'Summer',
     tagClass: 'lsl-pill--orange',
     title: 'Jr. Mustangs Feeder Basketball Summer Camp',
     age: 'Rising 3rd–8th · Ages 8–14',
-    points: ['Core skills: shooting, footwork, ball handling & more', 'Guided instruction, competitive games & interactive drills', 'Builds positive habits, effort, and love for the game']
+    points: ['Core skills: shooting, footwork, ball handling & more', 'Guided instruction, competitive games & interactive drills', 'Builds positive habits, effort, and love for the game'],
+    btn: 'Sign Up Now',
+    href: 'https://mundyball.com/camps',
+    external: true
   }, {
     slot: 'prog-dayoff',
     tag: 'Holidays',
     tagClass: 'lsl-pill--navy',
     title: 'School Day-Off Camps',
     age: 'MLK Day · Labor Day & More',
-    points: ['High-intensity training on scheduled school closures', 'Focused skill work and competitive drills', 'Centered on basketball IQ and game transfer']
+    points: ['High-intensity training on scheduled school closures', 'Focused skill work and competitive drills', 'Centered on basketball IQ and game transfer'],
+    btn: 'Inquire Now',
+    href: 'contact.html',
+    external: false
   }];
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-section lsl-section--cream",
@@ -306,10 +316,13 @@ function Programs() {
       }), pt);
     })), /*#__PURE__*/React.createElement("div", {
       className: "lsl-program__foot"
-    }, /*#__PURE__*/React.createElement("a", {
+    }, /*#__PURE__*/React.createElement("a", _extends({
       className: "lsl-btn lsl-btn--primary lsl-btn--sm",
-      href: "contact.html"
-    }, "Inquire Now"))));
+      href: p.href
+    }, p.external ? {
+      target: '_blank',
+      rel: 'noopener'
+    } : {}), p.btn))));
   }))));
 }
 function SkillsFocus() {
