@@ -208,14 +208,25 @@ function PlayerGrowth() {
       paddingTop: 0
     }
   }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-wrap"
-  }, /*#__PURE__*/React.createElement(SectionHead, {
+    className: "lsl-wrap lsl-philosophy"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
     title: "Player Growth within a Team Structure"
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
   }, "We emphasize individual development while teaching athletes how to contribute within a team system. Players learn how to compete with purpose, make sound decisions, and understand the game beyond just playing it."), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
-  }, "By offering players game-realistic repetitions & real, intentional feedback, our athletes develop the skills, confidence, and basketball abilities needed to succeed at the next level. We emphasize the development of strong fundamentals, disciplined habits, and the ability to adapt to different roles & systems.")));
+  }, "By offering players game-realistic repetitions & real, intentional feedback, our athletes develop the skills, confidence, and basketball abilities needed to succeed at the next level. We emphasize the development of strong fundamentals, disciplined habits, and the ability to adapt to different roles & systems.")), /*#__PURE__*/React.createElement("img", {
+    className: "lsl-photo",
+    src: "uploads/S4A6561-scaled.jpg",
+    alt: "Coach drawing up a play with the full team",
+    style: {
+      width: '100%',
+      height: '420px',
+      objectFit: 'cover',
+      borderRadius: '18px',
+      display: 'block'
+    }
+  })));
 }
 function SkillsGrid() {
   var skills = [['target', 'Shooting'], ['footprints', 'Footwork'], ['circle-dot', 'Ball Handling'], ['shield', 'Screening'], ['arrow-up-from-line', 'Rebounding'], ['send', 'Passing'], ['hand', 'Defending']];

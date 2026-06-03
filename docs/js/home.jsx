@@ -126,10 +126,14 @@ function DevelopmentModel() {
 function PlayerGrowth() {
   return (
     <section className="lsl-section lsl-section--cream" style={{ paddingTop: 0 }}>
-      <div className="lsl-wrap">
-        <SectionHead title="Player Growth within a Team Structure" />
-        <p className="lsl-body">We emphasize individual development while teaching athletes how to contribute within a team system. Players learn how to compete with purpose, make sound decisions, and understand the game beyond just playing it.</p>
-        <p className="lsl-body">By offering players game-realistic repetitions &amp; real, intentional feedback, our athletes develop the skills, confidence, and basketball abilities needed to succeed at the next level. We emphasize the development of strong fundamentals, disciplined habits, and the ability to adapt to different roles &amp; systems.</p>
+      <div className="lsl-wrap lsl-philosophy">
+        <div>
+          <SectionHead title="Player Growth within a Team Structure" />
+          <p className="lsl-body">We emphasize individual development while teaching athletes how to contribute within a team system. Players learn how to compete with purpose, make sound decisions, and understand the game beyond just playing it.</p>
+          <p className="lsl-body">By offering players game-realistic repetitions &amp; real, intentional feedback, our athletes develop the skills, confidence, and basketball abilities needed to succeed at the next level. We emphasize the development of strong fundamentals, disciplined habits, and the ability to adapt to different roles &amp; systems.</p>
+        </div>
+        <img className="lsl-photo" src="uploads/S4A6561-scaled.jpg" alt="Coach drawing up a play with the full team"
+          style={{ width: '100%', height: '420px', objectFit: 'cover', borderRadius: '18px', display: 'block' }} />
       </div>
     </section>
   );
