@@ -153,7 +153,7 @@ body { font-family: var(--font-body); color: var(--fg1); background: var(--legen
 .lsl-principle { background: var(--navy-700); border: 1px solid var(--line-on-dark); border-radius: var(--r-lg); padding: 24px 22px; text-align: center; width: calc(25% - 14px); min-width: 200px; }
 .lsl-principle__num { font-family: var(--font-display); font-size: 30px; color: var(--legend-orange); display: block; margin-bottom: 10px; }
 .lsl-principle .lsl-body { margin: 0; }
-.lsl-coach { display: grid; grid-template-columns: .85fr 1.15fr; gap: 48px; align-items: start; }
+.lsl-coach { display: grid; grid-template-columns: .85fr 1.15fr; gap: 48px; align-items: center; }
 .lsl-coach__roles { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 22px; }
 .lsl-coach__creds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; border-top: 1px solid var(--line-soft); padding-top: 24px; }
 .lsl-coach__creds div { display: flex; flex-direction: column; }
