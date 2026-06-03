@@ -313,14 +313,11 @@ function Programs() {
   }))));
 }
 function SkillsFocus() {
-  var skills = ['Shooting', 'Footwork', 'Ball Handling', 'Screening', 'Rebounding', 'Passing', 'Defending'];
+  var skills = [['target', 'Shooting'], ['footprints', 'Footwork'], ['circle-dot', 'Ball Handling'], ['shield', 'Screening'], ['arrow-up-from-line', 'Rebounding'], ['send', 'Passing'], ['hand', 'Defending']];
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-section lsl-section--ink"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-wrap",
-    style: {
-      textAlign: 'center'
-    }
+    className: "lsl-wrap"
   }, /*#__PURE__*/React.createElement(SectionHead, {
     light: true,
     center: true,
@@ -328,20 +325,21 @@ function SkillsFocus() {
     eyebrow: "Every Session Covers",
     title: "The Fundamentals That Translate"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-chiprow",
-    style: {
-      justifyContent: 'center'
-    }
-  }, skills.map(function (s) {
-    return /*#__PURE__*/React.createElement("span", {
-      className: "lsl-chip",
-      key: s,
-      style: {
-        background: 'var(--navy-700)',
-        color: 'var(--fg-on-dark)',
-        borderColor: 'var(--line-on-dark)'
-      }
-    }, s);
+    className: "lsl-skills"
+  }, skills.map(function (_ref2) {
+    var _ref3 = _slicedToArray(_ref2, 2),
+      ico = _ref3[0],
+      name = _ref3[1];
+    return /*#__PURE__*/React.createElement("div", {
+      className: "lsl-skill",
+      key: name
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "lsl-skill__ico"
+    }, /*#__PURE__*/React.createElement("i", {
+      "data-lucide": ico
+    })), /*#__PURE__*/React.createElement("span", {
+      className: "lsl-skill__name"
+    }, name));
   }))));
 }
 Object.assign(window, {

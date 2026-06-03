@@ -140,15 +140,22 @@ function Programs() {
 }
 
 function SkillsFocus() {
-  const skills = ['Shooting', 'Footwork', 'Ball Handling', 'Screening', 'Rebounding', 'Passing', 'Defending'];
+  const skills = [
+    ['target', 'Shooting'], ['footprints', 'Footwork'], ['circle-dot', 'Ball Handling'],
+    ['shield', 'Screening'], ['arrow-up-from-line', 'Rebounding'], ['send', 'Passing'],
+    ['hand', 'Defending'],
+  ];
   return (
     <section className="lsl-section lsl-section--ink">
-      <div className="lsl-wrap" style={{ textAlign: 'center' }}>
+      <div className="lsl-wrap">
         <SectionHead light center wide eyebrow="Every Session Covers"
           title="The Fundamentals That Translate" />
-        <div className="lsl-chiprow" style={{ justifyContent: 'center' }}>
-          {skills.map((s) => (
-            <span className="lsl-chip" key={s} style={{ background: 'var(--navy-700)', color: 'var(--fg-on-dark)', borderColor: 'var(--line-on-dark)' }}>{s}</span>
+        <div className="lsl-skills">
+          {skills.map(([ico, name]) => (
+            <div className="lsl-skill" key={name}>
+              <div className="lsl-skill__ico"><i data-lucide={ico}></i></div>
+              <span className="lsl-skill__name">{name}</span>
+            </div>
           ))}
         </div>
       </div>
