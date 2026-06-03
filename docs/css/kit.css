@@ -81,7 +81,7 @@ body { font-family: var(--font-body); color: var(--fg1); background: var(--legen
 .lsl-stat__lbl { font-family: var(--font-cond); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: 12px; color: var(--fg-on-dark-2); margin-top: 10px; }
 
 /* ---------- sections ---------- */
-.lsl-section { padding: 88px 0; }
+.lsl-section { padding: 44px 0; }
 .lsl-section--cream { background: var(--legend-cream); }
 .lsl-section--ink { background: var(--navy-800); position: relative; }
 .lsl-secthead { max-width: 640px; margin: 0 0 14px; }

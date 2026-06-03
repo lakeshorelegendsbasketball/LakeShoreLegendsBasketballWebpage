@@ -168,10 +168,7 @@ function DevelopmentModel() {
     body: ['Our goal is simple: Practice twice as much as we play.', 'Allowing more time for training between competition gives our athletes the opportunity to learn from their mistakes, build real skills, and develop habits that directly translate to higher levels of competition.']
   }];
   return /*#__PURE__*/React.createElement("section", {
-    className: "lsl-section lsl-section--cream",
-    style: {
-      paddingTop: 0
-    }
+    className: "lsl-section lsl-section--cream"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap"
   }, /*#__PURE__*/React.createElement(SectionHead, {
@@ -206,10 +203,7 @@ function DevelopmentModel() {
 }
 function PlayerGrowth() {
   return /*#__PURE__*/React.createElement("section", {
-    className: "lsl-section lsl-section--cream",
-    style: {
-      paddingTop: 0
-    }
+    className: "lsl-section lsl-section--cream"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap lsl-philosophy"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
@@ -288,10 +282,7 @@ function BasketballIQ() {
 }
 function WhyItMatters() {
   return /*#__PURE__*/React.createElement("section", {
-    className: "lsl-section lsl-section--cream",
-    style: {
-      paddingTop: 0
-    }
+    className: "lsl-section lsl-section--cream"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap lsl-philosophy"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {

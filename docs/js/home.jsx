@@ -102,7 +102,7 @@ function DevelopmentModel() {
       body: ['Our goal is simple: Practice twice as much as we play.', 'Allowing more time for training between competition gives our athletes the opportunity to learn from their mistakes, build real skills, and develop habits that directly translate to higher levels of competition.'] },
   ];
   return (
-    <section className="lsl-section lsl-section--cream" style={{ paddingTop: 0 }}>
+    <section className="lsl-section lsl-section--cream">
       <div className="lsl-wrap">
         <SectionHead center wide eyebrow="Our Development Model"
           title={<>Real Development Is Built In The Gym,<br/>Not On The Scoreboard</>}
@@ -126,7 +126,7 @@ function DevelopmentModel() {
 
 function PlayerGrowth() {
   return (
-    <section className="lsl-section lsl-section--cream" style={{ paddingTop: 0 }}>
+    <section className="lsl-section lsl-section--cream">
       <div className="lsl-wrap lsl-philosophy">
         <div>
           <SectionHead title="Player Growth within a Team Structure" />
@@ -185,7 +185,7 @@ function BasketballIQ() {
 
 function WhyItMatters() {
   return (
-    <section className="lsl-section lsl-section--cream" style={{ paddingTop: 0 }}>
+    <section className="lsl-section lsl-section--cream">
       <div className="lsl-wrap lsl-philosophy">
         <div>
           <SectionHead title="Why This Matters" />
