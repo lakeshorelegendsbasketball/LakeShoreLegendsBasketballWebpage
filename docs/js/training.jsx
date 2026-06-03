@@ -109,7 +109,7 @@ function Programs() {
   return (
     <section className="lsl-section lsl-section--cream" style={{ paddingTop: 'var(--sp-7)' }}>
       <div className="lsl-wrap">
-        <SectionHead eyebrow="Training & Camp Offerings"
+        <SectionHead center wide eyebrow="Training & Camp Offerings"
           title="Built Around Intentional Development"
           sub="Every offering meets athletes where they are while setting clear standards for effort, accountability, and long-term growth." />
         <div className="lsl-programs">
@@ -144,7 +144,7 @@ function SkillsFocus() {
   return (
     <section className="lsl-section lsl-section--ink">
       <div className="lsl-wrap" style={{ textAlign: 'center' }}>
-        <SectionHead light center eyebrow="Every Session Covers"
+        <SectionHead light center wide eyebrow="Every Session Covers"
           title="The Fundamentals That Translate" />
         <div className="lsl-chiprow" style={{ justifyContent: 'center' }}>
           {skills.map((s) => (

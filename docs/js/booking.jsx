@@ -85,7 +85,7 @@ function PrivateBooking() {
   return (
     <section className="lsl-section lsl-section--cream" id="book" style={{ paddingTop: 0 }}>
       <div className="lsl-wrap">
-        <SectionHead center eyebrow="Private Training"
+        <SectionHead center wide eyebrow="Private Training"
           title="Book a Session With Coach Gio"
           sub="Check out our availability and book the date and time that works for you." />
 
