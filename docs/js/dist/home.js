@@ -143,7 +143,9 @@ function Philosophy() {
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-pullquote",
     style: {
-      marginTop: '20px'
+      marginTop: '20px',
+      textAlign: 'center',
+      whiteSpace: 'nowrap'
     }
   }, "\u201CWe don\u2019t just play the game. We study it.\u201D"))));
 }
