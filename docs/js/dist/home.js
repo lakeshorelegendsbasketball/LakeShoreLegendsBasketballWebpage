@@ -45,7 +45,7 @@ function Hero() {
     alt: "Coach Gio leading a team huddle",
     style: {
       width: '100%',
-      height: '420px',
+      height: '360px',
       objectFit: 'cover',
       borderRadius: '20px',
       display: 'block'

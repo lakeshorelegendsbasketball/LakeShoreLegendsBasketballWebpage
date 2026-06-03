@@ -16,7 +16,7 @@ function Hero() {
         </div>
         <div className="lsl-hero__media">
           <img className="lsl-photo" src="uploads/mundeleinvshp-30.jpg" alt="Coach Gio leading a team huddle"
-            style={{ width: '100%', height: '420px', objectFit: 'cover', borderRadius: '20px', display: 'block' }} />
+            style={{ width: '100%', height: '360px', objectFit: 'cover', borderRadius: '20px', display: 'block' }} />
         </div>
       </div>
     </section>

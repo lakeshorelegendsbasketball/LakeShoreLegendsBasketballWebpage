@@ -62,7 +62,7 @@ body { font-family: var(--font-body); color: var(--fg1); background: var(--legen
 .lsl-mobilenav a { color: #fff; padding: 10px 0; font-family: var(--font-cond); text-transform: uppercase; letter-spacing: .06em; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,.08); }
 
 /* ---------- hero ---------- */
-.lsl-hero { position: relative; background: var(--navy-800); overflow: hidden; padding: 70px 0 90px; margin-top: -74px; padding-top: 140px; }
+.lsl-hero { position: relative; background: var(--navy-800); overflow: hidden; padding: 70px 0 40px; margin-top: -74px; padding-top: 120px; }
 .lsl-hero__glow { position: absolute; top: -160px; right: -120px; width: 620px; height: 620px; background: radial-gradient(circle, rgba(88,194,247,.28), transparent 62%); pointer-events: none; }
 .lsl-hero__spire { position: absolute; left: -40px; bottom: -30px; height: 360px; opacity: .07; filter: brightness(0) invert(1); pointer-events: none; }
 .lsl-hero__grid { position: relative; max-width: 1180px; margin: 0 auto; padding: 0 32px; display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
