@@ -107,7 +107,7 @@ body { font-family: var(--font-body); color: var(--fg1); background: var(--legen
 .lsl-skill__name { font-family: var(--font-cond); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-size: 13px; color: var(--fg-on-dark); }
 
 /* ---------- testimonials ---------- */
-.lsl-testimonial { position: relative; background: #fff; border: 1px solid var(--line-soft); border-radius: var(--r-xl); padding: 56px 56px 40px; box-shadow: var(--shadow-lg); max-width: 820px; }
+.lsl-testimonial { position: relative; background: #fff; border: 1px solid var(--line-soft); border-radius: var(--r-xl); padding: 56px 56px 40px; box-shadow: var(--shadow-lg); max-width: 100%; }
 .lsl-quotemark { position: absolute; top: 8px; left: 30px; font-family: var(--font-display); font-size: 120px; color: var(--orange-100); line-height: 1; pointer-events: none; }
 .lsl-testimonial__quote { position: relative; font-size: 23px; line-height: 1.5; color: var(--fg1); margin: 0 0 28px; font-weight: 500; }
 .lsl-testimonial__by { display: flex; align-items: center; gap: 14px; }
