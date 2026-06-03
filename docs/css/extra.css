@@ -61,7 +61,7 @@ a.lsl-btn { line-height: 1; }
 .lsl-program { background: #fff; border: 1px solid var(--line-soft); border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--shadow-md);
   transition: transform var(--dur-med) var(--ease-out), box-shadow var(--dur-med); display: flex; flex-direction: column; }
 .lsl-program:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-.lsl-program__media { height: 168px; position: relative; }
+.lsl-program__media { height: 240px; position: relative; }
 .lsl-program__media image-slot, .lsl-program__media img { width: 100%; height: 100%; display: block; object-fit: cover; }
 .lsl-program__tag { position: absolute; top: 14px; left: 14px; }
 .lsl-program__body { padding: 24px 26px 28px; display: flex; flex-direction: column; flex: 1; }
