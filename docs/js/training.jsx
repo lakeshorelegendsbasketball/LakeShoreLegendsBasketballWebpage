@@ -99,7 +99,7 @@ function UpcomingEvents() {
 
 function Programs() {
   const progs = [
-    { slot: 'prog-private', img: 'uploads/gio-highfive-23.jpg', mediaH: 240, tag: '1-on-1', tagClass: 'lsl-pill--sky', title: 'Private & Small Group Training', age: 'All Ages & Skill Levels',
+    { slot: 'prog-private', img: 'uploads/gio-highfive-23.jpg', mediaH: 240, imgPos: 'top', tag: '1-on-1', tagClass: 'lsl-pill--sky', title: 'Private & Small Group Training', age: 'All Ages & Skill Levels',
       points: ['Individual skill-development plans', 'Position-specific training and reads', 'Direct feedback, accountability & consistency'], btn: 'Inquire Now', href: 'contact.html', external: false },
     { slot: 'prog-summer', img: 'uploads/gio-group-cafeteria.jpg', mediaH: 240, tag: 'Summer', tagClass: 'lsl-pill--orange', title: 'Jr. Mustangs Feeder Basketball Summer Camp', age: 'Rising 3rd–8th · Ages 8–14',
       points: ['Core skills: shooting, footwork, ball handling & more', 'Guided instruction, competitive games & interactive drills', 'Builds positive habits, effort, and love for the game'], btn: 'Sign Up Now', href: 'https://mundyball.com/camps', external: true },
@@ -117,7 +117,7 @@ function Programs() {
             <div className="lsl-program" key={p.title}>
               <div className="lsl-program__media" style={p.mediaH ? { height: p.mediaH } : undefined}>
                 {p.img
-                  ? <img src={p.img} alt={p.title} />
+                  ? <img src={p.img} alt={p.title} style={p.imgPos ? { objectPosition: p.imgPos } : undefined} />
                   : <image-slot id={p.slot} shape="rect" placeholder={'Drop a ' + p.title + ' photo'}></image-slot>}
                 <span className={'lsl-program__tag lsl-pill ' + p.tagClass}>{p.tag}</span>
               </div>

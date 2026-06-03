@@ -216,6 +216,7 @@ function Programs() {
     slot: 'prog-private',
     img: 'uploads/gio-highfive-23.jpg',
     mediaH: 240,
+    imgPos: 'top',
     tag: '1-on-1',
     tagClass: 'lsl-pill--sky',
     title: 'Private & Small Group Training',
@@ -274,7 +275,10 @@ function Programs() {
     } : undefined
   }, p.img ? /*#__PURE__*/React.createElement("img", {
     src: p.img,
-    alt: p.title
+    alt: p.title,
+    style: p.imgPos ? {
+      objectPosition: p.imgPos
+    } : undefined
   }) : /*#__PURE__*/React.createElement("image-slot", {
     id: p.slot,
     shape: "rect",
