@@ -208,6 +208,7 @@ function PlayerGrowth() {
     className: "lsl-wrap lsl-philosophy"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
     wide: true,
+    smTitle: true,
     title: "Player Growth In A Team Structure"
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
@@ -275,6 +276,7 @@ function BasketballIQ() {
     }
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
     wide: true,
+    smTitle: true,
     title: "Basketball IQ & Game Mastery"
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"

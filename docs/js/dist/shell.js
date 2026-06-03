@@ -208,13 +208,17 @@ function SectionHead(_ref5) {
     light = _ref5.light,
     center = _ref5.center,
     wide = _ref5.wide,
-    full = _ref5.full;
+    full = _ref5.full,
+    smTitle = _ref5.smTitle;
   return /*#__PURE__*/React.createElement("div", {
     className: 'lsl-secthead' + (center ? ' lsl-secthead--center' : '') + (full ? ' lsl-secthead--full' : wide ? ' lsl-secthead--wide' : '')
   }, eyebrow && /*#__PURE__*/React.createElement("span", {
     className: 'lsl-eyebrow' + (light ? ' lsl-eyebrow--light' : '')
   }, eyebrow), title && /*#__PURE__*/React.createElement("h2", {
-    className: 'lsl-h2' + (light ? ' lsl-h2--light' : '')
+    className: 'lsl-h2' + (light ? ' lsl-h2--light' : ''),
+    style: smTitle ? {
+      fontSize: 'clamp(22px, 2.4vw, 32px)'
+    } : undefined
   }, title), sub && /*#__PURE__*/React.createElement("p", {
     className: 'lsl-body' + (light ? ' lsl-body--light' : '')
   }, sub));
