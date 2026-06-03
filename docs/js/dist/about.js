@@ -32,19 +32,24 @@ function AboutHero() {
   }, "A development-driven basketball organization built on elite training standards, intentional teaching,", /*#__PURE__*/React.createElement("br", null), "and long-term athlete growth \u2014 developing complete players, on and off the court.")));
 }
 function MissionVision() {
-  var items = [['Mission', 'To develop complete basketball players through elite training, intentional teaching, and purposeful competition.'], ['Vision', 'To become a nationally respected development program known for skilled, intelligent, and disciplined athletes prepared to succeed at every level.'], ['Engagement', 'We set a new standard for youth basketball with a training-first mindset. Practices are demanding by design so that games feel simple.']];
+  var items = [['Mission', 'target', 'To develop complete basketball players through elite training, intentional teaching, and purposeful competition.'], ['Vision', 'eye', 'To become a nationally respected development program known for skilled, intelligent, and disciplined athletes prepared to succeed at every level.'], ['Engagement', 'users', 'We set a new standard for youth basketball with a training-first mindset. Practices are demanding by design so that games feel simple.']];
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-section lsl-section--cream"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap lsl-mvgrid"
   }, items.map(function (_ref) {
-    var _ref2 = _slicedToArray(_ref, 2),
+    var _ref2 = _slicedToArray(_ref, 3),
       h = _ref2[0],
-      b = _ref2[1];
+      ico = _ref2[1],
+      b = _ref2[2];
     return /*#__PURE__*/React.createElement("div", {
       className: "lsl-mvcard",
       key: h
-    }, /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "lsl-mvcard__ico"
+    }, /*#__PURE__*/React.createElement("i", {
+      "data-lucide": ico
+    })), /*#__PURE__*/React.createElement("span", {
       className: "lsl-label"
     }, h, " Statement"), /*#__PURE__*/React.createElement("p", {
       className: "lsl-body"

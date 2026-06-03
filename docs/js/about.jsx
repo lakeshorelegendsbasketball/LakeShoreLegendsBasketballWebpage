@@ -15,15 +15,16 @@ function AboutHero() {
 
 function MissionVision() {
   const items = [
-    ['Mission', 'To develop complete basketball players through elite training, intentional teaching, and purposeful competition.'],
-    ['Vision', 'To become a nationally respected development program known for skilled, intelligent, and disciplined athletes prepared to succeed at every level.'],
-    ['Engagement', 'We set a new standard for youth basketball with a training-first mindset. Practices are demanding by design so that games feel simple.'],
+    ['Mission', 'target', 'To develop complete basketball players through elite training, intentional teaching, and purposeful competition.'],
+    ['Vision', 'eye', 'To become a nationally respected development program known for skilled, intelligent, and disciplined athletes prepared to succeed at every level.'],
+    ['Engagement', 'users', 'We set a new standard for youth basketball with a training-first mindset. Practices are demanding by design so that games feel simple.'],
   ];
   return (
     <section className="lsl-section lsl-section--cream">
       <div className="lsl-wrap lsl-mvgrid">
-        {items.map(([h, b]) => (
+        {items.map(([h, ico, b]) => (
           <div className="lsl-mvcard" key={h}>
+            <div className="lsl-mvcard__ico"><i data-lucide={ico}></i></div>
             <span className="lsl-label">{h} Statement</span>
             <p className="lsl-body">{b}</p>
           </div>
