@@ -148,7 +148,7 @@ function SkillsGrid() {
   return (
     <section className="lsl-section lsl-section--ink">
       <div className="lsl-wrap">
-        <SectionHead center light eyebrow="Core Technical Skills"
+        <SectionHead center wide light eyebrow="Core Technical Skills"
           title="What We Develop"
           sub="Through structured training, intentional feedback, and game-realistic repetition." />
         <div className="lsl-skills">

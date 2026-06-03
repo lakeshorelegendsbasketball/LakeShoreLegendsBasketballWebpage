@@ -236,6 +236,7 @@ function SkillsGrid() {
     className: "lsl-wrap"
   }, /*#__PURE__*/React.createElement(SectionHead, {
     center: true,
+    wide: true,
     light: true,
     eyebrow: "Core Technical Skills",
     title: "What We Develop",

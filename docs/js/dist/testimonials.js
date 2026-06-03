@@ -47,6 +47,7 @@ function Testimonials() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap"
   }, /*#__PURE__*/React.createElement(SectionHead, {
+    wide: true,
     eyebrow: "What Our Community Says",
     title: "Hear From The Families Who Have Experienced Our Development Model Firsthand"
   }), /*#__PURE__*/React.createElement("div", {

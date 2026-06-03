@@ -15,7 +15,7 @@ function Testimonials() {
   return (
     <section className="lsl-section lsl-section--cream">
       <div className="lsl-wrap">
-        <SectionHead eyebrow="What Our Community Says"
+        <SectionHead wide eyebrow="What Our Community Says"
           title="Hear From The Families Who Have Experienced Our Development Model Firsthand" />
         <div className="lsl-testimonial">
           <div className="lsl-quotemark">&ldquo;</div>
