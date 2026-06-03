@@ -17,7 +17,7 @@ a.lsl-btn { line-height: 1; }
 .lsl-pagehero { position: relative; background: var(--navy-800); padding: 150px 0 80px; margin-top: -74px; overflow: hidden; }
 .lsl-pagehero__glow { position: absolute; top: -120px; right: -100px; width: 560px; height: 560px; background: radial-gradient(circle, rgba(88,194,247,.22), transparent 62%); pointer-events: none; }
 .lsl-pagehero__glow.is-orange { background: radial-gradient(circle, rgba(227,88,2,.22), transparent 62%); left: -100px; right: auto; }
-.lsl-pagehero__spire { position: absolute; right: 4%; bottom: -40px; height: 320px; opacity: .08; filter: brightness(0) invert(1); pointer-events: none; }
+.lsl-pagehero__spire { position: absolute; right: 4%; bottom: 10px; height: 320px; opacity: .08; filter: brightness(0) invert(1); pointer-events: none; }
 .lsl-pagehero .lsl-display { color: #fff; }
 .lsl-pagehero .lsl-lede { color: var(--fg-on-dark-2); }
 .lsl-pagehero__inner { position: relative; max-width: 1180px; margin: 0 auto; padding: 0 32px; }
