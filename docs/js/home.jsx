@@ -164,8 +164,11 @@ function BasketballIQ() {
   return (
     <section className="lsl-section lsl-section--cream">
       <div className="lsl-wrap lsl-philosophy">
-        <img className="lsl-photo" src="uploads/S4A6498-scaled.jpg" alt="Coach Gio breaking down a game-time huddle"
-          style={{ width: '100%', height: '440px', objectFit: 'cover', borderRadius: '18px', display: 'block' }} />
+        <div>
+          <img className="lsl-photo" src="uploads/S4A6498-scaled.jpg" alt="Coach Gio breaking down a game-time huddle"
+            style={{ width: '100%', height: '440px', objectFit: 'cover', borderRadius: '18px', display: 'block' }} />
+          <p className="lsl-pullquote" style={{ marginTop: '20px' }}>&ldquo;We don&rsquo;t just play the game. We study it.&rdquo;</p>
+        </div>
         <div>
           <SectionHead eyebrow="Basketball IQ & Game Mastery"
             title="We Don't Just Play The Game. We Study It." />

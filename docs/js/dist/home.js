@@ -251,7 +251,7 @@ function BasketballIQ() {
     className: "lsl-section lsl-section--cream"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap lsl-philosophy"
-  }, /*#__PURE__*/React.createElement("img", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("img", {
     className: "lsl-photo",
     src: "uploads/S4A6498-scaled.jpg",
     alt: "Coach Gio breaking down a game-time huddle",
@@ -262,7 +262,12 @@ function BasketballIQ() {
       borderRadius: '18px',
       display: 'block'
     }
-  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-pullquote",
+    style: {
+      marginTop: '20px'
+    }
+  }, "\u201CWe don\u2019t just play the game. We study it.\u201D")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
     eyebrow: "Basketball IQ & Game Mastery",
     title: "We Don't Just Play The Game. We Study It."
   }), /*#__PURE__*/React.createElement("p", {
