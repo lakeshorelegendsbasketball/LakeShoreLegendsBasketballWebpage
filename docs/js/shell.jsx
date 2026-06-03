@@ -87,9 +87,9 @@ function Header({ page }) {
   );
 }
 
-function SectionHead({ eyebrow, title, sub, light, center }) {
+function SectionHead({ eyebrow, title, sub, light, center, wide }) {
   return (
-    <div className={'lsl-secthead' + (center ? ' lsl-secthead--center' : '')}>
+    <div className={'lsl-secthead' + (center ? ' lsl-secthead--center' : '') + (wide ? ' lsl-secthead--wide' : '')}>
       {eyebrow && <span className={'lsl-eyebrow' + (light ? ' lsl-eyebrow--light' : '')}>{eyebrow}</span>}
       {title && <h2 className={'lsl-h2' + (light ? ' lsl-h2--light' : '')}>{title}</h2>}
       {sub && <p className={'lsl-body' + (light ? ' lsl-body--light' : '')}>{sub}</p>}

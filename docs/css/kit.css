@@ -85,6 +85,7 @@ body { font-family: var(--font-body); color: var(--fg1); background: var(--legen
 .lsl-section--cream { background: var(--legend-cream); }
 .lsl-section--ink { background: var(--navy-800); position: relative; }
 .lsl-secthead { max-width: 640px; margin: 0 0 44px; }
+.lsl-secthead--wide { max-width: 900px; }
 .lsl-secthead .lsl-body { font-size: 18px; }
 
 .lsl-philosophy { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; }

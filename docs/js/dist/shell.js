@@ -206,9 +206,10 @@ function SectionHead(_ref5) {
     title = _ref5.title,
     sub = _ref5.sub,
     light = _ref5.light,
-    center = _ref5.center;
+    center = _ref5.center,
+    wide = _ref5.wide;
   return /*#__PURE__*/React.createElement("div", {
-    className: 'lsl-secthead' + (center ? ' lsl-secthead--center' : '')
+    className: 'lsl-secthead' + (center ? ' lsl-secthead--center' : '') + (wide ? ' lsl-secthead--wide' : '')
   }, eyebrow && /*#__PURE__*/React.createElement("span", {
     className: 'lsl-eyebrow' + (light ? ' lsl-eyebrow--light' : '')
   }, eyebrow), title && /*#__PURE__*/React.createElement("h2", {

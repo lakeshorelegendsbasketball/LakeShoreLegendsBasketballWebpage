@@ -173,6 +173,7 @@ function DevelopmentModel() {
     className: "lsl-wrap"
   }, /*#__PURE__*/React.createElement(SectionHead, {
     center: true,
+    wide: true,
     eyebrow: "Our Development Model",
     title: /*#__PURE__*/React.createElement(React.Fragment, null, "Real Development Is Built In The Gym,", /*#__PURE__*/React.createElement("br", null), "Not On The Scoreboard"),
     sub: "Our training structure is intentionally different from the typical AAU approach, because our goal is long-term player growth, not short-term program victories."
