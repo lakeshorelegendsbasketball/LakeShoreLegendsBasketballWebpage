@@ -99,7 +99,7 @@ function UpcomingEvents() {
 
 function Programs() {
   const progs = [
-    { slot: 'prog-private', img: 'uploads/gio-highfive-23.jpg', mediaH: 240, imgPos: 'center 15%', tag: '1-on-1', tagClass: 'lsl-pill--sky', title: 'Private & Small Group Training', age: 'All Ages & Skill Levels',
+    { slot: 'prog-private', img: 'uploads/gio-highfive-23.jpg', mediaH: 240, imgPos: 'center 10%', tag: '1-on-1', tagClass: 'lsl-pill--sky', title: 'Private & Small Group Training', age: 'All Ages & Skill Levels',
       points: ['Individual skill-development plans', 'Position-specific training and reads', 'Direct feedback, accountability & consistency'], btn: 'Check Availability', scrollTo: 'book', external: false },
     { slot: 'prog-summer', img: 'uploads/gio-group-cafeteria.jpg', mediaH: 240, tag: 'Summer', tagClass: 'lsl-pill--orange', title: 'Jr. Mustangs Feeder Basketball Summer Camp', age: 'Rising 3rd–8th · Ages 8–14',
       points: ['Core skills: shooting, footwork, ball handling & more', 'Guided instruction, competitive games & interactive drills', 'Builds positive habits, effort, and love for the game'], btn: 'Sign Up Now', href: 'https://mundyball.com/camps', external: true },
