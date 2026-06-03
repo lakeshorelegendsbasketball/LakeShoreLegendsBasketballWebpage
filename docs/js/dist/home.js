@@ -208,7 +208,7 @@ function PlayerGrowth() {
     className: "lsl-wrap lsl-philosophy"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
     wide: true,
-    title: "Player Growth In A Team Structure"
+    title: /*#__PURE__*/React.createElement(React.Fragment, null, "Player Growth", /*#__PURE__*/React.createElement("br", null), "In A Team Structure")
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
   }, "We emphasize individual development while teaching athletes how to contribute within a team system. Players learn how to compete with purpose, make sound decisions, and understand the game beyond just playing it."), /*#__PURE__*/React.createElement("p", {
