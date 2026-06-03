@@ -216,7 +216,7 @@ function Programs() {
     slot: 'prog-private',
     img: 'uploads/gio-highfive-23.jpg',
     mediaH: 240,
-    imgPos: 'top',
+    imgPos: 'center 15%',
     tag: '1-on-1',
     tagClass: 'lsl-pill--sky',
     title: 'Private & Small Group Training',
