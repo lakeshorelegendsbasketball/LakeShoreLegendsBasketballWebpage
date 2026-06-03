@@ -296,8 +296,19 @@ function WhyItMatters() {
       paddingTop: 0
     }
   }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-wrap"
-  }, /*#__PURE__*/React.createElement(SectionHead, {
+    className: "lsl-wrap lsl-philosophy"
+  }, /*#__PURE__*/React.createElement("img", {
+    className: "lsl-photo",
+    src: "uploads/S4A6326-scaled.jpg",
+    alt: "LakeShore Legends team and coaches on the bench",
+    style: {
+      width: '100%',
+      height: '420px',
+      objectFit: 'cover',
+      borderRadius: '18px',
+      display: 'block'
+    }
+  }), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
     title: "Why This Matters"
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
@@ -307,7 +318,7 @@ function WhyItMatters() {
     className: "lsl-body"
   }, "Rather than prioritizing short-term results, we focus on building strong technical foundations, advanced basketball IQ, and consistent habits that support long-term performance and growth."), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
-  }, "At LakeShore Legends, we are committed to developing disciplined, well-rounded athletes equipped to compete and thrive in today's game and beyond.")));
+  }, "At LakeShore Legends, we are committed to developing disciplined, well-rounded athletes equipped to compete and thrive in today's game and beyond."))));
 }
 Object.assign(window, {
   Hero: Hero,
