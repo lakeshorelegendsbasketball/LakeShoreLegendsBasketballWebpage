@@ -100,7 +100,7 @@ function UpcomingEvents() {
 function Programs() {
   const progs = [
     { slot: 'prog-private', img: 'uploads/gio-highfive-23.jpg', mediaH: 240, imgPos: 'top', tag: '1-on-1', tagClass: 'lsl-pill--sky', title: 'Private & Small Group Training', age: 'All Ages & Skill Levels',
-      points: ['Individual skill-development plans', 'Position-specific training and reads', 'Direct feedback, accountability & consistency'], btn: 'Inquire Now', href: 'contact.html', external: false },
+      points: ['Individual skill-development plans', 'Position-specific training and reads', 'Direct feedback, accountability & consistency'], btn: 'Check Availability', scrollTo: 'book', external: false },
     { slot: 'prog-summer', img: 'uploads/gio-group-cafeteria.jpg', mediaH: 240, tag: 'Summer', tagClass: 'lsl-pill--orange', title: 'Jr. Mustangs Feeder Basketball Summer Camp', age: 'Rising 3rd–8th · Ages 8–14',
       points: ['Core skills: shooting, footwork, ball handling & more', 'Guided instruction, competitive games & interactive drills', 'Builds positive habits, effort, and love for the game'], btn: 'Sign Up Now', href: 'https://mundyball.com/camps', external: true },
     { slot: 'prog-dayoff', img: 'uploads/IMG_2971.jpeg', mediaH: 240, tag: 'Holidays', tagClass: 'lsl-pill--navy', title: 'School Day-Off Camps', age: 'MLK Day · Labor Day & More',
@@ -130,7 +130,9 @@ function Programs() {
                   ))}
                 </ul>
                 <div className="lsl-program__foot">
-                  <a className="lsl-btn lsl-btn--primary lsl-btn--sm" href={p.href} {...(p.external ? { target: '_blank', rel: 'noopener' } : {})}>{p.btn}</a>
+                  {p.scrollTo
+                    ? <button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={() => document.getElementById(p.scrollTo).scrollIntoView({ behavior: 'smooth' })}>{p.btn}</button>
+                    : <a className="lsl-btn lsl-btn--primary lsl-btn--sm" href={p.href} {...(p.external ? { target: '_blank', rel: 'noopener' } : {})}>{p.btn}</a>}
                 </div>
               </div>
             </div>

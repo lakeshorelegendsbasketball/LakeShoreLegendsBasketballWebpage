@@ -222,8 +222,8 @@ function Programs() {
     title: 'Private & Small Group Training',
     age: 'All Ages & Skill Levels',
     points: ['Individual skill-development plans', 'Position-specific training and reads', 'Direct feedback, accountability & consistency'],
-    btn: 'Inquire Now',
-    href: 'contact.html',
+    btn: 'Check Availability',
+    scrollTo: 'book',
     external: false
   }, {
     slot: 'prog-summer',
@@ -299,7 +299,12 @@ function Programs() {
     size: 13
   }), pt))), /*#__PURE__*/React.createElement("div", {
     className: "lsl-program__foot"
-  }, /*#__PURE__*/React.createElement("a", _extends({
+  }, p.scrollTo ? /*#__PURE__*/React.createElement("button", {
+    className: "lsl-btn lsl-btn--primary lsl-btn--sm",
+    onClick: () => document.getElementById(p.scrollTo).scrollIntoView({
+      behavior: 'smooth'
+    })
+  }, p.btn) : /*#__PURE__*/React.createElement("a", _extends({
     className: "lsl-btn lsl-btn--primary lsl-btn--sm",
     href: p.href
   }, p.external ? {
