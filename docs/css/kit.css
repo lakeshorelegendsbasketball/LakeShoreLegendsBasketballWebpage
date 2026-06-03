@@ -84,7 +84,7 @@ body { font-family: var(--font-body); color: var(--fg1); background: var(--legen
 .lsl-section { padding: 88px 0; }
 .lsl-section--cream { background: var(--legend-cream); }
 .lsl-section--ink { background: var(--navy-800); position: relative; }
-.lsl-secthead { max-width: 640px; margin: 0 0 44px; }
+.lsl-secthead { max-width: 640px; margin: 0 0 14px; }
 .lsl-secthead--wide { max-width: 900px; }
 .lsl-secthead--full { max-width: 100%; }
 .lsl-secthead .lsl-body { font-size: 18px; }
