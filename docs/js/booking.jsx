@@ -83,7 +83,7 @@ function PrivateBooking() {
   else if (service && !isReq && slotId) desc = { mode: 'dated', serviceName: service.name, typeId: service.typeId, slotId };
 
   return (
-    <section className="lsl-section lsl-section--cream" id="book" style={{ paddingTop: 0 }}>
+    <section className="lsl-section lsl-section--cream" id="book" style={{ paddingTop: '44px' }}>
       <div className="lsl-wrap">
         <SectionHead center wide eyebrow="Private Training"
           title="Book a Session With Coach Gio"

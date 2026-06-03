@@ -227,7 +227,7 @@ function PrivateBooking() {
     className: "lsl-section lsl-section--cream",
     id: "book",
     style: {
-      paddingTop: 0
+      paddingTop: '44px'
     }
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap"
