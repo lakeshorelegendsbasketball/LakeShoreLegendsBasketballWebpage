@@ -111,7 +111,7 @@ function Programs() {
       <div className="lsl-wrap">
         <SectionHead center wide eyebrow="Training & Camp Offerings"
           title="Built Around Intentional Development"
-          sub="Every offering meets athletes where they are while setting clear standards for effort, accountability, and long-term growth." />
+          sub={<>Every offering meets athletes where they are while setting clear standards for<br/>effort, accountability, and long-term growth.</>} />
         <div className="lsl-programs">
           {progs.map((p) => (
             <div className="lsl-program" key={p.title}>

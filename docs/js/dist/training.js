@@ -285,7 +285,7 @@ function Programs() {
     wide: true,
     eyebrow: "Training & Camp Offerings",
     title: "Built Around Intentional Development",
-    sub: "Every offering meets athletes where they are while setting clear standards for effort, accountability, and long-term growth."
+    sub: /*#__PURE__*/React.createElement(React.Fragment, null, "Every offering meets athletes where they are while setting clear standards for", /*#__PURE__*/React.createElement("br", null), "effort, accountability, and long-term growth.")
   }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-programs"
   }, progs.map(function (p) {
