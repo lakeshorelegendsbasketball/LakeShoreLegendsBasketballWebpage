@@ -174,8 +174,7 @@ function BasketballIQ() {
             style={{ width: '100%', height: '440px', objectFit: 'cover', borderRadius: '18px', display: 'block' }} />
         </div>
         <div>
-          <SectionHead eyebrow="Basketball IQ & Game Mastery"
-            title="We Don't Just Play The Game. We Study It." />
+          <SectionHead eyebrow="Basketball IQ & Game Mastery" />
           <p className="lsl-body">Our athletes develop strong decision-making habits, situational awareness, and a deeper understanding of basketball concepts that translate to higher levels of play.</p>
           <p className="lsl-body">Through structured training, purposeful film breakdown, and competitive practice environments, players learn why plays work, not just how to run them. We teach athletes how to read defenses, anticipate actions, communicate effectively, and adapt in real time. This approach builds players who are confident under pressure, trusted by coaches, and prepared for the speed and complexity of the high school and college game. Talent gets you noticed, but sound decision-making and basketball IQ will keep you on the floor.</p>
         </div>

@@ -279,8 +279,7 @@ function BasketballIQ() {
       display: 'block'
     }
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
-    eyebrow: "Basketball IQ & Game Mastery",
-    title: "We Don't Just Play The Game. We Study It."
+    eyebrow: "Basketball IQ & Game Mastery"
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
   }, "Our athletes develop strong decision-making habits, situational awareness, and a deeper understanding of basketball concepts that translate to higher levels of play."), /*#__PURE__*/React.createElement("p", {
