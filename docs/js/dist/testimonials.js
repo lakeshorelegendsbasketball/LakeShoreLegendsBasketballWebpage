@@ -59,7 +59,7 @@ function Testimonials() {
   }, /*#__PURE__*/React.createElement(SectionHead, {
     full: true,
     eyebrow: "What Our Community Says",
-    title: "Hear From The Families Who Have Experienced Our Development Model Firsthand"
+    title: /*#__PURE__*/React.createElement(React.Fragment, null, "Hear From The Families Who Have Experienced", /*#__PURE__*/React.createElement("br", null), "Our Development Model Firsthand")
   }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-testimonial"
   }, /*#__PURE__*/React.createElement("div", {

@@ -22,7 +22,7 @@ function Testimonials() {
     <section className="lsl-section lsl-section--cream">
       <div className="lsl-wrap">
         <SectionHead full eyebrow="What Our Community Says"
-          title="Hear From The Families Who Have Experienced Our Development Model Firsthand" />
+          title={<>Hear From The Families Who Have Experienced<br/>Our Development Model Firsthand</>} />
         <div className="lsl-testimonial">
           <div className="lsl-quotemark">&ldquo;</div>
           <blockquote className="lsl-testimonial__quote">
