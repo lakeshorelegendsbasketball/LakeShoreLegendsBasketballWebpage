@@ -50,13 +50,7 @@ function Hero() {
       borderRadius: '20px',
       display: 'block'
     }
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-hero__badge"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "lsl-hero__badge-num"
-  }, "2\xD7"), /*#__PURE__*/React.createElement("span", {
-    className: "lsl-hero__badge-lbl"
-  }, "Practice", /*#__PURE__*/React.createElement("br", null), "vs. Play")))));
+  }))));
 }
 function CountUp(_ref) {
   var value = _ref.value;

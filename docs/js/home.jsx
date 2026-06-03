@@ -17,10 +17,6 @@ function Hero() {
         <div className="lsl-hero__media">
           <img className="lsl-photo" src="uploads/mundeleinvshp-30.jpg" alt="Coach Gio leading a team huddle"
             style={{ width: '100%', height: '420px', objectFit: 'cover', borderRadius: '20px', display: 'block' }} />
-          <div className="lsl-hero__badge">
-            <span className="lsl-hero__badge-num">2×</span>
-            <span className="lsl-hero__badge-lbl">Practice<br/>vs. Play</span>
-          </div>
         </div>
       </div>
     </section>
