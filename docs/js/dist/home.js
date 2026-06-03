@@ -274,6 +274,7 @@ function BasketballIQ() {
       display: 'block'
     }
   })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(SectionHead, {
+    wide: true,
     title: "Basketball IQ & Game Mastery"
   }), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body"
