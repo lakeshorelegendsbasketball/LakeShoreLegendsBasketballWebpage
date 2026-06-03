@@ -50,7 +50,7 @@ body { font-family: var(--font-body); color: var(--fg1); background: var(--legen
 .lsl-header.is-scrolled { background: rgba(18,48,83,.92); backdrop-filter: blur(10px); box-shadow: var(--shadow-md); }
 .lsl-header__inner { max-width: 1180px; margin: 0 auto; padding: 12px 32px; display: flex; align-items: center; gap: 24px; }
 .lsl-brand { display: flex; align-items: center; gap: 12px; cursor: pointer; text-decoration: none; }
-.lsl-brand__name { font-family: var(--font-display); font-weight: 800; font-size: 19px; line-height: .98; color: #fff; letter-spacing: -.01em; }
+.lsl-brand__name { font-family: var(--font-display); font-weight: 800; font-size: 19px; line-height: .98; color: #fff; letter-spacing: -.01em; text-align: center; }
 .lsl-nav { display: flex; gap: 4px; margin-left: auto; }
 .lsl-nav__link { font-family: var(--font-cond); font-weight: 600; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; color: rgba(255,255,255,.82); padding: 8px 12px; border-radius: var(--r-sm); cursor: pointer; transition: color var(--dur-fast), background var(--dur-fast); white-space: nowrap; }
 .lsl-nav__link:hover { color: #fff; background: rgba(255,255,255,.1); }
