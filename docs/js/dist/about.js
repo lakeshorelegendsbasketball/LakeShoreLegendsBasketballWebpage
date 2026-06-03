@@ -29,7 +29,7 @@ function AboutHero() {
       maxWidth: '100%',
       color: 'var(--fg-on-dark-2)'
     }
-  }, "A development-driven basketball organization built on elite training standards, intentional teaching,", /*#__PURE__*/React.createElement("br", null), "and long-term athlete growth \u2014 developing complete basketball players both on and off the court.")));
+  }, "A development-driven basketball organization built on elite training standards, intentional teaching,", /*#__PURE__*/React.createElement("br", null), "and long-term athlete growth \u2014 developing complete players, on and off the court.")));
 }
 function MissionVision() {
   var items = [['Mission', 'To develop complete basketball players through elite training, intentional teaching, and purposeful competition.'], ['Vision', 'To become a nationally respected development program known for skilled, intelligent, and disciplined athletes prepared to succeed at every level.'], ['Engagement', 'We set a new standard for youth basketball with a training-first mindset. Practices are demanding by design so that games feel simple.']];
