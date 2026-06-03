@@ -1,4 +1,32 @@
 /* global React, SectionHead, Star6 */
+function CountUpAlumni({ value }) {
+  const m = String(value).match(/^(\d+)(.*)$/);
+  const target = m ? parseInt(m[1], 10) : 0;
+  const suffix = m ? m[2] : '';
+  const [n, setN] = React.useState(0);
+  const ref = React.useRef(null);
+  React.useEffect(() => {
+    let raf, started = false;
+    const run = () => {
+      started = true;
+      const dur = 2400, t0 = performance.now();
+      const tick = (now) => {
+        const p = Math.min(1, (now - t0) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        setN(Math.round(eased * target));
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting && !started) run(); });
+    }, { threshold: 0.4 });
+    if (ref.current) io.observe(ref.current);
+    return () => { io.disconnect(); if (raf) cancelAnimationFrame(raf); };
+  }, [target]);
+  return <div className="lsl-stat__num" ref={ref}>{n}{suffix}</div>;
+}
+
 function ImpactBand() {
   const stats = [
     ['28', 'Travel Teams Coached'],
@@ -10,7 +38,7 @@ function ImpactBand() {
     <section className="lsl-statsband">
       {stats.map(([n, l]) => (
         <div className="lsl-stat" key={l}>
-          <div className="lsl-stat__num">{n}</div>
+          <CountUpAlumni value={n} />
           <div className="lsl-stat__lbl">{l}</div>
         </div>
       ))}
@@ -102,7 +130,7 @@ function Offers() {
   return (
     <section className="lsl-section lsl-section--ink">
       <div className="lsl-wrap">
-        <SectionHead light center eyebrow="Recruitment"
+        <SectionHead light center wide eyebrow="Recruitment"
           title="Offers Received From"
           sub="A growing list of programs that have recruited LakeShore Legends athletes." />
       </div>
