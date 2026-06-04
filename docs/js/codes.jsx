@@ -55,7 +55,8 @@ function OrgStandards() {
             </p>
             <p>LakeShore Legends Basketball reserves the right to address behavior that does not align with these standards in order to protect the culture, mission, and integrity of the program.</p>
             <p>Participation signifies a commitment to the process, the standards, and the culture that make long-term athlete development possible.</p>
-            <p><strong>By signing up, every member of the LakeShore Legends community agrees to uphold the standards listed here — on the floor, in the stands, and in the parking lot afterward.</strong></p>
+            <hr className="lsl-codes-featured__divider" />
+            <p className="lsl-codes-featured__bold">By signing up, every member of the LakeShore Legends community agrees to uphold the standards listed here — on the floor, in the stands, and in the parking lot afterward.</p>
           </div>
           <div className="lsl-codes-valuelist">
             {values.map((v) => (

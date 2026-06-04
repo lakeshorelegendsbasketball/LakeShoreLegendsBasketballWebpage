@@ -67,7 +67,11 @@ function OrgStandards() {
     className: "lsl-codes-featured__headline"
   }, "Athlete development is a ", /*#__PURE__*/React.createElement("span", {
     className: "lsl-codes-orange"
-  }, "long-term process"), " \u2014 not a weekend outcome."), /*#__PURE__*/React.createElement("p", null, "LakeShore Legends Basketball reserves the right to address behavior that does not align with these standards in order to protect the culture, mission, and integrity of the program."), /*#__PURE__*/React.createElement("p", null, "Participation signifies a commitment to the process, the standards, and the culture that make long-term athlete development possible."), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("strong", null, "By signing up, every member of the LakeShore Legends community agrees to uphold the standards listed here \u2014 on the floor, in the stands, and in the parking lot afterward."))), /*#__PURE__*/React.createElement("div", {
+  }, "long-term process"), " \u2014 not a weekend outcome."), /*#__PURE__*/React.createElement("p", null, "LakeShore Legends Basketball reserves the right to address behavior that does not align with these standards in order to protect the culture, mission, and integrity of the program."), /*#__PURE__*/React.createElement("p", null, "Participation signifies a commitment to the process, the standards, and the culture that make long-term athlete development possible."), /*#__PURE__*/React.createElement("hr", {
+    className: "lsl-codes-featured__divider"
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-codes-featured__bold"
+  }, "By signing up, every member of the LakeShore Legends community agrees to uphold the standards listed here \u2014 on the floor, in the stands, and in the parking lot afterward.")), /*#__PURE__*/React.createElement("div", {
     className: "lsl-codes-valuelist"
   }, values.map(v => /*#__PURE__*/React.createElement("div", {
     className: "lsl-codes-valuerow",
