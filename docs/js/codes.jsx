@@ -140,7 +140,7 @@ function ParentsCode() {
           <div className="lsl-codes-badge lsl-codes-badge--orange">03</div>
           <h2 className="lsl-codes-sh">Parents &amp; <span className="lsl-codes-orange">Spectators.</span></h2>
         </div>
-        <p className="lsl-codes-intro">LakeShore Legends views parents and families as partners in the long-term development process. Support, trust, and alignment are essential to athlete growth — and what makes our gyms feel like home.</p>
+        <p className="lsl-codes-intro lsl-codes-intro--wide">LakeShore Legends views parents and families as partners in the long-term youth development process.<br />Support, trust, and alignment are essential to athlete growth, and what makes our gyms feel like home.</p>
         <div className="lsl-codes-cols">
           <div className="lsl-codes-col lsl-codes-col--will">
             <div className="lsl-codes-col__head"><i data-lucide="check-circle"></i><span>Parents &amp; Spectators<br/>Are Expected To</span></div>

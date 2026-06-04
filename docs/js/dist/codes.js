@@ -151,8 +151,8 @@ function ParentsCode() {
   }, "Parents & ", /*#__PURE__*/React.createElement("span", {
     className: "lsl-codes-orange"
   }, "Spectators."))), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-codes-intro"
-  }, "LakeShore Legends views parents and families as partners in the long-term development process. Support, trust, and alignment are essential to athlete growth \u2014 and what makes our gyms feel like home."), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-codes-intro lsl-codes-intro--wide"
+  }, "LakeShore Legends views parents and families as partners in the long-term youth development process.", /*#__PURE__*/React.createElement("br", null), "Support, trust, and alignment are essential to athlete growth, and what makes our gyms feel like home."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-codes-cols"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-codes-col lsl-codes-col--will"
