@@ -268,10 +268,12 @@ function PrivateBooking() {
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "calendar-check"
   }), " Request Booking"))), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-body lsl-body--sm",
+    className: "lsl-body",
     style: {
+      marginTop: 24,
       marginBottom: 8,
-      color: 'var(--fg2)'
+      color: 'var(--fg2)',
+      textAlign: 'center'
     }
   }, "Don\u2019t see your preferred location? Reach out \u2014 Coach Gio can often make it work."), /*#__PURE__*/React.createElement("p", {
     className: "lsl-bookpolicy"

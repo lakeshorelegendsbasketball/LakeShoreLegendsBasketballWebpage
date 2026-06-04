@@ -217,7 +217,7 @@ function PrivateBooking() {
           </div>
         </div>
 
-        <p className="lsl-body lsl-body--sm" style={{ marginBottom: 8, color: 'var(--fg2)' }}>
+        <p className="lsl-body" style={{ marginTop: 24, marginBottom: 8, color: 'var(--fg2)', textAlign: 'center' }}>
           Don&rsquo;t see your preferred location? Reach out &mdash; Coach Gio can often make it work.
         </p>
         <p className="lsl-bookpolicy">
