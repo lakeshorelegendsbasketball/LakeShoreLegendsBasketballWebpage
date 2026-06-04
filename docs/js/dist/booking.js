@@ -3,7 +3,7 @@ const {
   useState: useStateBk,
   useEffect: useEffectBk
 } = React;
-const LSL_POLICY = 'Cancellations made within 48 hours of a session are subject to a 50% retainer. Cancellations made more than 48 hours in advance receive a 100% refund. Training session times and availability are subject to change.';
+const LSL_POLICY = ['Cancellations made within 48 hours of a session are subject to a 50% retainer.', 'Cancellations made more than 48 hours in advance receive a 100% refund.', 'Training session times and availability are subject to change.'];
 const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const pad2 = n => String(n).padStart(2, '0');
 const isoOf = dt => dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + pad2(dt.getDate());
@@ -270,7 +270,9 @@ function PrivateBooking() {
     className: "lsl-bookpolicy"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "info"
-  }), LSL_POLICY)), formOpen && desc && /*#__PURE__*/React.createElement(BookingForm, {
+  }), /*#__PURE__*/React.createElement("span", null, LSL_POLICY.map((line, i) => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: i
+  }, line, i < LSL_POLICY.length - 1 && /*#__PURE__*/React.createElement("br", null)))))), formOpen && desc && /*#__PURE__*/React.createElement(BookingForm, {
     desc: desc,
     onClose: () => setFormOpen(false),
     onBooked: () => {
@@ -626,7 +628,9 @@ function BookingForm({
     "data-lucide": isReq ? 'mail' : 'shield-check'
   }), isReq ? /*#__PURE__*/React.createElement("span", null, "This sends a ", /*#__PURE__*/React.createElement("strong", null, "class request"), " to Coach Gio. You'll get a confirmation email \u2014 no payment is taken now.") : /*#__PURE__*/React.createElement("span", null, "After you submit, you'll be taken to ", /*#__PURE__*/React.createElement("strong", null, "Stripe"), " to pay securely and lock in your spot. Stripe emails your receipt.")), /*#__PURE__*/React.createElement("p", {
     className: "lsl-bkpolicy--modal"
-  }, LSL_POLICY), errs.form && /*#__PURE__*/React.createElement("p", {
+  }, LSL_POLICY.map((line, i) => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: i
+  }, line, i < LSL_POLICY.length - 1 && /*#__PURE__*/React.createElement("br", null)))), errs.form && /*#__PURE__*/React.createElement("p", {
     className: "lsl-err"
   }, errs.form), /*#__PURE__*/React.createElement("button", {
     type: "submit",

@@ -1,7 +1,11 @@
 /* global React, SectionHead, LSL */
 const { useState: useStateBk, useEffect: useEffectBk } = React;
 
-const LSL_POLICY = 'Cancellations made within 48 hours of a session are subject to a 50% retainer. Cancellations made more than 48 hours in advance receive a 100% refund. Training session times and availability are subject to change.';
+const LSL_POLICY = [
+  'Cancellations made within 48 hours of a session are subject to a 50% retainer.',
+  'Cancellations made more than 48 hours in advance receive a 100% refund.',
+  'Training session times and availability are subject to change.',
+];
 
 const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const pad2 = (n) => String(n).padStart(2, '0');
@@ -248,7 +252,10 @@ function PrivateBooking() {
           </div>
         </div>
 
-        <p className="lsl-bookpolicy"><i data-lucide="info"></i>{LSL_POLICY}</p>
+        <p className="lsl-bookpolicy">
+          <i data-lucide="info"></i>
+          <span>{LSL_POLICY.map((line, i) => <React.Fragment key={i}>{line}{i < LSL_POLICY.length - 1 && <br />}</React.Fragment>)}</span>
+        </p>
       </div>
       {formOpen && desc && (
         <BookingForm desc={desc} onClose={() => setFormOpen(false)}
@@ -445,7 +452,7 @@ function BookingForm({ desc, onClose, onBooked }) {
                 ? <span>This sends a <strong>class request</strong> to Coach Gio. You'll get a confirmation email — no payment is taken now.</span>
                 : <span>After you submit, you'll be taken to <strong>Stripe</strong> to pay securely and lock in your spot. Stripe emails your receipt.</span>}
             </div>
-            <p className="lsl-bkpolicy--modal">{LSL_POLICY}</p>
+            <p className="lsl-bkpolicy--modal">{LSL_POLICY.map((line, i) => <React.Fragment key={i}>{line}{i < LSL_POLICY.length - 1 && <br />}</React.Fragment>)}</p>
             {errs.form && <p className="lsl-err">{errs.form}</p>}
             <button type="submit" className="lsl-btn lsl-btn--primary" disabled={busy} style={{ width: '100%' }}>
               <i data-lucide={isReq ? 'send' : 'arrow-right'}></i>
