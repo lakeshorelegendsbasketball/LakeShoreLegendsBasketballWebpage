@@ -68,7 +68,7 @@ function Header({ page }) {
             </a>
           ))}
         </nav>
-        <a className="lsl-btn lsl-btn--primary lsl-btn--sm lsl-header__cta" href="contact.html">Join the Program</a>
+        <a className="lsl-btn lsl-btn--primary lsl-btn--sm lsl-header__cta" href="training.html#book">Start Training</a>
         <button className="lsl-burger" onClick={() => setOpen(!open)} aria-label="Menu">
           <span></span><span></span><span></span>
         </button>

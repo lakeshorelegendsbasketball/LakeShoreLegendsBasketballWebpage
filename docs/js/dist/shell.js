@@ -161,8 +161,8 @@ function Header({
     rel: 'noopener'
   } : {}), n.label))), /*#__PURE__*/React.createElement("a", {
     className: "lsl-btn lsl-btn--primary lsl-btn--sm lsl-header__cta",
-    href: "contact.html"
-  }, "Join the Program"), /*#__PURE__*/React.createElement("button", {
+    href: "training.html#book"
+  }, "Start Training"), /*#__PURE__*/React.createElement("button", {
     className: "lsl-burger",
     onClick: () => setOpen(!open),
     "aria-label": "Menu"
