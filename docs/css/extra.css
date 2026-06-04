@@ -535,3 +535,97 @@ a.lsl-btn { line-height: 1; }
   .lsl-bookpanel__cta { padding-left: 0; border-left: none; border-top: 1px solid var(--line-soft); padding-top: 24px; }
   .lsl-admin__addrow { grid-template-columns: 1fr 1fr; }
 }
+
+/* ============================================================
+   MOBILE OPTIMIZATIONS
+   ============================================================ */
+
+/* Fluid horizontal padding on narrow phones */
+@media (max-width: 600px) {
+  .lsl-wrap,
+  .lsl-hero__grid,
+  .lsl-pagehero__inner,
+  .lsl-codeshero__inner { padding-left: 18px; padding-right: 18px; }
+  .lsl-header__inner { padding-left: 18px; padding-right: 18px; }
+  .lsl-mobilenav { padding-left: 18px; padding-right: 18px; }
+  .lsl-mobilenav a { padding: 14px 0; }
+}
+
+/* Footer — extra.css non-media rules override the kit.css 900px breakpoint,
+   so we must re-override here to actually get mobile stacking */
+@media (max-width: 900px) {
+  .lsl-footer__top { grid-template-columns: 1fr; padding: 40px 24px 28px; gap: 24px; justify-items: center; }
+  .lsl-footer__logoside:last-child { display: none; }
+  .lsl-footer__logoside { height: 80px; }
+  .lsl-footer__cols { grid-template-columns: 1fr; gap: 0; }
+  .lsl-footer__col { padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+  .lsl-footer__col:last-child { border-bottom: none; }
+  .lsl-footer__bar { flex-direction: column; align-items: center; gap: 4px; padding: 16px 24px; }
+}
+
+/* Hero — remove hardcoded 72px, reduce hero/page-hero top padding */
+@media (max-width: 640px) {
+  .lsl-hero { padding-top: 100px; padding-bottom: 52px; }
+  .lsl-hero__copy .lsl-display { font-size: clamp(40px, 11vw, 72px); }
+  .lsl-hero__badge { left: 0; }
+  .lsl-pagehero { padding: 108px 0 44px; }
+  .lsl-abouthero { padding: 108px 0 44px; }
+  .lsl-codeshero { padding: 108px 0 48px; }
+}
+
+/* Section & CTA vertical spacing */
+@media (max-width: 640px) {
+  .lsl-section { padding: 36px 0; }
+  .lsl-cta__inner { padding: 52px 20px; }
+}
+
+/* Stats band */
+@media (max-width: 480px) {
+  .lsl-stat { padding: 26px 14px; }
+  .lsl-stat__num { font-size: 44px; }
+}
+
+/* Skills — 7 → 3 → 2 cols */
+@media (max-width: 600px) {
+  .lsl-skills { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Events — fully stack on small screens */
+@media (max-width: 520px) {
+  .lsl-event { grid-template-columns: 1fr; gap: 12px; }
+  .lsl-event__date { display: flex; align-items: baseline; gap: 10px; border-right: none; border-bottom: 1px solid var(--line-soft); padding-right: 0; padding-bottom: 10px; text-align: left; }
+  .lsl-event__day { font-size: 28px; }
+  .lsl-event__cta { flex-direction: column; align-items: flex-start; }
+}
+
+/* Testimonials */
+@media (max-width: 640px) {
+  .lsl-testimonial-wrap { gap: 8px; }
+  .lsl-testimonial-arrow { width: 38px; height: 38px; }
+  .lsl-testimonial { padding: 44px 22px 26px; }
+  .lsl-testimonial__quote { font-size: 17px; }
+}
+
+/* Forms & modals */
+@media (max-width: 640px) {
+  .lsl-form { padding: 24px 20px; }
+  .lsl-bkmodal { padding: 22px 18px; }
+  .lsl-lightbox { padding: 16px; }
+  .lsl-sched__col { padding: 18px 16px; }
+}
+
+/* Codes of Conduct */
+@media (max-width: 640px) {
+  .lsl-codes-col { padding: 20px 16px; }
+  .lsl-codes-col__head { white-space: normal; font-size: 13px; }
+  .lsl-codes-commsec { padding: 52px 0; }
+}
+
+/* Admin */
+@media (max-width: 520px) {
+  .lsl-admin__addrow { grid-template-columns: 1fr; }
+  .lsl-admin__head { flex-wrap: wrap; }
+}
+@media (max-width: 400px) {
+  .lsl-admin { padding: 20px 16px; }
+}
