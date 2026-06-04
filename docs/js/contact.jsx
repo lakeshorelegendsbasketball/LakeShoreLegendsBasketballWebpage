@@ -144,7 +144,6 @@ const FAQS = [
   ['What\'s the difference between private and small-group training?', 'Private sessions are fully individualized & built around one athlete\'s specific needs and goals. Small-group training (2–4 athletes) keeps that personalized feedback while adding competitive, game-realistic reps at a lower per-session cost.'],
   ['When are summer camps and how do I register?', 'This summer\'s Mundelein Jr. Mustangs Feeder basketball camps are July 6th–10th and July 27th–31st. Camps are open to rising 3rd–8th graders and will be held at Mundelein High School in the Main Gym. Head to MundyBall.com/Camps or reach out to mundeleinboysbasketball@gmail.com for details.'],
   ['What is the Jr. Mustangs feeder program?', 'The Jr. Mustangs Feeder Basketball program is our winter competitive team pathway. It connects developing athletes in the Mundelein community to a structured, training-first team environment. Reach out and we\'ll connect you to the right people to get you involved!'],
-  ['Do you offer team or organization training?', 'Yes. We partner with schools, clubs, and teams for group training centered on fundamentals, basketball IQ, and game transfer. Use the form above and select "Team Training" to start the conversation.'],
 ];
 
 function FAQ() {
