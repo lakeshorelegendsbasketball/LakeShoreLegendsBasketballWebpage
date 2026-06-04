@@ -98,7 +98,7 @@ function CoachesCode() {
           <div className="lsl-codes-badge">02</div>
           <h2 className="lsl-codes-sh lsl-codes-sh--light">Coaches &amp; <span className="lsl-codes-orange">Volunteers.</span></h2>
         </div>
-        <p className="lsl-codes-intro lsl-codes-intro--light">Coaches and volunteers are leaders within the LakeShore Legends organization — held to the highest standards of professionalism, preparation, and conduct. The floor starts with them.</p>
+        <p className="lsl-codes-intro lsl-codes-intro--light lsl-codes-intro--wide">Coaches and volunteers are leaders within the LakeShore Legends organization —<br />Held to the highest standards of professionalism, preparation, and conduct. The floor starts with them.</p>
         <div className="lsl-codes-cols">
           <div className="lsl-codes-col lsl-codes-col--will-dark">
             <div className="lsl-codes-col__head"><i data-lucide="check-circle"></i><span>Coaches &amp; Volunteers<br/>Will</span></div>

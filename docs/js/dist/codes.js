@@ -104,8 +104,8 @@ function CoachesCode() {
   }, "Coaches & ", /*#__PURE__*/React.createElement("span", {
     className: "lsl-codes-orange"
   }, "Volunteers."))), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-codes-intro lsl-codes-intro--light"
-  }, "Coaches and volunteers are leaders within the LakeShore Legends organization \u2014 held to the highest standards of professionalism, preparation, and conduct. The floor starts with them."), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-codes-intro lsl-codes-intro--light lsl-codes-intro--wide"
+  }, "Coaches and volunteers are leaders within the LakeShore Legends organization \u2014", /*#__PURE__*/React.createElement("br", null), "Held to the highest standards of professionalism, preparation, and conduct. The floor starts with them."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-codes-cols"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-codes-col lsl-codes-col--will-dark"
