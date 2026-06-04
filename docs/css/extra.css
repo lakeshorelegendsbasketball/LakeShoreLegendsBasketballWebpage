@@ -264,7 +264,7 @@ a.lsl-btn { line-height: 1; }
 .lsl-bookpanel__tmeta { font-family: var(--font-cond); font-weight: 600; text-transform: uppercase; letter-spacing: .05em; font-size: 12px; color: var(--fg3); }
 .lsl-bookpanel__tprice { font-family: var(--font-display); font-size: 20px; color: var(--legend-orange); }
 .lsl-bookpanel__cta { display: flex; flex-direction: column; justify-content: center; padding-left: 30px; border-left: 1px solid var(--line-soft); }
-.lsl-bookpolicy { display: flex; gap: 9px; align-items: flex-start; max-width: 760px; margin: 22px auto 0; text-align: center;
+.lsl-bookpolicy { display: flex; gap: 9px; align-items: flex-start; justify-content: center; max-width: 760px; margin: 22px auto 0; text-align: center;
   font-size: 13px; line-height: 1.55; color: var(--fg3); }
 .lsl-bookpolicy i { width: 16px; height: 16px; flex: none; margin-top: 2px; color: var(--fg3); }
 .lsl-bkpolicy--modal { font-size: 12.5px; line-height: 1.5; color: var(--fg3); margin: 0 0 4px; text-align: center; }
