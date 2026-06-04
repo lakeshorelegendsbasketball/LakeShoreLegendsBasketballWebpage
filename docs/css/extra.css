@@ -14,7 +14,7 @@ a.lsl-btn { line-height: 1; }
 .lsl-footer__logoside:first-child { justify-self: start; }
 .lsl-footer__logoside:last-child { justify-self: end; }
 .lsl-footer__cols { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
-.lsl-footer__col { text-align: center; width: 220px; flex: 0 0 220px; }
+.lsl-footer__col { text-align: center; }
 .lsl-footer__link { text-align: center; }
 
 .lsl-secthead--center { margin-left: auto; margin-right: auto; text-align: center; }
