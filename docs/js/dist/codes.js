@@ -212,7 +212,7 @@ function CommPolicy() {
       color: 'rgba(255,255,255,.75)',
       fontSize: 15,
       lineHeight: 1.65,
-      maxWidth: 520,
+      maxWidth: 680,
       margin: '0 0 28px'
     }
   }, "If a parent or guardian has a concern involving a member of the coaching staff immediately following a game, a 12\u201324 hour waiting period is required before any communication occurs. This policy exists to promote thoughtful, constructive dialogue and prevent emotionally driven interactions."), /*#__PURE__*/React.createElement("div", {
@@ -242,7 +242,7 @@ function CodesClosing() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-wrap",
     style: {
-      maxWidth: 700
+      maxWidth: 900
     }
   }, /*#__PURE__*/React.createElement("h2", {
     className: "lsl-codes-sh lsl-codes-sh--light lsl-codes-sh--xl"
@@ -254,7 +254,7 @@ function CodesClosing() {
       fontSize: 15,
       lineHeight: 1.65,
       margin: '20px auto 36px',
-      maxWidth: 560
+      maxWidth: 720
     }
   }, "These codes apply the moment you walk into the gym \u2014 for every athlete, coach, volunteer, parent, and spectator wearing or watching LakeShore Legends."), /*#__PURE__*/React.createElement("div", {
     style: {
