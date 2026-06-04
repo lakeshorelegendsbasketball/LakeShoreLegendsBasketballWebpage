@@ -258,7 +258,11 @@ function Footer() {
     className: "lsl-footer"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-footer__top"
-  }, /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "assets/badge-crest.png",
+    alt: "LakeShore Legends Crest",
+    className: "lsl-footer__logoside"
+  }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-footer__cols"
   }, cols.map(([h, links]) => /*#__PURE__*/React.createElement("div", {
     key: h,
@@ -275,7 +279,11 @@ function Footer() {
       target: '_blank',
       rel: 'noopener'
     } : {}), l);
-  }))))), /*#__PURE__*/React.createElement("div", {
+  })))), /*#__PURE__*/React.createElement("img", {
+    src: "assets/mark-spire-stars.png",
+    alt: "LakeShore Legends Spire",
+    className: "lsl-footer__logoside"
+  })), /*#__PURE__*/React.createElement("div", {
     className: "lsl-footer__bar"
   }, /*#__PURE__*/React.createElement("span", null, "\xA9 2026 LakeShore Legends Basketball"), /*#__PURE__*/React.createElement("span", null, "Chicago, Illinois")));
 }

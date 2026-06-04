@@ -133,6 +133,7 @@ function Footer() {
   return (
     <footer className="lsl-footer">
       <div className="lsl-footer__top">
+        <img src="assets/badge-crest.png" alt="LakeShore Legends Crest" className="lsl-footer__logoside" />
         <div className="lsl-footer__cols">
           {cols.map(([h, links]) => (
             <div key={h} className="lsl-footer__col">
@@ -147,6 +148,7 @@ function Footer() {
             </div>
           ))}
         </div>
+        <img src="assets/mark-spire-stars.png" alt="LakeShore Legends Spire" className="lsl-footer__logoside" />
       </div>
       <div className="lsl-footer__bar">
         <span>© 2026 LakeShore Legends Basketball</span>
