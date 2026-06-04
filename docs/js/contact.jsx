@@ -140,7 +140,7 @@ function ContactSection() {
 }
 
 const FAQS = [
-  ['What ages and skill levels do you train?', 'We work with athletes of all ages and skill levels — from rising 3rd graders in summer camp through high school and college athletes in private and small-group training. Every plan is tailored to where the athlete is in their development.'],
+  ['What ages and skill levels do you train?', "We work with athletes of all ages and skill levels. From rising 3rd graders to high school and college athletes, as long as you're serious about hoops, we will give you the skills and tools necessary to get you to the next level."],
   ['What\'s the difference between private and small-group training?', 'Private sessions are fully individualized — built around one athlete\'s specific needs, position, and goals. Small-group training (2–4 athletes) keeps that personalized feedback while adding competitive, game-realistic reps at a lower per-session cost.'],
   ['When are summer camps and how do I register?', 'Summer camps run in weekly blocks through June and July for rising 3rd–8th graders. Head to the Training & Camps page, pick a session, and reserve a spot in under a minute — we\'ll follow up with confirmation and payment details.'],
   ['What is the Jr. Mustangs feeder program?', 'The Jr. Mustangs feeder is our competitive team pathway. It connects developing athletes to a structured, training-first team environment. Reach out and we\'ll walk you through tryouts and placement.'],
