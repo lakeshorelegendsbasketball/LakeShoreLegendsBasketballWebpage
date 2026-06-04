@@ -478,10 +478,11 @@ a.lsl-btn { line-height: 1; }
 .lsl-codes-list--dark li { color: var(--fg-on-dark-2); }
 .lsl-codes-list li .lsl-star6 { flex: none; margin-top: 3px; }
 .lsl-codes-commsec { background: var(--legend-navy); padding: 80px 0; }
-.lsl-codes-comm { display: grid; grid-template-columns: auto 1fr; gap: 72px; align-items: center; max-width: 960px; }
-.lsl-codes-comm__circle { width: 190px; height: 190px; border-radius: 50%; border: 3px solid var(--legend-orange); display: flex; flex-direction: column; align-items: center; justify-content: center; flex: none; }
+.lsl-codes-comm { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; max-width: 960px; margin: 0 auto; }
+.lsl-codes-comm__circle { position: relative; width: 180px; height: 180px; border-radius: 50%; background: var(--legend-orange); border: 5px solid #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; justify-self: center; }
+.lsl-codes-comm__circle::before { content: ''; position: absolute; inset: -14px; border-radius: 50%; border: 2px dashed rgba(255,255,255,.55); }
 .lsl-codes-comm__num { font-family: var(--font-display); font-weight: 800; font-size: 44px; line-height: 1; letter-spacing: -.02em; color: #fff; }
-.lsl-codes-comm__unit { font-family: var(--font-cond); font-weight: 700; text-transform: uppercase; letter-spacing: .1em; font-size: 13px; color: var(--legend-orange); margin-top: 5px; }
+.lsl-codes-comm__unit { font-family: var(--font-cond); font-weight: 700; text-transform: uppercase; letter-spacing: .12em; font-size: 12px; color: #fff; margin-top: 6px; }
 @media (max-width: 900px) {
   .lsl-codes-org-grid { grid-template-columns: 1fr; }
 }
