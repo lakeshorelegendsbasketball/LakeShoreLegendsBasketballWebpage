@@ -320,6 +320,7 @@ function BookingForm({ desc, onClose, onBooked }) {
     e.preventDefault();
     if (!validate()) return;
     setBusy(true);
+    if (!isReq && payLink) window.open(payLink, '_blank');
     let rec;
     if (isReq) {
       rec = { id: LSL.uid(), mode: 'request', serviceName: desc.serviceName, players: desc.players, dow: desc.dow, reqTime: desc.reqTime,
@@ -344,13 +345,6 @@ function BookingForm({ desc, onClose, onBooked }) {
     if (onBooked) onBooked();
   }
 
-  // dated bookings forward to Stripe after the confirmation screen
-  useEffectBk(() => {
-    if (result && result.mode === 'dated' && payLink) {
-      const id = setTimeout(() => { window.location.href = payLink; }, 4000);
-      return () => clearTimeout(id);
-    }
-  }, [result]);
 
   return (
     <div className="lsl-lightbox" onClick={onClose}>
@@ -430,10 +424,10 @@ function BookingForm({ desc, onClose, onBooked }) {
             <h3 className="lsl-h3">Spot reserved — one last step</h3>
             <p className="lsl-body lsl-body--sm" style={{ marginTop: 0 }}>
               {result.serviceName} · {LSL.fmtDateLong(result.date)} · {LSL.fmtTime(result.time)} at {LSL.locById(result.locId).name}.<br />
-              Redirecting you to secure Stripe payment…
+              {payLink ? 'Stripe payment opened in a new tab.' : ''}
             </p>
             {payLink
-              ? <a className="lsl-btn lsl-btn--primary" href={payLink} style={{ marginBottom: 12 }}><i data-lucide="credit-card"></i> Complete Payment Now</a>
+              ? <a className="lsl-btn lsl-btn--primary" href={payLink} target="_blank" rel="noopener" style={{ marginBottom: 12 }}><i data-lucide="credit-card"></i> Complete Payment Now</a>
               : <div className="lsl-bknote"><i data-lucide="info"></i><span>Coach Gio will email a secure Stripe payment link to {result.email} shortly.</span></div>}
             <div className="lsl-bkdone__row">
               <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => LSL.downloadICS(result)}><i data-lucide="calendar-plus"></i> Add to calendar</button>

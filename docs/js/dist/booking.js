@@ -395,6 +395,7 @@ function BookingForm({
     e.preventDefault();
     if (!validate()) return;
     setBusy(true);
+    if (!isReq && payLink) window.open(payLink, '_blank');
     let rec;
     if (isReq) {
       rec = {
@@ -457,16 +458,6 @@ function BookingForm({
     setResult(rec);
     if (onBooked) onBooked();
   }
-
-  // dated bookings forward to Stripe after the confirmation screen
-  useEffectBk(() => {
-    if (result && result.mode === 'dated' && payLink) {
-      const id = setTimeout(() => {
-        window.location.href = payLink;
-      }, 4000);
-      return () => clearTimeout(id);
-    }
-  }, [result]);
   return /*#__PURE__*/React.createElement("div", {
     className: "lsl-lightbox",
     onClick: onClose
@@ -619,9 +610,11 @@ function BookingForm({
     style: {
       marginTop: 0
     }
-  }, result.serviceName, " \xB7 ", LSL.fmtDateLong(result.date), " \xB7 ", LSL.fmtTime(result.time), " at ", LSL.locById(result.locId).name, ".", /*#__PURE__*/React.createElement("br", null), "Redirecting you to secure Stripe payment\u2026"), payLink ? /*#__PURE__*/React.createElement("a", {
+  }, result.serviceName, " \xB7 ", LSL.fmtDateLong(result.date), " \xB7 ", LSL.fmtTime(result.time), " at ", LSL.locById(result.locId).name, ".", /*#__PURE__*/React.createElement("br", null), payLink ? 'Stripe payment opened in a new tab.' : ''), payLink ? /*#__PURE__*/React.createElement("a", {
     className: "lsl-btn lsl-btn--primary",
     href: payLink,
+    target: "_blank",
+    rel: "noopener",
     style: {
       marginBottom: 12
     }
