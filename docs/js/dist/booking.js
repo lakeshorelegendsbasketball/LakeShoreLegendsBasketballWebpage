@@ -18,7 +18,7 @@ const SERVICES = [{
   meta: 'One athlete · 60 min',
   mode: 'dated',
   typeId: 'p1',
-  payLink: 'https://buy.stripe.com/fZu4gzeKn4f5c9ndiG9Zm02'
+  payLink: 'https://buy.stripe.com/00w9AM0rxcFigGc4M10Jq01'
 }, {
   key: 'small',
   name: 'Small Group Training Session',

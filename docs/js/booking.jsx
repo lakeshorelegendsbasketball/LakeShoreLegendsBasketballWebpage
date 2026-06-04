@@ -12,7 +12,7 @@ const isoOf = (dt) => dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + p
    preference and emails the coach + family — no payment. */
 const SERVICES = [
   { key: '1on1', name: '1-on-1 Private Training Session', icon: 'user', meta: 'One athlete · 60 min', mode: 'dated', typeId: 'p1',
-    payLink: 'https://buy.stripe.com/fZu4gzeKn4f5c9ndiG9Zm02' },
+    payLink: 'https://buy.stripe.com/00w9AM0rxcFigGc4M10Jq01' },
   { key: 'small', name: 'Small Group Training Session', icon: 'users', meta: 'Bring your own group', mode: 'request' },
   { key: 'class', name: 'Group Basketball Classes', icon: 'graduation-cap', meta: 'Open enrollment', mode: 'soon' },
 ];

@@ -3,7 +3,7 @@
    Data persists in localStorage (browser-local). Real multi-device booking,
    email, and calendar sync require a backend handoff. Exposes window.LSL. */
 (function () {
-  const SEEDV = '5';
+  const SEEDV = '6';
   const K = {
     types: 'lsl_lessonTypes', locs: 'lsl_locations', slots: 'lsl_slots',
     books: 'lsl_bookings', pass: 'lsl_adminPass', web3: 'lsl_web3key', ver: 'lsl_seedv',
@@ -15,10 +15,10 @@
   const uid = () => Math.random().toString(36).slice(2, 9);
 
   const DEFAULT_TYPES = [
-    { id: 'p1', name: '60 Minute Private Training', size: '1-on-1', group: false, duration: 60, price: null, payLink: 'https://buy.stripe.com/fZu4gzeKn4f5c9ndiG9Zm02' },
-    { id: 'p2', name: '60 Minute 2-on-1 Training', size: '2-on-1', group: true, duration: 60, price: null, payLink: 'https://buy.stripe.com/14AfZh45J12Tddr5Qe9Zm03' },
-    { id: 'p3', name: '60 Minute 3-on-1 Training', size: '3-on-1', group: true, duration: 60, price: null, payLink: 'https://buy.stripe.com/9B6fZh9q312Ta1f2E29Zm04' },
-    { id: 'p4', name: '60 Minute 4+ Player Training', size: '4+ players', group: true, duration: 60, price: null, payLink: 'https://buy.stripe.com/4gM3cv6dR26Xa1fa6u9Zm05' },
+    { id: 'p1', name: '60 Minute Private Training', size: '1-on-1', group: false, duration: 60, price: null, payLink: 'https://buy.stripe.com/00w9AM0rxcFigGc4M10Jq01' },
+    { id: 'p2', name: '60 Minute 2-on-1 Training', size: '2-on-1', group: true, duration: 60, price: null, payLink: 'https://buy.stripe.com/28E9AMcaf48Mdu03HX0Jq00' },
+    { id: 'p3', name: '60 Minute 3-on-1 Training', size: '3-on-1', group: true, duration: 60, price: null, payLink: 'https://buy.stripe.com/8x2dR20rx9t64XuguJ0Jq02' },
+    { id: 'p4', name: '60 Minute 4+ Player Training', size: '4+ players', group: true, duration: 60, price: null, payLink: 'https://buy.stripe.com/14AcMYdejaxa89GemB0Jq03' },
   ];
   const DEFAULT_LOCS = [
     { id: 'pr', name: 'Park Ridge, IL', city: '' },
