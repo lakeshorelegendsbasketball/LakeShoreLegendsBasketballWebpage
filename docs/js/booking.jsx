@@ -25,23 +25,61 @@ const REQ_TIMES = (() => {
 async function notifyCoach(rec) {
   const key = LSL.getWeb3Key();
   if (!key) return;
-  const type = LSL.typeById(rec.typeId);
-  const base = { access_key: key, from_name: 'LakeShore Legends Booking', replyto: rec.email,
-    Parent_Guardian: rec.parent, Athlete: rec.athlete, Age_Grade: rec.age || '—',
-    Email: rec.email, Phone: rec.phone || '—', Focus: rec.focus || '—', Notes: rec.notes || '—' };
-  let extra;
+  const loc = rec.mode !== 'request' ? LSL.locById(rec.locId) : {};
+  let subject, message;
   if (rec.mode === 'request') {
-    extra = { subject: 'New Class Request — ' + rec.athlete + ' (' + rec.serviceName + ')',
-      Service: rec.serviceName, Players_In_Group: rec.players, Preferred_Day: DOW[rec.dow], Preferred_Time: LSL.fmtTime(rec.reqTime) };
+    subject = 'New Group Request — ' + rec.athlete + ' (' + rec.serviceName + ')';
+    message = [
+      '=== NEW GROUP TRAINING REQUEST ===',
+      '',
+      'SERVICE: ' + rec.serviceName,
+      'GROUP SIZE: ' + rec.players + ' players',
+      'PREFERRED DAY: ' + DOW[rec.dow] + 's',
+      'PREFERRED TIME: ' + LSL.fmtTime(rec.reqTime),
+      '',
+      '--- ATHLETE ---',
+      'Name: ' + rec.athlete,
+      'Age / Grade: ' + (rec.age || '—'),
+      '',
+      '--- PARENT / GUARDIAN ---',
+      'Name: ' + rec.parent,
+      'Email: ' + rec.email,
+      'Phone: ' + (rec.phone || '—'),
+      '',
+      '--- TRAINING DETAILS ---',
+      'Focus Areas / Goals: ' + (rec.focus || '—'),
+      'Additional Notes: ' + (rec.notes || '—'),
+    ].join('\n');
   } else {
-    const loc = LSL.locById(rec.locId);
-    extra = { subject: 'New Booking — ' + rec.athlete + ' (' + LSL.fmtDate(rec.date) + ')',
-      Service: rec.serviceName, Date: LSL.fmtDateLong(rec.date), Time: LSL.fmtTime(rec.time), Location: loc.name };
+    subject = '🏀 New 1-on-1 Booking — ' + rec.athlete + ' · ' + LSL.fmtDate(rec.date);
+    message = [
+      '=== NEW PRIVATE TRAINING BOOKING ===',
+      '',
+      'SERVICE: ' + rec.serviceName,
+      'DATE: ' + LSL.fmtDateLong(rec.date),
+      'TIME: ' + LSL.fmtTime(rec.time),
+      'LOCATION: ' + (loc.name || '—'),
+      '',
+      '--- ATHLETE ---',
+      'Name: ' + rec.athlete,
+      'Age / Grade: ' + (rec.age || '—'),
+      '',
+      '--- PARENT / GUARDIAN ---',
+      'Name: ' + rec.parent,
+      'Email: ' + rec.email,
+      'Phone: ' + (rec.phone || '—'),
+      '',
+      '--- TRAINING DETAILS ---',
+      'Focus Areas / Goals: ' + (rec.focus || '—'),
+      'Additional Notes: ' + (rec.notes || '—'),
+      '',
+      '⚠️  Status: Awaiting Stripe payment',
+    ].join('\n');
   }
   try {
     await fetch('https://api.web3forms.com/submit', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify(Object.assign(base, extra)),
+      body: JSON.stringify({ access_key: key, subject, message, from_name: 'LakeShore Legends Booking', replyto: rec.email }),
     });
   } catch (e) { /* non-blocking */ }
 }
