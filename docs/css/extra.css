@@ -629,3 +629,9 @@ a.lsl-btn { line-height: 1; }
 @media (max-width: 400px) {
   .lsl-admin { padding: 20px 16px; }
 }
+
+/* Hero copy — center on mobile */
+@media (max-width: 900px) {
+  .lsl-hero__copy { text-align: center; }
+  .lsl-hero__actions { justify-content: center; }
+}
