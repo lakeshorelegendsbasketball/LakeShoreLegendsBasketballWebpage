@@ -11,9 +11,10 @@ const isoOf = (dt) => dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + p
    forward to Stripe. The "request" service collects a day-of-week + time
    preference and emails the coach + family — no payment. */
 const SERVICES = [
-  { key: '1on1', name: '1-on-1 Private Training Session', icon: 'user', meta: 'One athlete · 60 min', mode: 'dated', typeId: 'p1' },
+  { key: '1on1', name: '1-on-1 Private Training Session', icon: 'user', meta: 'One athlete · 60 min', mode: 'dated', typeId: 'p1',
+    payLink: 'https://buy.stripe.com/fZu4gzeKn4f5c9ndiG9Zm02' },
   { key: 'small', name: 'Small Group Training Session', icon: 'users', meta: 'Bring your own group', mode: 'request' },
-  { key: 'class', name: 'Group Basketball Classes', icon: 'graduation-cap', meta: 'Open enrollment', mode: 'soon', typeId: 'p4' },
+  { key: 'class', name: 'Group Basketball Classes', icon: 'graduation-cap', meta: 'Open enrollment', mode: 'soon' },
 ];
 
 const REQ_TIMES = (() => {
@@ -118,7 +119,7 @@ function PrivateBooking() {
   // build descriptor for the form
   let desc = null;
   if (isReq && dow != null && reqTime) desc = { mode: 'request', serviceName: service.name, players, dow, reqTime };
-  else if (service && !isReq && slotId) desc = { mode: 'dated', serviceName: service.name, typeId: service.typeId, slotId };
+  else if (service && !isReq && slotId) desc = { mode: 'dated', serviceName: service.name, typeId: service.typeId, payLink: service.payLink, slotId };
 
   return (
     <section className="lsl-section lsl-section--cream" id="book" style={{ paddingTop: '44px' }}>
@@ -301,7 +302,7 @@ function BookingForm({ desc, onClose, onBooked }) {
   }, []);
 
   const isReq = desc.mode === 'request';
-  const type = isReq ? {} : LSL.typeById(desc.typeId);
+  const payLink = desc.payLink || null;
   const slot = isReq ? {} : (LSL.getSlots().find((s) => s.id === desc.slotId) || {});
   const loc = isReq ? {} : LSL.locById(slot.locId);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
@@ -345,8 +346,8 @@ function BookingForm({ desc, onClose, onBooked }) {
 
   // dated bookings forward to Stripe after the confirmation screen
   useEffectBk(() => {
-    if (result && result.mode === 'dated' && type.payLink) {
-      const id = setTimeout(() => { window.location.href = type.payLink; }, 4000);
+    if (result && result.mode === 'dated' && payLink) {
+      const id = setTimeout(() => { window.location.href = payLink; }, 4000);
       return () => clearTimeout(id);
     }
   }, [result]);
@@ -431,8 +432,8 @@ function BookingForm({ desc, onClose, onBooked }) {
               {result.serviceName} · {LSL.fmtDateLong(result.date)} · {LSL.fmtTime(result.time)} at {LSL.locById(result.locId).name}.<br />
               Redirecting you to secure Stripe payment…
             </p>
-            {type.payLink
-              ? <a className="lsl-btn lsl-btn--primary" href={type.payLink} style={{ marginBottom: 12 }}><i data-lucide="credit-card"></i> Complete Payment Now</a>
+            {payLink
+              ? <a className="lsl-btn lsl-btn--primary" href={payLink} style={{ marginBottom: 12 }}><i data-lucide="credit-card"></i> Complete Payment Now</a>
               : <div className="lsl-bknote"><i data-lucide="info"></i><span>Coach Gio will email a secure Stripe payment link to {result.email} shortly.</span></div>}
             <div className="lsl-bkdone__row">
               <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => LSL.downloadICS(result)}><i data-lucide="calendar-plus"></i> Add to calendar</button>

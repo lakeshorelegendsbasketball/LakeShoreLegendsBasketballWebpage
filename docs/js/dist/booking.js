@@ -17,7 +17,8 @@ const SERVICES = [{
   icon: 'user',
   meta: 'One athlete · 60 min',
   mode: 'dated',
-  typeId: 'p1'
+  typeId: 'p1',
+  payLink: 'https://buy.stripe.com/fZu4gzeKn4f5c9ndiG9Zm02'
 }, {
   key: 'small',
   name: 'Small Group Training Session',
@@ -29,8 +30,7 @@ const SERVICES = [{
   name: 'Group Basketball Classes',
   icon: 'graduation-cap',
   meta: 'Open enrollment',
-  mode: 'soon',
-  typeId: 'p4'
+  mode: 'soon'
 }];
 const REQ_TIMES = (() => {
   const out = [];
@@ -120,6 +120,7 @@ function PrivateBooking() {
     mode: 'dated',
     serviceName: service.name,
     typeId: service.typeId,
+    payLink: service.payLink,
     slotId
   };
   return /*#__PURE__*/React.createElement("section", {
@@ -375,7 +376,7 @@ function BookingForm({
     return () => window.removeEventListener('keydown', onKey);
   }, []);
   const isReq = desc.mode === 'request';
-  const type = isReq ? {} : LSL.typeById(desc.typeId);
+  const payLink = desc.payLink || null;
   const slot = isReq ? {} : LSL.getSlots().find(s => s.id === desc.slotId) || {};
   const loc = isReq ? {} : LSL.locById(slot.locId);
   const set = k => e => setForm({
@@ -459,9 +460,9 @@ function BookingForm({
 
   // dated bookings forward to Stripe after the confirmation screen
   useEffectBk(() => {
-    if (result && result.mode === 'dated' && type.payLink) {
+    if (result && result.mode === 'dated' && payLink) {
       const id = setTimeout(() => {
-        window.location.href = type.payLink;
+        window.location.href = payLink;
       }, 4000);
       return () => clearTimeout(id);
     }
@@ -618,9 +619,9 @@ function BookingForm({
     style: {
       marginTop: 0
     }
-  }, result.serviceName, " \xB7 ", LSL.fmtDateLong(result.date), " \xB7 ", LSL.fmtTime(result.time), " at ", LSL.locById(result.locId).name, ".", /*#__PURE__*/React.createElement("br", null), "Redirecting you to secure Stripe payment\u2026"), type.payLink ? /*#__PURE__*/React.createElement("a", {
+  }, result.serviceName, " \xB7 ", LSL.fmtDateLong(result.date), " \xB7 ", LSL.fmtTime(result.time), " at ", LSL.locById(result.locId).name, ".", /*#__PURE__*/React.createElement("br", null), "Redirecting you to secure Stripe payment\u2026"), payLink ? /*#__PURE__*/React.createElement("a", {
     className: "lsl-btn lsl-btn--primary",
-    href: type.payLink,
+    href: payLink,
     style: {
       marginBottom: 12
     }
