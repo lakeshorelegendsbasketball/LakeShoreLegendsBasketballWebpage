@@ -113,7 +113,7 @@ function CoachesCode() {
     className: "lsl-codes-col__head"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "check-circle"
-  }), /*#__PURE__*/React.createElement("span", null, "Coaches & Volunteers", /*#__PURE__*/React.createElement("br", null), "Will")), /*#__PURE__*/React.createElement("ul", {
+  }), /*#__PURE__*/React.createElement("span", null, "Coaches & Volunteers Will")), /*#__PURE__*/React.createElement("ul", {
     className: "lsl-codes-list lsl-codes-list--dark"
   }, will.map((item, i) => /*#__PURE__*/React.createElement("li", {
     key: i
@@ -125,7 +125,7 @@ function CoachesCode() {
     className: "lsl-codes-col__head lsl-codes-col__head--neg"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "x-circle"
-  }), /*#__PURE__*/React.createElement("span", null, "Coaches & Volunteers", /*#__PURE__*/React.createElement("br", null), "Will Not")), /*#__PURE__*/React.createElement("ul", {
+  }), /*#__PURE__*/React.createElement("span", null, "Coaches & Volunteers Will Not")), /*#__PURE__*/React.createElement("ul", {
     className: "lsl-codes-list lsl-codes-list--dark"
   }, willNot.map((item, i) => /*#__PURE__*/React.createElement("li", {
     key: i
@@ -160,7 +160,7 @@ function ParentsCode() {
     className: "lsl-codes-col__head"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "check-circle"
-  }), /*#__PURE__*/React.createElement("span", null, "Parents & Spectators", /*#__PURE__*/React.createElement("br", null), "Are Expected To")), /*#__PURE__*/React.createElement("ul", {
+  }), /*#__PURE__*/React.createElement("span", null, "Parents & Spectators Are Expected To")), /*#__PURE__*/React.createElement("ul", {
     className: "lsl-codes-list"
   }, expected.map((item, i) => /*#__PURE__*/React.createElement("li", {
     key: i
@@ -172,7 +172,7 @@ function ParentsCode() {
     className: "lsl-codes-col__head lsl-codes-col__head--neg"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "x-circle"
-  }), /*#__PURE__*/React.createElement("span", null, "Parents & Spectators", /*#__PURE__*/React.createElement("br", null), "Will Not")), /*#__PURE__*/React.createElement("ul", {
+  }), /*#__PURE__*/React.createElement("span", null, "Parents & Spectators Will Not")), /*#__PURE__*/React.createElement("ul", {
     className: "lsl-codes-list"
   }, willNot.map((item, i) => /*#__PURE__*/React.createElement("li", {
     key: i

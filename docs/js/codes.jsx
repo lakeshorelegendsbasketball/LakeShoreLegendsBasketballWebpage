@@ -101,13 +101,13 @@ function CoachesCode() {
         <p className="lsl-codes-intro lsl-codes-intro--light lsl-codes-intro--wide">Coaches and volunteers are leaders within the LakeShore Legends organization —<br />Held to the highest standards of professionalism, preparation, and conduct. The floor starts with them.</p>
         <div className="lsl-codes-cols">
           <div className="lsl-codes-col lsl-codes-col--will-dark">
-            <div className="lsl-codes-col__head"><i data-lucide="check-circle"></i><span>Coaches &amp; Volunteers<br/>Will</span></div>
+            <div className="lsl-codes-col__head"><i data-lucide="check-circle"></i><span>Coaches &amp; Volunteers Will</span></div>
             <ul className="lsl-codes-list lsl-codes-list--dark">
               {will.map((item, i) => <li key={i}><Star6 size={12} />{item}</li>)}
             </ul>
           </div>
           <div className="lsl-codes-col lsl-codes-col--willnot-dark">
-            <div className="lsl-codes-col__head lsl-codes-col__head--neg"><i data-lucide="x-circle"></i><span>Coaches &amp; Volunteers<br/>Will Not</span></div>
+            <div className="lsl-codes-col__head lsl-codes-col__head--neg"><i data-lucide="x-circle"></i><span>Coaches &amp; Volunteers Will Not</span></div>
             <ul className="lsl-codes-list lsl-codes-list--dark">
               {willNot.map((item, i) => <li key={i}><Star6 size={12} />{item}</li>)}
             </ul>
@@ -143,13 +143,13 @@ function ParentsCode() {
         <p className="lsl-codes-intro lsl-codes-intro--wide">LakeShore Legends views parents and families as partners in the long-term youth development process.<br />Support, trust, and alignment are essential to athlete growth, and what makes our gyms feel like home.</p>
         <div className="lsl-codes-cols">
           <div className="lsl-codes-col lsl-codes-col--will">
-            <div className="lsl-codes-col__head"><i data-lucide="check-circle"></i><span>Parents &amp; Spectators<br/>Are Expected To</span></div>
+            <div className="lsl-codes-col__head"><i data-lucide="check-circle"></i><span>Parents &amp; Spectators Are Expected To</span></div>
             <ul className="lsl-codes-list">
               {expected.map((item, i) => <li key={i}><Star6 size={12} />{item}</li>)}
             </ul>
           </div>
           <div className="lsl-codes-col lsl-codes-col--willnot">
-            <div className="lsl-codes-col__head lsl-codes-col__head--neg"><i data-lucide="x-circle"></i><span>Parents &amp; Spectators<br/>Will Not</span></div>
+            <div className="lsl-codes-col__head lsl-codes-col__head--neg"><i data-lucide="x-circle"></i><span>Parents &amp; Spectators Will Not</span></div>
             <ul className="lsl-codes-list">
               {willNot.map((item, i) => <li key={i}><Star6 size={12} />{item}</li>)}
             </ul>
