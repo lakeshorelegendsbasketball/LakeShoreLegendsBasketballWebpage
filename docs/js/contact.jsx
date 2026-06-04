@@ -93,7 +93,7 @@ function InfoCard() {
   const rows = [
     ['mail', 'Email', <a href="mailto:coachgiopag@gmail.com">coachgiopag@gmail.com</a>],
     ['phone', 'Phone', <a href="tel:+12244259490">(224) 425-9490</a>],
-    ['map-pin', 'Based In', 'Park Ridge, IL · Northern Chicago Suburbs'],
+    ['map-pin', 'Based In', 'Park Ridge, IL & Mundelein, IL'],
     ['clock', 'Response Time', '1–2 business days'],
   ];
   const socials = [

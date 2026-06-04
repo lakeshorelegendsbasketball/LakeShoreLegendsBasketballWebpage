@@ -144,7 +144,7 @@ function InfoCard() {
     href: "mailto:coachgiopag@gmail.com"
   }, "coachgiopag@gmail.com")], ['phone', 'Phone', /*#__PURE__*/React.createElement("a", {
     href: "tel:+12244259490"
-  }, "(224) 425-9490")], ['map-pin', 'Based In', 'Park Ridge, IL · Northern Chicago Suburbs'], ['clock', 'Response Time', '1–2 business days']];
+  }, "(224) 425-9490")], ['map-pin', 'Based In', 'Park Ridge, IL & Mundelein, IL'], ['clock', 'Response Time', '1–2 business days']];
   const socials = [['instagram', 'https://www.instagram.com/coachgiopag/', 'Instagram'], ['x', 'https://x.com/CoachGioPag', 'X'], ['linkedin', 'https://www.linkedin.com/in/gio-paganis/', 'LinkedIn']];
   return /*#__PURE__*/React.createElement("div", {
     className: "lsl-infocard"
