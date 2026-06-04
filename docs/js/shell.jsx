@@ -136,7 +136,6 @@ function Footer() {
       <div className="lsl-footer__top">
         <div className="lsl-footer__brand">
           <img src="assets/badge-crest.png" alt="Lake Shore Legends" style={{ height: 86 }} />
-          <p className="lsl-footer__tag">Trainers First.<br/>Coaches Always.</p>
         </div>
         <div className="lsl-footer__cols">
           {cols.map(([h, links]) => (

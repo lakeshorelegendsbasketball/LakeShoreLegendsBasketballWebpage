@@ -266,9 +266,7 @@ function Footer() {
     style: {
       height: 86
     }
-  }), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-footer__tag"
-  }, "Trainers First.", /*#__PURE__*/React.createElement("br", null), "Coaches Always.")), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "lsl-footer__cols"
   }, cols.map(([h, links]) => /*#__PURE__*/React.createElement("div", {
     key: h,
