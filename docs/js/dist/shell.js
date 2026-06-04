@@ -259,14 +259,6 @@ function Footer() {
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-footer__top"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-footer__brand"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/badge-crest.png",
-    alt: "Lake Shore Legends",
-    style: {
-      height: 86
-    }
-  })), /*#__PURE__*/React.createElement("div", {
     className: "lsl-footer__cols"
   }, cols.map(([h, links]) => /*#__PURE__*/React.createElement("div", {
     key: h,
