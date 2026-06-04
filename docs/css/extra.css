@@ -10,7 +10,7 @@
 .lsl-btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
 a.lsl-btn { line-height: 1; }
 .lsl-footer__top { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
-.lsl-footer__logoside { height: 86px; flex: none; }
+.lsl-footer__logoside { height: 120px; flex: none; }
 .lsl-footer__cols { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; flex: 1; }
 .lsl-footer__col { text-align: center; }
 .lsl-footer__link { text-align: center; }
