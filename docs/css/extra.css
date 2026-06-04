@@ -642,8 +642,8 @@ a.lsl-btn { line-height: 1; }
   .lsl-scroll { overflow-x: hidden; }
 
   /* Cards & mission grid — 1 column (override kit.css 2-col) */
-  .lsl-cards3 { grid-template-columns: 1fr; }
-  .lsl-mvgrid { grid-template-columns: 1fr; }
+  .lsl-cards3 { grid-template-columns: 1fr !important; }
+  .lsl-mvgrid { grid-template-columns: 1fr !important; }
 
   /* Page-level heroes — center all inner text */
   .lsl-pagehero__inner { text-align: center; }
