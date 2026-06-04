@@ -194,7 +194,10 @@ function CommPolicy() {
   }, "12\u201324"), /*#__PURE__*/React.createElement("span", {
     className: "lsl-codes-comm__unit"
   }, "Hours")), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-codes-comm__body"
+    className: "lsl-codes-comm__body",
+    style: {
+      textAlign: 'center'
+    }
   }, /*#__PURE__*/React.createElement("span", {
     className: "lsl-codes-eyebrow",
     style: {
@@ -213,7 +216,7 @@ function CommPolicy() {
       fontSize: 15,
       lineHeight: 1.65,
       maxWidth: 680,
-      margin: '0 0 28px'
+      margin: '0 auto 28px'
     }
   }, "If a parent or guardian has a concern involving a member of the coaching staff immediately following a game, a 12\u201324 hour waiting period is required before any communication occurs. This policy exists to promote thoughtful, constructive dialogue", /*#__PURE__*/React.createElement("br", null), "and prevent emotionally driven interactions."), /*#__PURE__*/React.createElement("div", {
     style: {
