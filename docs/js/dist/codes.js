@@ -235,7 +235,7 @@ function CodesClosing() {
     if (window.lucide) window.lucide.createIcons();
   }, []);
   return /*#__PURE__*/React.createElement("section", {
-    className: "lsl-section lsl-section--ink",
+    className: "lsl-section lsl-section--cream",
     style: {
       textAlign: 'center'
     }
@@ -245,12 +245,12 @@ function CodesClosing() {
       maxWidth: 900
     }
   }, /*#__PURE__*/React.createElement("h2", {
-    className: "lsl-codes-sh lsl-codes-sh--light lsl-codes-sh--xl"
+    className: "lsl-codes-sh lsl-codes-sh--xl"
   }, "Know the standards.", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
     className: "lsl-codes-orange"
   }, "Live them.")), /*#__PURE__*/React.createElement("p", {
     style: {
-      color: 'rgba(255,255,255,.65)',
+      color: 'var(--fg2)',
       fontSize: 15,
       lineHeight: 1.65,
       margin: '20px auto 36px',

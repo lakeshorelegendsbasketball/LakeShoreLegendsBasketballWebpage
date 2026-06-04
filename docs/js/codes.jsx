@@ -188,12 +188,12 @@ function CommPolicy() {
 function CodesClosing() {
   React.useEffect(() => { if (window.lucide) window.lucide.createIcons(); }, []);
   return (
-    <section className="lsl-section lsl-section--ink" style={{ textAlign: 'center' }}>
+    <section className="lsl-section lsl-section--cream" style={{ textAlign: 'center' }}>
       <div className="lsl-wrap" style={{ maxWidth: 900 }}>
-        <h2 className="lsl-codes-sh lsl-codes-sh--light lsl-codes-sh--xl">
+        <h2 className="lsl-codes-sh lsl-codes-sh--xl">
           Know the standards.<br /><span className="lsl-codes-orange">Live them.</span>
         </h2>
-        <p style={{ color: 'rgba(255,255,255,.65)', fontSize: 15, lineHeight: 1.65, margin: '20px auto 36px', maxWidth: 720 }}>
+        <p style={{ color: 'var(--fg2)', fontSize: 15, lineHeight: 1.65, margin: '20px auto 36px', maxWidth: 720 }}>
           These codes apply the moment you walk into the gym — for every athlete, coach, volunteer, parent, and spectator wearing or watching LakeShore Legends.
         </p>
         <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
