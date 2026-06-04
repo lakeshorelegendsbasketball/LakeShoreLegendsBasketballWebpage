@@ -126,7 +126,7 @@ function CTA({ title = 'Turn Your Athlete Into a Legend', sub = 'Get in touch to
 
 function Footer() {
   const cols = [
-    ['Connect With Us', [['Contact Us', 'contact.html'], ['Our Programs', 'training.html'], ['Training', 'training.html'], ['Meet Our Coaches', 'about.html']]],
+    ['Connect With Us', [['Contact Us', 'contact.html'], ['Training Programs', 'training.html'], ['Meet Our Coaches', 'about.html']]],
     ['Quick Links', [['Upcoming Events', 'training.html'], ['Alumni Success Stories', 'alumni.html'], ['Jr. Mustangs Feeder', 'https://mundyball.com/feeder-home']]],
     ['Resources', [['Code of Conduct', '#'], ['Training Schedule', 'training.html'], ['FAQs', 'contact.html']]],
     ['Follow Us', [['Twitter / X', '#'], ['Instagram', '#'], ['LinkedIn', '#']]],
