@@ -33,65 +33,30 @@ async function notifyCoach(rec) {
   const loc = rec.mode !== 'request' ? LSL.locById(rec.locId) : {};
   let subject, message;
   if (rec.mode === 'request') {
-    subject = 'New Group Request — ' + rec.athlete + ' (' + rec.serviceName + ')';
+    subject = 'New Group Request — ' + rec.athlete;
     message = [
-      '=== NEW GROUP TRAINING REQUEST ===',
-      '',
-      'SERVICE: ' + rec.serviceName,
-      'GROUP SIZE: ' + rec.players + ' players',
-      'PREFERRED DAY: ' + DOW[rec.dow] + 's',
-      'PREFERRED TIME: ' + LSL.fmtTime(rec.reqTime),
-      '',
-      '--- ATHLETE ---',
-      'Name: ' + rec.athlete,
-      'Age / Grade: ' + (rec.age || '—'),
-      '',
-      '--- PARENT / GUARDIAN ---',
-      'Name: ' + rec.parent,
-      'Email: ' + rec.email,
-      'Phone: ' + (rec.phone || '—'),
-      '',
-      '--- TRAINING DETAILS ---',
-      'Focus Areas / Goals: ' + (rec.focus || '—'),
-      'Additional Notes: ' + (rec.notes || '—'),
-      ...(rec.extras && rec.extras.length > 0 ? [
-        '',
-        '--- ADDITIONAL PARTICIPANTS ---',
-        ...rec.extras.flatMap((ex, i) => [
-          '',
-          'Participant ' + (i + 2) + ':',
-          '  Athlete: ' + (ex.athlete || '—'),
-          '  Parent / Guardian: ' + (ex.parent || '—'),
-          '  Email: ' + (ex.email || '—'),
-          '  Phone: ' + (ex.phone || '—'),
-        ]),
-      ] : []),
-    ].join('\n');
+      'Group Request: ' + rec.athlete,
+      rec.serviceName + ' · ' + rec.players + ' players',
+      DOW[rec.dow] + 's · ' + LSL.fmtTime(rec.reqTime),
+      'Parent: ' + rec.parent,
+      rec.email + (rec.phone ? ' · ' + rec.phone : ''),
+      rec.age ? 'Age/Grade: ' + rec.age : '',
+      rec.focus ? 'Focus: ' + rec.focus : '',
+      rec.notes ? 'Notes: ' + rec.notes : '',
+    ].filter(Boolean).join('\n');
   } else {
-    subject = '🏀 New 1-on-1 Booking — ' + rec.athlete + ' · ' + LSL.fmtDate(rec.date);
+    subject = 'New Booking — ' + rec.athlete + ' · ' + LSL.fmtDate(rec.date);
     message = [
-      '=== NEW PRIVATE TRAINING BOOKING ===',
-      '',
-      'SERVICE: ' + rec.serviceName,
-      'DATE: ' + LSL.fmtDateLong(rec.date),
-      'TIME: ' + LSL.fmtTime(rec.time),
-      'LOCATION: ' + (loc.name || '—'),
-      '',
-      '--- ATHLETE ---',
-      'Name: ' + rec.athlete,
-      'Age / Grade: ' + (rec.age || '—'),
-      '',
-      '--- PARENT / GUARDIAN ---',
-      'Name: ' + rec.parent,
-      'Email: ' + rec.email,
-      'Phone: ' + (rec.phone || '—'),
-      '',
-      '--- TRAINING DETAILS ---',
-      'Focus Areas / Goals: ' + (rec.focus || '—'),
-      'Additional Notes: ' + (rec.notes || '—'),
-      '',
-      '⚠️  Status: Awaiting Stripe payment',
-    ].join('\n');
+      'New Booking: ' + rec.athlete,
+      rec.serviceName,
+      LSL.fmtDate(rec.date) + ' · ' + LSL.fmtTime(rec.time),
+      loc.name || '',
+      'Parent: ' + rec.parent,
+      rec.email + (rec.phone ? ' · ' + rec.phone : ''),
+      rec.age ? 'Age/Grade: ' + rec.age : '',
+      rec.focus ? 'Focus: ' + rec.focus : '',
+      rec.notes ? 'Notes: ' + rec.notes : '',
+    ].filter(Boolean).join('\n');
   }
   try {
     await fetch('https://api.web3forms.com/submit', {
