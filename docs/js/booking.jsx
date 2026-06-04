@@ -50,6 +50,18 @@ async function notifyCoach(rec) {
       '--- TRAINING DETAILS ---',
       'Focus Areas / Goals: ' + (rec.focus || '—'),
       'Additional Notes: ' + (rec.notes || '—'),
+      ...(rec.extras && rec.extras.length > 0 ? [
+        '',
+        '--- ADDITIONAL PARTICIPANTS ---',
+        ...rec.extras.flatMap((ex, i) => [
+          '',
+          'Participant ' + (i + 2) + ':',
+          '  Athlete: ' + (ex.athlete || '—'),
+          '  Parent / Guardian: ' + (ex.parent || '—'),
+          '  Email: ' + (ex.email || '—'),
+          '  Phone: ' + (ex.phone || '—'),
+        ]),
+      ] : []),
     ].join('\n');
   } else {
     subject = '🏀 New 1-on-1 Booking — ' + rec.athlete + ' · ' + LSL.fmtDate(rec.date);
@@ -290,9 +302,14 @@ function Calendar({ offset, onOffset, openDates, selected, onPick, todayIso }) {
 
 function BookingForm({ desc, onClose, onBooked }) {
   const [form, setForm] = useStateBk({ parent: '', athlete: '', age: '', email: '', phone: '', focus: '', notes: '' });
+  const [extras, setExtras] = useStateBk([]);
   const [errs, setErrs] = useStateBk({});
   const [busy, setBusy] = useStateBk(false);
   const [result, setResult] = useStateBk(null);
+
+  const addExtra = () => setExtras([...extras, { parent: '', athlete: '', email: '', phone: '' }]);
+  const removeExtra = (i) => setExtras(extras.filter((_, idx) => idx !== i));
+  const setExtra = (i, k) => (e) => setExtras(extras.map((ex, idx) => idx === i ? { ...ex, [k]: e.target.value } : ex));
 
   useEffectBk(() => { if (window.lucide) window.lucide.createIcons(); }, [result]);
   useEffectBk(() => {
@@ -325,7 +342,7 @@ function BookingForm({ desc, onClose, onBooked }) {
     if (isReq) {
       rec = { id: LSL.uid(), mode: 'request', serviceName: desc.serviceName, players: desc.players, dow: desc.dow, reqTime: desc.reqTime,
         parent: form.parent, athlete: form.athlete, age: form.age, email: form.email, phone: form.phone,
-        focus: form.focus, notes: form.notes, created: new Date().toISOString(), status: 'requested' };
+        focus: form.focus, notes: form.notes, extras, created: new Date().toISOString(), status: 'requested' };
       LSL.setBooks([...LSL.getBooks(), rec]);
     } else {
       const slots = LSL.getSlots();
@@ -393,6 +410,35 @@ function BookingForm({ desc, onClose, onBooked }) {
               <label>Additional Notes</label>
               <textarea className="lsl-textarea" value={form.notes} onChange={set('notes')} placeholder="Anything Coach Gio should know" style={{ minHeight: 76 }}></textarea>
             </div>
+            {isReq && (
+              <div className="lsl-extras">
+                {extras.map((ex, i) => (
+                  <div className="lsl-extra" key={i}>
+                    <div className="lsl-extra__head">
+                      <span>Participant {i + 2}</span>
+                      <button type="button" className="lsl-extra__remove" onClick={() => removeExtra(i)} aria-label="Remove">
+                        <i data-lucide="x"></i>
+                      </button>
+                    </div>
+                    <div className="lsl-field lsl-field--row">
+                      <div><label>Parent / Guardian Name</label>
+                        <input className="lsl-input" value={ex.parent} onChange={setExtra(i, 'parent')} placeholder="Jane Smith" /></div>
+                      <div><label>Athlete Name</label>
+                        <input className="lsl-input" value={ex.athlete} onChange={setExtra(i, 'athlete')} placeholder="Alex Smith" /></div>
+                    </div>
+                    <div className="lsl-field lsl-field--row">
+                      <div><label>Email</label>
+                        <input className="lsl-input" type="email" value={ex.email} onChange={setExtra(i, 'email')} placeholder="you@email.com" /></div>
+                      <div><label>Phone</label>
+                        <input className="lsl-input" value={ex.phone} onChange={setExtra(i, 'phone')} placeholder="(555) 555-5555" /></div>
+                    </div>
+                  </div>
+                ))}
+                <button type="button" className="lsl-btn lsl-btn--ghost lsl-btn--sm lsl-extras__add" onClick={addExtra}>
+                  <i data-lucide="user-plus"></i> Add Another Participant
+                </button>
+              </div>
+            )}
             <div className="lsl-bknote" style={{ marginBottom: 14 }}>
               <i data-lucide={isReq ? 'mail' : 'shield-check'}></i>
               {isReq

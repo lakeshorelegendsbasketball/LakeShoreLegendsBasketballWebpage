@@ -44,7 +44,7 @@ async function notifyCoach(rec) {
   let subject, message;
   if (rec.mode === 'request') {
     subject = 'New Group Request — ' + rec.athlete + ' (' + rec.serviceName + ')';
-    message = ['=== NEW GROUP TRAINING REQUEST ===', '', 'SERVICE: ' + rec.serviceName, 'GROUP SIZE: ' + rec.players + ' players', 'PREFERRED DAY: ' + DOW[rec.dow] + 's', 'PREFERRED TIME: ' + LSL.fmtTime(rec.reqTime), '', '--- ATHLETE ---', 'Name: ' + rec.athlete, 'Age / Grade: ' + (rec.age || '—'), '', '--- PARENT / GUARDIAN ---', 'Name: ' + rec.parent, 'Email: ' + rec.email, 'Phone: ' + (rec.phone || '—'), '', '--- TRAINING DETAILS ---', 'Focus Areas / Goals: ' + (rec.focus || '—'), 'Additional Notes: ' + (rec.notes || '—')].join('\n');
+    message = ['=== NEW GROUP TRAINING REQUEST ===', '', 'SERVICE: ' + rec.serviceName, 'GROUP SIZE: ' + rec.players + ' players', 'PREFERRED DAY: ' + DOW[rec.dow] + 's', 'PREFERRED TIME: ' + LSL.fmtTime(rec.reqTime), '', '--- ATHLETE ---', 'Name: ' + rec.athlete, 'Age / Grade: ' + (rec.age || '—'), '', '--- PARENT / GUARDIAN ---', 'Name: ' + rec.parent, 'Email: ' + rec.email, 'Phone: ' + (rec.phone || '—'), '', '--- TRAINING DETAILS ---', 'Focus Areas / Goals: ' + (rec.focus || '—'), 'Additional Notes: ' + (rec.notes || '—'), ...(rec.extras && rec.extras.length > 0 ? ['', '--- ADDITIONAL PARTICIPANTS ---', ...rec.extras.flatMap((ex, i) => ['', 'Participant ' + (i + 2) + ':', '  Athlete: ' + (ex.athlete || '—'), '  Parent / Guardian: ' + (ex.parent || '—'), '  Email: ' + (ex.email || '—'), '  Phone: ' + (ex.phone || '—')])] : [])].join('\n');
   } else {
     subject = '🏀 New 1-on-1 Booking — ' + rec.athlete + ' · ' + LSL.fmtDate(rec.date);
     message = ['=== NEW PRIVATE TRAINING BOOKING ===', '', 'SERVICE: ' + rec.serviceName, 'DATE: ' + LSL.fmtDateLong(rec.date), 'TIME: ' + LSL.fmtTime(rec.time), 'LOCATION: ' + (loc.name || '—'), '', '--- ATHLETE ---', 'Name: ' + rec.athlete, 'Age / Grade: ' + (rec.age || '—'), '', '--- PARENT / GUARDIAN ---', 'Name: ' + rec.parent, 'Email: ' + rec.email, 'Phone: ' + (rec.phone || '—'), '', '--- TRAINING DETAILS ---', 'Focus Areas / Goals: ' + (rec.focus || '—'), 'Additional Notes: ' + (rec.notes || '—'), '', '⚠️  Status: Awaiting Stripe payment'].join('\n');
@@ -362,9 +362,21 @@ function BookingForm({
     focus: '',
     notes: ''
   });
+  const [extras, setExtras] = useStateBk([]);
   const [errs, setErrs] = useStateBk({});
   const [busy, setBusy] = useStateBk(false);
   const [result, setResult] = useStateBk(null);
+  const addExtra = () => setExtras([...extras, {
+    parent: '',
+    athlete: '',
+    email: '',
+    phone: ''
+  }]);
+  const removeExtra = i => setExtras(extras.filter((_, idx) => idx !== i));
+  const setExtra = (i, k) => e => setExtras(extras.map((ex, idx) => idx === i ? {
+    ...ex,
+    [k]: e.target.value
+  } : ex));
   useEffectBk(() => {
     if (window.lucide) window.lucide.createIcons();
   }, [result]);
@@ -412,6 +424,7 @@ function BookingForm({
         phone: form.phone,
         focus: form.focus,
         notes: form.notes,
+        extras,
         created: new Date().toISOString(),
         status: 'requested'
       };
@@ -559,7 +572,52 @@ function BookingForm({
     style: {
       minHeight: 76
     }
-  })), /*#__PURE__*/React.createElement("div", {
+  })), isReq && /*#__PURE__*/React.createElement("div", {
+    className: "lsl-extras"
+  }, extras.map((ex, i) => /*#__PURE__*/React.createElement("div", {
+    className: "lsl-extra",
+    key: i
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-extra__head"
+  }, /*#__PURE__*/React.createElement("span", null, "Participant ", i + 2), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "lsl-extra__remove",
+    onClick: () => removeExtra(i),
+    "aria-label": "Remove"
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "x"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-field lsl-field--row"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Parent / Guardian Name"), /*#__PURE__*/React.createElement("input", {
+    className: "lsl-input",
+    value: ex.parent,
+    onChange: setExtra(i, 'parent'),
+    placeholder: "Jane Smith"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Athlete Name"), /*#__PURE__*/React.createElement("input", {
+    className: "lsl-input",
+    value: ex.athlete,
+    onChange: setExtra(i, 'athlete'),
+    placeholder: "Alex Smith"
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-field lsl-field--row"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Email"), /*#__PURE__*/React.createElement("input", {
+    className: "lsl-input",
+    type: "email",
+    value: ex.email,
+    onChange: setExtra(i, 'email'),
+    placeholder: "you@email.com"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Phone"), /*#__PURE__*/React.createElement("input", {
+    className: "lsl-input",
+    value: ex.phone,
+    onChange: setExtra(i, 'phone'),
+    placeholder: "(555) 555-5555"
+  }))))), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "lsl-btn lsl-btn--ghost lsl-btn--sm lsl-extras__add",
+    onClick: addExtra
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "user-plus"
+  }), " Add Another Participant")), /*#__PURE__*/React.createElement("div", {
     className: "lsl-bknote",
     style: {
       marginBottom: 14

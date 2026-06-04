@@ -406,6 +406,13 @@ a.lsl-btn { line-height: 1; }
 .lsl-bkdone__row { display: flex; justify-content: center; gap: 12px; margin: 8px 0 18px; flex-wrap: wrap; }
 .lsl-bknote { display: flex; gap: 10px; align-items: flex-start; text-align: left; background: var(--sky-100); border-radius: var(--r-md); padding: 14px 16px; font-size: 13.5px; line-height: 1.5; color: var(--navy-800); }
 .lsl-bknote i { width: 18px; height: 18px; flex: none; margin-top: 1px; color: var(--navy-800); }
+.lsl-extras { display: flex; flex-direction: column; gap: 0; margin-bottom: 4px; }
+.lsl-extras__add { align-self: flex-start; margin-bottom: 12px; }
+.lsl-extra { border: 1.5px dashed var(--sky-300); border-radius: var(--r-lg); padding: 16px 16px 4px; margin-bottom: 12px; }
+.lsl-extra__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 600; font-size: 13px; color: var(--fg2); }
+.lsl-extra__remove { background: none; border: none; cursor: pointer; padding: 4px; color: var(--fg3); display: flex; align-items: center; border-radius: var(--r-sm); }
+.lsl-extra__remove:hover { color: var(--legend-orange); background: var(--orange-100); }
+.lsl-extra__remove i { width: 15px; height: 15px; }
 
 /* ---------- coach admin ---------- */
 .lsl-admin__login { text-align: center; padding: 12px 8px; }
