@@ -13,7 +13,7 @@ a.lsl-btn { line-height: 1; }
 .lsl-footer__logoside { height: 120px; }
 .lsl-footer__logoside:first-child { justify-self: start; }
 .lsl-footer__logoside:last-child { justify-self: end; }
-.lsl-footer__cols { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
+.lsl-footer__cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
 .lsl-footer__col { text-align: center; }
 .lsl-footer__link { text-align: center; }
 
