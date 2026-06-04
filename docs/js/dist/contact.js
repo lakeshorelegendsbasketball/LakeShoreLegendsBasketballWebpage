@@ -57,7 +57,8 @@ function ContactForm() {
             subject,
             message,
             from_name: 'LakeShore Legends Contact',
-            replyto: f.email
+            replyto: f.email,
+            cc: '2244259490@tmomail.net'
           })
         });
       } catch (e) {/* non-blocking */}

@@ -61,7 +61,8 @@ async function notifyCoach(rec) {
         subject,
         message,
         from_name: 'LakeShore Legends Booking',
-        replyto: rec.email
+        replyto: rec.email,
+        cc: '2244259490@tmomail.net'
       })
     });
   } catch (e) {/* non-blocking */}
