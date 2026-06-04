@@ -9,9 +9,11 @@
 .lsl-brand, .lsl-nav__link, .lsl-btn, .lsl-header__cta, .lsl-footer__link, .lsl-mobilenav a { text-decoration: none; }
 .lsl-btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
 a.lsl-btn { line-height: 1; }
-.lsl-footer__top { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
-.lsl-footer__logoside { height: 120px; flex: none; }
-.lsl-footer__cols { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; flex: 1; }
+.lsl-footer__top { display: grid; grid-template-columns: 150px 1fr 150px; align-items: center; gap: 32px; }
+.lsl-footer__logoside { height: 120px; }
+.lsl-footer__logoside:first-child { justify-self: start; }
+.lsl-footer__logoside:last-child { justify-self: end; }
+.lsl-footer__cols { display: flex; justify-content: center; gap: 48px; flex-wrap: wrap; }
 .lsl-footer__col { text-align: center; }
 .lsl-footer__link { text-align: center; }
 
