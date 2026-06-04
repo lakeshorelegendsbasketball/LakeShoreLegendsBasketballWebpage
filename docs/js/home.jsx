@@ -85,7 +85,7 @@ function Philosophy() {
         <div>
           <img className="lsl-photo" src="uploads/S4A6259-scaled.jpg" alt="LakeShore Legends athlete defending on the ball"
             style={{ width: '100%', height: '420px', objectFit: 'cover', borderRadius: '18px', display: 'block' }} />
-          <p className="lsl-pullquote" style={{ marginTop: '20px', textAlign: 'center', whiteSpace: 'nowrap' }}>&ldquo;We don&rsquo;t just play the game. We study it.&rdquo;</p>
+          <p className="lsl-pullquote" style={{ marginTop: '20px', textAlign: 'center' }}>&ldquo;We don&rsquo;t just play the game. We study it.&rdquo;</p>
         </div>
       </div>
     </section>

@@ -635,3 +635,28 @@ a.lsl-btn { line-height: 1; }
   .lsl-hero__copy { text-align: center; }
   .lsl-hero__actions { justify-content: center; }
 }
+
+/* Mobile layout & centering */
+@media (max-width: 900px) {
+  /* Prevent horizontal overflow */
+  .lsl-scroll { overflow-x: hidden; }
+
+  /* Cards & mission grid — 1 column (override kit.css 2-col) */
+  .lsl-cards3 { grid-template-columns: 1fr; }
+  .lsl-mvgrid { grid-template-columns: 1fr; }
+
+  /* Page-level heroes — center all inner text */
+  .lsl-pagehero__inner { text-align: center; }
+  .lsl-pagehero__inner .lsl-lede { text-align: center; }
+
+  /* Section headings — center on mobile */
+  .lsl-secthead { text-align: center; }
+  .lsl-secthead .lsl-h2,
+  .lsl-secthead .lsl-body { text-align: center; }
+
+  /* Philosophy / split-col text divs — center when stacked */
+  .lsl-philosophy > div { text-align: center; }
+
+  /* Footer logo — center on mobile (override justify-self: start) */
+  .lsl-footer__logoside:first-child { justify-self: center; }
+}
