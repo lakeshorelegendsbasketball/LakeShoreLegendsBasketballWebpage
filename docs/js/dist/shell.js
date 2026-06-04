@@ -1,21 +1,9 @@
-"use strict";
-
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
-function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 /* global React */
 /* Shared site chrome: Header (multi-page nav), Footer, Crest, SectionHead.
    Each page is its own HTML file; nav uses real <a href> links. */
-var RxShell = React;
-var NAV = [{
+const RxShell = React;
+const NAV = [{
   label: 'Home',
   href: 'home.html'
 }, {
@@ -40,11 +28,10 @@ var NAV = [{
 }];
 
 /* Six-point Chicago-flag star — brand motif (never a 5-point ★). */
-function Star6(_ref) {
-  var _ref$size = _ref.size,
-    size = _ref$size === void 0 ? 14 : _ref$size,
-    _ref$className = _ref.className,
-    className = _ref$className === void 0 ? 'lsl-star6' : _ref$className;
+function Star6({
+  size = 14,
+  className = 'lsl-star6'
+}) {
   return /*#__PURE__*/React.createElement("svg", {
     className: className,
     width: size,
@@ -58,11 +45,11 @@ function Star6(_ref) {
 }
 
 /* Inline brand glyphs (Lucide dropped brand icons). 24x24 viewBox. */
-function SocialGlyph(_ref2) {
-  var name = _ref2.name,
-    _ref2$size = _ref2.size,
-    size = _ref2$size === void 0 ? 20 : _ref2$size;
-  var paths = {
+function SocialGlyph({
+  name,
+  size = 20
+}) {
+  const paths = {
     instagram: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("rect", {
       x: "2.5",
       y: "2.5",
@@ -99,13 +86,14 @@ function SocialGlyph(_ref2) {
       fill: "none",
       stroke: "currentColor",
       strokeWidth: "1.8"
-    }), /*#__PURE__*/React.createElement("path", _defineProperty({
+    }), /*#__PURE__*/React.createElement("path", {
       fill: "currentColor",
       d: "M7 9.5v8M7 6.6v.02M11 17.5v-4.4c0-1.3 1-2.3 2.3-2.3s2.2 1 2.2 2.3v4.4",
       stroke: "currentColor",
       strokeWidth: "1.8",
-      strokeLinecap: "round"
-    }, "fill", "none")), /*#__PURE__*/React.createElement("circle", {
+      strokeLinecap: "round",
+      fill: "none"
+    }), /*#__PURE__*/React.createElement("circle", {
       cx: "7",
       cy: "6.6",
       r: "1",
@@ -123,9 +111,9 @@ function SocialGlyph(_ref2) {
     "aria-hidden": "true"
   }, paths[name]);
 }
-function Crest(_ref3) {
-  var _ref3$size = _ref3.size,
-    size = _ref3$size === void 0 ? 46 : _ref3$size;
+function Crest({
+  size = 46
+}) {
   return /*#__PURE__*/React.createElement("img", {
     src: "assets/badge-crest.png",
     alt: "Lake Shore Legends",
@@ -136,25 +124,18 @@ function Crest(_ref3) {
     }
   });
 }
-function Header(_ref4) {
-  var page = _ref4.page;
-  var _RxShell$useState = RxShell.useState(false),
-    _RxShell$useState2 = _slicedToArray(_RxShell$useState, 2),
-    scrolled = _RxShell$useState2[0],
-    setScrolled = _RxShell$useState2[1];
-  var _RxShell$useState3 = RxShell.useState(false),
-    _RxShell$useState4 = _slicedToArray(_RxShell$useState3, 2),
-    open = _RxShell$useState4[0],
-    setOpen = _RxShell$useState4[1];
-  RxShell.useEffect(function () {
-    var sc = document.querySelector('.lsl-scroll');
-    var onScroll = function onScroll() {
-      return setScrolled(((sc === null || sc === void 0 ? void 0 : sc.scrollTop) || window.scrollY) > 20);
-    };
-    sc === null || sc === void 0 || sc.addEventListener('scroll', onScroll);
+function Header({
+  page
+}) {
+  const [scrolled, setScrolled] = RxShell.useState(false);
+  const [open, setOpen] = RxShell.useState(false);
+  RxShell.useEffect(() => {
+    const sc = document.querySelector('.lsl-scroll');
+    const onScroll = () => setScrolled((sc?.scrollTop || window.scrollY) > 20);
+    sc?.addEventListener('scroll', onScroll);
     window.addEventListener('scroll', onScroll);
-    return function () {
-      sc === null || sc === void 0 || sc.removeEventListener('scroll', onScroll);
+    return () => {
+      sc?.removeEventListener('scroll', onScroll);
       window.removeEventListener('scroll', onScroll);
     };
   }, []);
@@ -171,45 +152,40 @@ function Header(_ref4) {
     className: "lsl-brand__name"
   }, "Lake\xA0Shore", /*#__PURE__*/React.createElement("br", null), "Legends")), /*#__PURE__*/React.createElement("nav", {
     className: "lsl-nav"
-  }, NAV.map(function (n) {
-    return /*#__PURE__*/React.createElement("a", _extends({
-      key: n.label,
-      className: 'lsl-nav__link' + (page === n.label ? ' is-active' : ''),
-      href: n.href
-    }, n.external ? {
-      target: '_blank',
-      rel: 'noopener'
-    } : {}), n.label);
-  })), /*#__PURE__*/React.createElement("a", {
+  }, NAV.map(n => /*#__PURE__*/React.createElement("a", _extends({
+    key: n.label,
+    className: 'lsl-nav__link' + (page === n.label ? ' is-active' : ''),
+    href: n.href
+  }, n.external ? {
+    target: '_blank',
+    rel: 'noopener'
+  } : {}), n.label))), /*#__PURE__*/React.createElement("a", {
     className: "lsl-btn lsl-btn--primary lsl-btn--sm lsl-header__cta",
     href: "contact.html"
   }, "Join the Program"), /*#__PURE__*/React.createElement("button", {
     className: "lsl-burger",
-    onClick: function onClick() {
-      return setOpen(!open);
-    },
+    onClick: () => setOpen(!open),
     "aria-label": "Menu"
   }, /*#__PURE__*/React.createElement("span", null), /*#__PURE__*/React.createElement("span", null), /*#__PURE__*/React.createElement("span", null))), open && /*#__PURE__*/React.createElement("div", {
     className: "lsl-mobilenav"
-  }, NAV.map(function (n) {
-    return /*#__PURE__*/React.createElement("a", _extends({
-      key: n.label,
-      href: n.href
-    }, n.external ? {
-      target: '_blank',
-      rel: 'noopener'
-    } : {}), n.label);
-  })));
+  }, NAV.map(n => /*#__PURE__*/React.createElement("a", _extends({
+    key: n.label,
+    href: n.href
+  }, n.external ? {
+    target: '_blank',
+    rel: 'noopener'
+  } : {}), n.label))));
 }
-function SectionHead(_ref5) {
-  var eyebrow = _ref5.eyebrow,
-    title = _ref5.title,
-    sub = _ref5.sub,
-    light = _ref5.light,
-    center = _ref5.center,
-    wide = _ref5.wide,
-    full = _ref5.full,
-    smTitle = _ref5.smTitle;
+function SectionHead({
+  eyebrow,
+  title,
+  sub,
+  light,
+  center,
+  wide,
+  full,
+  smTitle
+}) {
   return /*#__PURE__*/React.createElement("div", {
     className: 'lsl-secthead' + (center ? ' lsl-secthead--center' : '') + (full ? ' lsl-secthead--full' : wide ? ' lsl-secthead--wide' : '')
   }, eyebrow && /*#__PURE__*/React.createElement("span", {
@@ -223,11 +199,12 @@ function SectionHead(_ref5) {
     className: 'lsl-body' + (light ? ' lsl-body--light' : '')
   }, sub));
 }
-function PageHero(_ref6) {
-  var eyebrow = _ref6.eyebrow,
-    title = _ref6.title,
-    sub = _ref6.sub,
-    accent = _ref6.accent;
+function PageHero({
+  eyebrow,
+  title,
+  sub,
+  accent
+}) {
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-pagehero"
   }, /*#__PURE__*/React.createElement("div", {
@@ -251,15 +228,12 @@ function PageHero(_ref6) {
     }
   }, sub)));
 }
-function CTA(_ref7) {
-  var _ref7$title = _ref7.title,
-    title = _ref7$title === void 0 ? 'Turn Your Athlete Into a Legend' : _ref7$title,
-    _ref7$sub = _ref7.sub,
-    sub = _ref7$sub === void 0 ? 'Get in touch to learn about training, camps, and the Jr. Mustangs feeder program.' : _ref7$sub,
-    _ref7$btn = _ref7.btn,
-    btn = _ref7$btn === void 0 ? 'Connect With Us' : _ref7$btn,
-    _ref7$href = _ref7.href,
-    href = _ref7$href === void 0 ? 'contact.html' : _ref7$href;
+function CTA({
+  title = 'Turn Your Athlete Into a Legend',
+  sub = 'Get in touch to learn about training, camps, and the Jr. Mustangs feeder program.',
+  btn = 'Connect With Us',
+  href = 'contact.html'
+}) {
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-cta"
   }, /*#__PURE__*/React.createElement("div", {
@@ -279,7 +253,7 @@ function CTA(_ref7) {
   }, btn)));
 }
 function Footer() {
-  var cols = [['Connect With Us', [['Contact Us', 'contact.html'], ['Our Programs', 'training.html'], ['Training', 'training.html'], ['Meet Our Coaches', 'about.html']]], ['Quick Links', [['Upcoming Events', 'training.html'], ['Alumni Success Stories', 'alumni.html'], ['Jr. Mustangs Feeder', 'https://mundyball.com/feeder-home']]], ['Resources', [['Code of Conduct', '#'], ['Training Schedule', 'training.html'], ['FAQs', 'contact.html']]], ['Follow Us', [['Facebook', '#'], ['Twitter / X', '#'], ['Instagram', '#'], ['LinkedIn', '#']]]];
+  const cols = [['Connect With Us', [['Contact Us', 'contact.html'], ['Our Programs', 'training.html'], ['Training', 'training.html'], ['Meet Our Coaches', 'about.html']]], ['Quick Links', [['Upcoming Events', 'training.html'], ['Alumni Success Stories', 'alumni.html'], ['Jr. Mustangs Feeder', 'https://mundyball.com/feeder-home']]], ['Resources', [['Code of Conduct', '#'], ['Training Schedule', 'training.html'], ['FAQs', 'contact.html']]], ['Follow Us', [['Twitter / X', '#'], ['Instagram', '#'], ['LinkedIn', '#']]]];
   return /*#__PURE__*/React.createElement("footer", {
     className: "lsl-footer"
   }, /*#__PURE__*/React.createElement("div", {
@@ -296,41 +270,33 @@ function Footer() {
     className: "lsl-footer__tag"
   }, "Trainers First.", /*#__PURE__*/React.createElement("br", null), "Coaches Always.")), /*#__PURE__*/React.createElement("div", {
     className: "lsl-footer__cols"
-  }, cols.map(function (_ref8) {
-    var _ref9 = _slicedToArray(_ref8, 2),
-      h = _ref9[0],
-      links = _ref9[1];
-    return /*#__PURE__*/React.createElement("div", {
-      key: h,
-      className: "lsl-footer__col"
-    }, /*#__PURE__*/React.createElement("h4", {
-      className: "lsl-footer__h"
-    }, h), links.map(function (_ref0) {
-      var _ref1 = _slicedToArray(_ref0, 2),
-        l = _ref1[0],
-        href = _ref1[1];
-      var ext = href && href.startsWith('http');
-      return /*#__PURE__*/React.createElement("a", _extends({
-        key: l,
-        className: "lsl-footer__link",
-        href: href || '#'
-      }, ext ? {
-        target: '_blank',
-        rel: 'noopener'
-      } : {}), l);
-    }));
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, cols.map(([h, links]) => /*#__PURE__*/React.createElement("div", {
+    key: h,
+    className: "lsl-footer__col"
+  }, /*#__PURE__*/React.createElement("h4", {
+    className: "lsl-footer__h"
+  }, h), links.map(([l, href]) => {
+    const ext = href && href.startsWith('http');
+    return /*#__PURE__*/React.createElement("a", _extends({
+      key: l,
+      className: "lsl-footer__link",
+      href: href || '#'
+    }, ext ? {
+      target: '_blank',
+      rel: 'noopener'
+    } : {}), l);
+  }))))), /*#__PURE__*/React.createElement("div", {
     className: "lsl-footer__bar"
   }, /*#__PURE__*/React.createElement("span", null, "\xA9 2026 LakeShore Legends Basketball"), /*#__PURE__*/React.createElement("span", null, "Chicago, Illinois")));
 }
 Object.assign(window, {
-  Star6: Star6,
-  SocialGlyph: SocialGlyph,
-  Crest: Crest,
-  Header: Header,
-  SectionHead: SectionHead,
-  PageHero: PageHero,
-  CTA: CTA,
-  Footer: Footer,
-  NAV: NAV
+  Star6,
+  SocialGlyph,
+  Crest,
+  Header,
+  SectionHead,
+  PageHero,
+  CTA,
+  Footer,
+  NAV
 });

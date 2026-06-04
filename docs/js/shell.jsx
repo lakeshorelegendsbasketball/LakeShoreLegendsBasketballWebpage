@@ -129,7 +129,7 @@ function Footer() {
     ['Connect With Us', [['Contact Us', 'contact.html'], ['Our Programs', 'training.html'], ['Training', 'training.html'], ['Meet Our Coaches', 'about.html']]],
     ['Quick Links', [['Upcoming Events', 'training.html'], ['Alumni Success Stories', 'alumni.html'], ['Jr. Mustangs Feeder', 'https://mundyball.com/feeder-home']]],
     ['Resources', [['Code of Conduct', '#'], ['Training Schedule', 'training.html'], ['FAQs', 'contact.html']]],
-    ['Follow Us', [['Facebook', '#'], ['Twitter / X', '#'], ['Instagram', '#'], ['LinkedIn', '#']]],
+    ['Follow Us', [['Twitter / X', '#'], ['Instagram', '#'], ['LinkedIn', '#']]],
   ];
   return (
     <footer className="lsl-footer">
