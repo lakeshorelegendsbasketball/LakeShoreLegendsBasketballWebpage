@@ -1,8 +1,8 @@
-/* global React, SectionHead */
+/* global React, SectionHead, LSL */
 const {
   useState: useStateC
 } = React;
-const INTERESTS = ['Private Training', 'Small-Group Training', 'Summer Camp', 'School Day-Off Camp', 'Jr. Mustangs Feeder', 'Team Training', 'Other'];
+const INTERESTS = ['Private Training', 'Small-Group Training', 'Summer Camp', 'School Day-Off Camp', 'Jr. Mustangs Feeder', 'Other'];
 function ContactForm() {
   const [f, setF] = useStateC({
     parent: '',
@@ -15,6 +15,7 @@ function ContactForm() {
   });
   const [err, setErr] = useStateC({});
   const [sent, setSent] = useStateC(false);
+  const [busy, setBusy] = useStateC(false);
   const set = k => e => {
     setF({
       ...f,
@@ -34,11 +35,35 @@ function ContactForm() {
     if (!f.message.trim() || f.message.trim().length < 10) e.message = 'Tell us a little more (10+ characters).';
     return e;
   };
-  const submit = ev => {
+  const submit = async ev => {
     ev.preventDefault();
     const e = validate();
     setErr(e);
-    if (Object.keys(e).length === 0) setSent(true);
+    if (Object.keys(e).length > 0) return;
+    setBusy(true);
+    const key = LSL.getWeb3Key();
+    if (key) {
+      const subject = 'New Contact Inquiry — ' + f.interest + ' (' + f.parent + ')';
+      const message = ['=== NEW CONTACT FORM SUBMISSION ===', '', 'INTERESTED IN: ' + f.interest, '', '--- CONTACT INFO ---', 'Parent / Guardian: ' + f.parent, 'Athlete Name: ' + (f.athlete || '—'), 'Email: ' + f.email, 'Phone: ' + (f.phone || '—'), 'Athlete Grade / Age: ' + (f.grade || '—'), '', '--- MESSAGE ---', f.message].join('\n');
+      try {
+        await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json'
+          },
+          body: JSON.stringify({
+            access_key: key,
+            subject,
+            message,
+            from_name: 'LakeShore Legends Contact',
+            replyto: f.email
+          })
+        });
+      } catch (e) {/* non-blocking */}
+    }
+    setBusy(false);
+    setSent(true);
   };
   React.useEffect(() => {
     if (window.lucide) window.lucide.createIcons();
@@ -134,8 +159,9 @@ function ContactForm() {
     className: "lsl-err"
   }, err.message)), /*#__PURE__*/React.createElement("button", {
     type: "submit",
-    className: "lsl-btn lsl-btn--primary lsl-form__submit"
-  }, "Send Message"), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-btn lsl-btn--primary lsl-form__submit",
+    disabled: busy
+  }, busy ? 'Sending…' : 'Send Message'), /*#__PURE__*/React.createElement("p", {
     className: "lsl-form__note"
   }, "We typically reply within 1\u20132 business days."));
 }
