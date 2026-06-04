@@ -169,7 +169,7 @@ function CommPolicy() {
             <span className="lsl-codes-comm__num">12–24</span>
             <span className="lsl-codes-comm__unit">Hours</span>
           </div>
-          <div className="lsl-codes-comm__body">
+          <div className="lsl-codes-comm__body" style={{ textAlign: 'center' }}>
             <span className="lsl-codes-eyebrow" style={{ color: 'rgba(255,255,255,.55)' }}>Section 04 · Communication Policy</span>
             <h2 className="lsl-codes-sh lsl-codes-sh--light" style={{ margin: '8px 0 16px' }}>Sleep on it.<br /><span className="lsl-codes-orange">Then let's talk.</span></h2>
             <p style={{ color: 'rgba(255,255,255,.75)', fontSize: 15, lineHeight: 1.65, margin: '0 0 0' }}>

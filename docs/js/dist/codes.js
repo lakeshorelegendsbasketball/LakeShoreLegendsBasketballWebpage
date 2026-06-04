@@ -194,7 +194,10 @@ function CommPolicy() {
   }, "12\u201324"), /*#__PURE__*/React.createElement("span", {
     className: "lsl-codes-comm__unit"
   }, "Hours")), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-codes-comm__body"
+    className: "lsl-codes-comm__body",
+    style: {
+      textAlign: 'center'
+    }
   }, /*#__PURE__*/React.createElement("span", {
     className: "lsl-codes-eyebrow",
     style: {
