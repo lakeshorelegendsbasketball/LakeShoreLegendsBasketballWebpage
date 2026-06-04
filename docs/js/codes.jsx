@@ -173,7 +173,7 @@ function CommPolicy() {
             <span className="lsl-codes-eyebrow" style={{ color: 'rgba(255,255,255,.55)' }}>Section 04 · Communication Policy</span>
             <h2 className="lsl-codes-sh lsl-codes-sh--light" style={{ margin: '8px 0 16px' }}>Sleep on it.<br /><span className="lsl-codes-orange">Then let's talk.</span></h2>
             <p style={{ color: 'rgba(255,255,255,.75)', fontSize: 15, lineHeight: 1.65, maxWidth: 680, margin: '0 0 28px' }}>
-              If a parent or guardian has a concern involving a member of the coaching staff immediately following a game, a 12–24 hour waiting period is required before any communication occurs. This policy exists to promote thoughtful, constructive dialogue and prevent emotionally driven interactions.
+              If a parent or guardian has a concern involving a member of the coaching staff immediately following a game, a 12–24 hour waiting period is required before any communication occurs. This policy exists to promote thoughtful, constructive dialogue<br />and prevent emotionally driven interactions.
             </p>
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               <a className="lsl-btn lsl-btn--ghost lsl-btn--sm" href="contact.html" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.4)' }}>Contact Coaching Staff</a>

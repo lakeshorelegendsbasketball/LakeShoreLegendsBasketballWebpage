@@ -215,7 +215,7 @@ function CommPolicy() {
       maxWidth: 680,
       margin: '0 0 28px'
     }
-  }, "If a parent or guardian has a concern involving a member of the coaching staff immediately following a game, a 12\u201324 hour waiting period is required before any communication occurs. This policy exists to promote thoughtful, constructive dialogue and prevent emotionally driven interactions."), /*#__PURE__*/React.createElement("div", {
+  }, "If a parent or guardian has a concern involving a member of the coaching staff immediately following a game, a 12\u201324 hour waiting period is required before any communication occurs. This policy exists to promote thoughtful, constructive dialogue", /*#__PURE__*/React.createElement("br", null), "and prevent emotionally driven interactions."), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 12,
