@@ -19,8 +19,8 @@
 <script src="js/dist/codes.js"></script>
 <script>
 (function () {
-  var Header = window.Header, PageHero = window.PageHero, Footer = window.Footer;
-  var CodesIntro = window.CodesIntro, OrgStandards = window.OrgStandards;
+  var Header = window.Header, Footer = window.Footer;
+  var CodesHero = window.CodesHero, OrgStandards = window.OrgStandards;
   var CoachesCode = window.CoachesCode, ParentsCode = window.ParentsCode;
   var CommPolicy = window.CommPolicy, CodesClosing = window.CodesClosing;
 
@@ -28,12 +28,7 @@
     React.useEffect(function () { if (window.lucide) window.lucide.createIcons(); }, []);
     return React.createElement('div', { className: 'lsl-scroll', 'data-screen-label': 'Codes' },
       React.createElement(Header, { page: 'Codes' }),
-      React.createElement(PageHero, {
-        eyebrow: 'Codes of Conduct',
-        title: 'The standards we play by.',
-        sub: 'Every athlete, coach, volunteer, parent, and spectator is held to these standards — no exceptions.'
-      }),
-      React.createElement(CodesIntro, null),
+      React.createElement(CodesHero, null),
       React.createElement(OrgStandards, null),
       React.createElement(CoachesCode, null),
       React.createElement(ParentsCode, null),
