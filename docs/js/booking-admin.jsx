@@ -157,7 +157,11 @@ function LocsTab({ force }) {
 
 /* ---------- Bookings ---------- */
 function BooksTab({ force }) {
-  const books = LSL.getBooks().slice().sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+  const books = LSL.getBooks().slice().sort((a, b) => {
+    const aKey = a.date ? (a.date + a.time) : (a.created || '');
+    const bKey = b.date ? (b.date + b.time) : (b.created || '');
+    return bKey.localeCompare(aKey);
+  });
   useEffectAd(() => { if (window.lucide) window.lucide.createIcons(); });
   const cancel = (bk) => {
     LSL.setBooks(LSL.getBooks().filter((b) => b.id !== bk.id));
