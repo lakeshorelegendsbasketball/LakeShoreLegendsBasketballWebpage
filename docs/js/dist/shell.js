@@ -253,7 +253,7 @@ function CTA({
   }, btn)));
 }
 function Footer() {
-  const cols = [['Connect With Us', [['Contact Us', 'contact.html'], ['Training Programs', 'training.html'], ['Meet Our Coaches', 'about.html']]], ['Quick Links', [['Upcoming Events', 'training.html'], ['Alumni Success Stories', 'alumni.html'], ['Jr. Mustangs Feeder', 'https://mundyball.com/feeder-home']]], ['Resources', [['Code of Conduct', '#'], ['Training Schedule', 'training.html'], ['FAQs', 'contact.html']]], ['Follow Us', [['Twitter / X', 'https://x.com/LSLegendsHoops'], ['Instagram', 'https://www.instagram.com/lakeshorelegends/'], ['LinkedIn', 'https://www.linkedin.com/in/gio-paganis/']]]];
+  const cols = [['Connect With Us', [['Contact Us', 'contact.html'], ['Training Programs', 'training.html'], ['Meet Our Coaches', 'about.html']]], ['Quick Links', [['Upcoming Events', 'training.html'], ['Alumni Success Stories', 'alumni.html'], ['Jr. Mustangs Feeder', 'https://mundyball.com/feeder-home']]], ['Resources', [['Code of Conduct', '#'], ['Training Schedule', 'training.html'], ['FAQs', 'contact.html']]], ['Follow Us', [['Twitter / X', 'https://x.com/LSLegendsHoops'], ['Instagram (LakeShore Legends)', 'https://www.instagram.com/lakeshorelegends/'], ['Instagram (CoachGioPag)', 'https://www.instagram.com/coachgiopag/'], ['LinkedIn', 'https://www.linkedin.com/in/gio-paganis/']]]];
   return /*#__PURE__*/React.createElement("footer", {
     className: "lsl-footer"
   }, /*#__PURE__*/React.createElement("div", {
