@@ -81,7 +81,6 @@ function Header({ page }) {
               {n.label}
             </a>
           ))}
-          <a className="lsl-btn lsl-btn--primary lsl-btn--sm lsl-mobilenav__cta" href="training.html#book">Start Training</a>
         </div>
       )}
     </header>

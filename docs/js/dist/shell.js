@@ -174,10 +174,7 @@ function Header({
   }, n.external ? {
     target: '_blank',
     rel: 'noopener'
-  } : {}), n.label)), /*#__PURE__*/React.createElement("a", {
-    className: "lsl-btn lsl-btn--primary lsl-btn--sm lsl-mobilenav__cta",
-    href: "training.html#book"
-  }, "Start Training")));
+  } : {}), n.label))));
 }
 function SectionHead({
   eyebrow,
