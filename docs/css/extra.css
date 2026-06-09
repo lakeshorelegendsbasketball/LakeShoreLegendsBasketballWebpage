@@ -635,7 +635,8 @@ a.lsl-btn { line-height: 1; }
   .lsl-hero__copy { text-align: center; }
   .lsl-hero__actions { justify-content: center; }
 
-  /* Center Start Training button in mobile header */
+  /* Mobile header: hide brand text, keep crest; center the CTA button */
+  .lsl-brand__name { display: none; }
   .lsl-header__inner { position: relative; }
   .lsl-header__cta { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; }
 }
