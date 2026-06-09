@@ -7,6 +7,7 @@
 /* ---------- shared additions ---------- */
 /* anchors used as nav/buttons/links should not show default underline */
 .lsl-brand, .lsl-nav__link, .lsl-btn, .lsl-header__cta, .lsl-footer__link, .lsl-mobilenav a { text-decoration: none; }
+.lsl-mobilenav__cta { display: block; margin: 8px auto 4px; text-align: center; width: fit-content; }
 .lsl-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
 a.lsl-btn { line-height: 1; }
 .lsl-footer__top { display: grid; grid-template-columns: 120px 1fr 120px; align-items: center; gap: 24px; }
