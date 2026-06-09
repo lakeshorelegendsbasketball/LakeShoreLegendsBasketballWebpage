@@ -13,6 +13,11 @@ function CoachAdminPage() {
   useEffectAd(() => {
     if (window.lucide) window.lucide.createIcons();
   });
+  useEffectAd(() => {
+    const onSync = () => force();
+    window.addEventListener('lsl-synced', onSync);
+    return () => window.removeEventListener('lsl-synced', onSync);
+  }, []);
   const tryAuth = e => {
     e.preventDefault();
     if (pass === LSL.getPass()) {
@@ -410,13 +415,21 @@ function SettingsTab({
 }) {
   const [np, setNp] = useStateAd('');
   const [w3, setW3] = useStateAd(LSL.getWeb3Key());
+  const [jbKey, setJbKey] = useStateAd(LSL.getJBKey());
+  const [jbBin, setJbBin] = useStateAd(LSL.getJBBin());
   const [savedMsg, setSavedMsg] = useStateAd('');
+  const [jbMsg, setJbMsg] = useStateAd('');
+  const [jbBusy, setJbBusy] = useStateAd(false);
   useEffectAd(() => {
     if (window.lucide) window.lucide.createIcons();
   });
   const flash = m => {
     setSavedMsg(m);
     setTimeout(() => setSavedMsg(''), 2200);
+  };
+  const flashJb = m => {
+    setJbMsg(m);
+    setTimeout(() => setJbMsg(''), 3500);
   };
   const savePass = () => {
     if (np.trim()) {
@@ -429,7 +442,147 @@ function SettingsTab({
     LSL.setWeb3Key(w3.trim());
     flash('Web3Forms key saved.');
   };
+  const setupCloud = async () => {
+    if (!jbKey.trim()) {
+      flashJb('Enter your JSONbin master key first.');
+      return;
+    }
+    setJbBusy(true);
+    LSL.setJBKey(jbKey.trim());
+    let binId = jbBin.trim();
+    if (!binId) {
+      binId = await LSL.createBin();
+      if (!binId) {
+        flashJb('Could not create bin — check your master key.');
+        setJbBusy(false);
+        return;
+      }
+      setJbBin(binId);
+    } else {
+      LSL.setJBBin(binId);
+      const ok = await LSL.syncFromCloud();
+      if (!ok) {
+        flashJb('Could not reach that bin — check the Bin ID.');
+        setJbBusy(false);
+        return;
+      }
+    }
+    force();
+    flashJb('✓ Cloud sync active! Availability now syncs across all devices.');
+    setJbBusy(false);
+  };
+  const syncNow = async () => {
+    setJbBusy(true);
+    const ok = await LSL.syncFromCloud();
+    flashJb(ok ? '✓ Synced from cloud.' : 'Sync failed — check your connection.');
+    force();
+    setJbBusy(false);
+  };
+  const isCloudActive = !!(LSL.getJBKey() && LSL.getJBBin());
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-admin__card"
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 10,
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("h4", {
+    style: {
+      margin: 0,
+      fontFamily: 'var(--font-cond)',
+      textTransform: 'uppercase',
+      letterSpacing: '.06em',
+      fontSize: 13
+    }
+  }, "Cloud Sync"), isCloudActive ? /*#__PURE__*/React.createElement("span", {
+    className: "lsl-pill lsl-pill--sky",
+    style: {
+      fontSize: 11
+    }
+  }, "\u25CF Active") : /*#__PURE__*/React.createElement("span", {
+    className: "lsl-pill lsl-pill--outline",
+    style: {
+      fontSize: 11
+    }
+  }, "Not configured")), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-field",
+    style: {
+      marginBottom: 8
+    }
+  }, /*#__PURE__*/React.createElement("label", null, "JSONbin Master Key"), /*#__PURE__*/React.createElement("input", {
+    className: "lsl-input",
+    value: jbKey,
+    onChange: e => setJbKey(e.target.value),
+    placeholder: "$2a$10$...",
+    style: {
+      fontFamily: 'monospace',
+      fontSize: 13
+    }
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-field",
+    style: {
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("label", null, "Bin ID ", isCloudActive && /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'var(--fg3)',
+      fontWeight: 400
+    }
+  }, "\u2014 copy this to other devices")), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "lsl-input",
+    value: jbBin,
+    onChange: e => setJbBin(e.target.value),
+    placeholder: isCloudActive ? '' : 'Leave empty to create new, or paste existing',
+    style: {
+      fontFamily: 'monospace',
+      fontSize: 13
+    }
+  }), jbBin && /*#__PURE__*/React.createElement("button", {
+    className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
+    onClick: () => {
+      navigator.clipboard.writeText(jbBin);
+      flashJb('Copied!');
+    }
+  }, "Copy"))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      flexWrap: 'wrap'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "lsl-btn lsl-btn--primary lsl-btn--sm",
+    onClick: setupCloud,
+    disabled: jbBusy
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": jbBusy ? 'loader' : 'cloud'
+  }), jbBusy ? 'Working…' : isCloudActive ? 'Save & Reconnect' : 'Set Up Cloud Sync'), isCloudActive && /*#__PURE__*/React.createElement("button", {
+    className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
+    onClick: syncNow,
+    disabled: jbBusy
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "refresh-cw"
+  }), " Sync Now")), jbMsg && /*#__PURE__*/React.createElement("p", {
+    style: {
+      marginTop: 10,
+      marginBottom: 0,
+      fontSize: 14,
+      color: jbMsg.startsWith('✓') || jbMsg === 'Copied!' ? 'var(--success)' : 'var(--error, #c0392b)'
+    }
+  }, jbMsg), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body lsl-body--sm",
+    style: {
+      marginTop: 10,
+      marginBottom: 0,
+      color: 'var(--fg3)'
+    }
+  }, isCloudActive ? 'Availability and bookings sync across all devices automatically. On a new device, enter the same master key and Bin ID above.' : 'Enter your JSONbin master key and click "Set Up Cloud Sync." On other devices, enter the same key plus the Bin ID shown after setup.')), /*#__PURE__*/React.createElement("div", {
     className: "lsl-admin__card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-field",
@@ -470,14 +623,7 @@ function SettingsTab({
     style: {
       color: 'var(--success)'
     }
-  }, savedMsg), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-bknote",
-    style: {
-      marginTop: 6
-    }
-  }, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "info"
-  }), /*#__PURE__*/React.createElement("span", null, "Availability, bookings, and settings save to ", /*#__PURE__*/React.createElement("strong", null, "this browser only"), ". For live multi-device booking and automatic calendar sync, this connects to a backend in a developer handoff.")));
+  }, savedMsg));
 }
 Object.assign(window, {
   CoachAdminPage

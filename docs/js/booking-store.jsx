@@ -1,12 +1,14 @@
 /* global React */
-/* LakeShore Legends — private-lesson booking store.
-   Data persists in localStorage (browser-local). Real multi-device booking,
-   email, and calendar sync require a backend handoff. Exposes window.LSL. */
+/* LakeShore Legends — booking store.
+   Reads/writes localStorage for instant sync and pushes to JSONbin
+   so all devices (coach admin, coach mobile, client browsers) share
+   the same availability data. Exposes window.LSL. */
 (function () {
   const SEEDV = '6';
   const K = {
     types: 'lsl_lessonTypes', locs: 'lsl_locations', slots: 'lsl_slots',
     books: 'lsl_bookings', pass: 'lsl_adminPass', web3: 'lsl_web3key', ver: 'lsl_seedv',
+    jbKey: 'lsl_jb_key', jbBin: 'lsl_jb_bin',
   };
   const LS = {
     get(k, def) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } },
@@ -37,7 +39,6 @@
 
   function seed() {
     const fresh = LS.get(K.ver) !== SEEDV;
-    // Lesson types & locations are reset on version bump so real Stripe links land.
     if (fresh || !LS.get(K.types)) LS.set(K.types, DEFAULT_TYPES);
     if (fresh || !LS.get(K.locs)) LS.set(K.locs, DEFAULT_LOCS);
     if (!LS.get(K.slots)) LS.set(K.slots, sampleSlots());
@@ -48,6 +49,73 @@
   }
   seed();
 
+  /* ---- JSONbin cloud sync ---- */
+  const JB_BASE = 'https://api.jsonbin.io/v3';
+
+  function jbHeaders() {
+    return { 'Content-Type': 'application/json', 'X-Master-Key': LS.get(K.jbKey, '') };
+  }
+
+  async function jbFetch(method, path, body) {
+    if (!LS.get(K.jbKey, '')) return null;
+    try {
+      const res = await fetch(JB_BASE + path, {
+        method,
+        headers: jbHeaders(),
+        ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+      });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch (e) { return null; }
+  }
+
+  function cloudSnapshot() {
+    return {
+      slots: LS.get(K.slots, []),
+      types: LS.get(K.types, []),
+      locs:  LS.get(K.locs,  []),
+      books: LS.get(K.books, []),
+      pass:  LS.get(K.pass,  'legends'),
+      web3Key: LS.get(K.web3, ''),
+    };
+  }
+
+  async function createBin() {
+    const data = await jbFetch('POST', '/b', cloudSnapshot());
+    if (data && data.metadata && data.metadata.id) {
+      LS.set(K.jbBin, data.metadata.id);
+      return data.metadata.id;
+    }
+    return null;
+  }
+
+  async function syncFromCloud() {
+    const binId = LS.get(K.jbBin, '');
+    if (!binId || !LS.get(K.jbKey, '')) return false;
+    const data = await jbFetch('GET', '/b/' + binId + '/latest');
+    if (!data || !data.record) return false;
+    const r = data.record;
+    if (Array.isArray(r.slots))  LS.set(K.slots, r.slots);
+    if (Array.isArray(r.types))  LS.set(K.types, r.types);
+    if (Array.isArray(r.locs))   LS.set(K.locs,  r.locs);
+    if (Array.isArray(r.books))  LS.set(K.books, r.books);
+    if (r.pass)                  LS.set(K.pass,  r.pass);
+    if (r.web3Key !== undefined)  LS.set(K.web3,  r.web3Key);
+    window.dispatchEvent(new CustomEvent('lsl-synced'));
+    return true;
+  }
+
+  let pushTimer = null;
+  function pushToCloud() {
+    clearTimeout(pushTimer);
+    pushTimer = setTimeout(async () => {
+      const binId = LS.get(K.jbBin, '');
+      if (!binId || !LS.get(K.jbKey, '')) return;
+      await jbFetch('PUT', '/b/' + binId, cloudSnapshot());
+    }, 800);
+  }
+
+  /* ---- formatters ---- */
   const fmtDate = (iso) => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); };
   const fmtDateLong = (iso) => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }); };
   const fmtTime = (t) => { let [h, mn] = t.split(':').map(Number); const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12; return h + ':' + String(mn).padStart(2, '0') + ' ' + ap; };
@@ -79,15 +147,21 @@
 
   const LSL = {
     uid,
-    getTypes: () => LS.get(K.types, []), setTypes: (v) => LS.set(K.types, v),
-    getLocs: () => LS.get(K.locs, []), setLocs: (v) => LS.set(K.locs, v),
-    getSlots: () => LS.get(K.slots, []), setSlots: (v) => LS.set(K.slots, v),
-    getBooks: () => LS.get(K.books, []), setBooks: (v) => LS.set(K.books, v),
-    getPass: () => LS.get(K.pass, 'legends'), setPass: (v) => LS.set(K.pass, v),
-    getWeb3Key: () => LS.get(K.web3, ''), setWeb3Key: (v) => LS.set(K.web3, v),
-    locById: (id) => LSL.getLocs().find((l) => l.id === id) || {},
-    typeById: (id) => LSL.getTypes().find((t) => t.id === id) || {},
+    getTypes:  () => LS.get(K.types, []),  setTypes:  (v) => { LS.set(K.types, v);  pushToCloud(); },
+    getLocs:   () => LS.get(K.locs,  []),  setLocs:   (v) => { LS.set(K.locs,  v);  pushToCloud(); },
+    getSlots:  () => LS.get(K.slots, []),  setSlots:  (v) => { LS.set(K.slots, v);  pushToCloud(); },
+    getBooks:  () => LS.get(K.books, []),  setBooks:  (v) => { LS.set(K.books, v);  pushToCloud(); },
+    getPass:   () => LS.get(K.pass,  'legends'), setPass:  (v) => { LS.set(K.pass, v);  pushToCloud(); },
+    getWeb3Key:() => LS.get(K.web3,  ''), setWeb3Key:(v) => { LS.set(K.web3, v);  pushToCloud(); },
+    getJBKey:  () => LS.get(K.jbKey, ''), setJBKey:  (v) => LS.set(K.jbKey, v),
+    getJBBin:  () => LS.get(K.jbBin, ''), setJBBin:  (v) => LS.set(K.jbBin, v),
+    locById:   (id) => LSL.getLocs().find((l) => l.id === id) || {},
+    typeById:  (id) => LSL.getTypes().find((t) => t.id === id) || {},
+    createBin, syncFromCloud, pushToCloud,
     fmtDate, fmtDateLong, fmtTime, priceLabel, makeICS, downloadICS,
   };
   window.LSL = LSL;
+
+  /* Auto-sync on every page load once cloud is configured */
+  syncFromCloud();
 })();

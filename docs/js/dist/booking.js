@@ -1,7 +1,8 @@
 /* global React, SectionHead, LSL */
 const {
   useState: useStateBk,
-  useEffect: useEffectBk
+  useEffect: useEffectBk,
+  useReducer: useReducerBk
 } = React;
 const LSL_POLICY = ['Cancellations made within 48 hours of a session are subject to a 50% retainer.', 'Cancellations made more than 48 hours in advance receive a 100% refund.', 'Training session times and availability are subject to change.'];
 const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -76,6 +77,12 @@ function PrivateBooking() {
   const [slotId, setSlotId] = useStateBk(null);
   const [reqTime, setReqTime] = useStateBk('');
   const [formOpen, setFormOpen] = useStateBk(false);
+  const [, forceSync] = useReducerBk(x => x + 1, 0);
+  useEffectBk(() => {
+    const onSync = () => forceSync();
+    window.addEventListener('lsl-synced', onSync);
+    return () => window.removeEventListener('lsl-synced', onSync);
+  }, []);
   useEffectBk(() => {
     if (window.lucide) window.lucide.createIcons();
   });
