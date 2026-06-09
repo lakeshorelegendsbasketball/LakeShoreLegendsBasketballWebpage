@@ -634,6 +634,7 @@ a.lsl-btn { line-height: 1; }
 @media (max-width: 900px) {
   .lsl-hero__copy { text-align: center; }
   .lsl-hero__actions { justify-content: center; }
+  .lsl-hero__copy .lsl-lede { margin-top: 20px; }
 
   /* Mobile header: hide brand text, keep crest; center the CTA button */
   .lsl-brand__name { display: none; }
