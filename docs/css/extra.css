@@ -636,10 +636,11 @@ a.lsl-btn { line-height: 1; }
   .lsl-hero__actions { justify-content: center; }
   .lsl-hero__copy .lsl-lede { margin-top: 20px; }
 
-  /* Mobile header: hide brand text, keep crest; center the CTA button */
-  .lsl-brand__name { display: none; }
-  .lsl-header__inner { position: relative; }
-  .lsl-header__cta { position: absolute; left: 50%; transform: translateX(-50%); white-space: nowrap; }
+  /* Mobile header: all four elements in a row — crest | name | button | burger */
+  .lsl-brand__name { display: block; font-size: 13px; line-height: 1.25; }
+  .lsl-header__inner { position: static; }
+  .lsl-header__cta { position: static; transform: none; flex: 1; margin: 0 8px; font-size: 11px; padding: 8px 10px; white-space: nowrap; }
+  .lsl-burger { margin-left: 0; }
 }
 
 /* Mobile layout & centering */
