@@ -76,6 +76,11 @@ function CoachCard() {
           <div className="lsl-coach__media">
             <img className="lsl-photo" src="uploads/Coach_Paganis-e1768944691510.jpg" alt="Coach Gio Paganis"
               style={{ width: '100%', height: '500px', objectFit: 'cover', objectPosition: '50% 25%', borderRadius: '16px', display: 'block' }} />
+            <a href="https://www.coachgiopag.com/" target="_blank" rel="noopener"
+              className="lsl-btn lsl-btn--ghost lsl-btn--sm"
+              style={{ marginTop: 14, width: '100%' }}>
+              Visit CoachGioPag.com
+            </a>
           </div>
           <div className="lsl-coach__body">
             <h3 className="lsl-h2">Coach Gio Paganis</h3>
