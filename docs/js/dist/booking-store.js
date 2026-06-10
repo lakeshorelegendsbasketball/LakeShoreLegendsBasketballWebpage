@@ -105,18 +105,24 @@
 
   /* ---- JSONbin cloud sync ---- */
   const JB_BASE = 'https://api.jsonbin.io/v3';
-  function jbHeaders() {
-    return {
-      'Content-Type': 'application/json',
-      'X-Master-Key': LS.get(K.jbKey, '')
-    };
+  const JB_KEY_DEFAULT = '$2a$10$RyTLgQsFbQELsa2bB62F4efI1Hdy7A1mY6P5U4qM5Qg0lV1CEQHyC';
+  const JB_BIN_DEFAULT = '6a2799d5da38895dfe9dfaa8';
+  function getJBKey() {
+    return LS.get(K.jbKey, '') || JB_KEY_DEFAULT;
+  }
+  function getJBBin() {
+    return LS.get(K.jbBin, '') || JB_BIN_DEFAULT;
   }
   async function jbFetch(method, path, body) {
-    if (!LS.get(K.jbKey, '')) return null;
+    const key = getJBKey();
+    if (!key) return null;
     try {
       const res = await fetch(JB_BASE + path, {
         method,
-        headers: jbHeaders(),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': key
+        },
         ...(body !== undefined ? {
           body: JSON.stringify(body)
         } : {})
@@ -146,8 +152,8 @@
     return null;
   }
   async function syncFromCloud() {
-    const binId = LS.get(K.jbBin, '');
-    if (!binId || !LS.get(K.jbKey, '')) return false;
+    const binId = getJBBin();
+    if (!binId) return false;
     const data = await jbFetch('GET', '/b/' + binId + '/latest');
     if (!data || !data.record) return false;
     const r = data.record;
@@ -164,8 +170,8 @@
   function pushToCloud() {
     clearTimeout(pushTimer);
     pushTimer = setTimeout(async () => {
-      const binId = LS.get(K.jbBin, '');
-      if (!binId || !LS.get(K.jbKey, '')) return;
+      const binId = getJBBin();
+      if (!binId) return;
       await jbFetch('PUT', '/b/' + binId, cloudSnapshot());
     }, 800);
   }
