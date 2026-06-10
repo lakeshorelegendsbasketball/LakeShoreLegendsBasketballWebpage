@@ -77,6 +77,7 @@ function PrivateBooking() {
   const [slotId, setSlotId] = useStateBk(null);
   const [reqTime, setReqTime] = useStateBk('');
   const [formOpen, setFormOpen] = useStateBk(false);
+  const [locFilter, setLocFilter] = useStateBk('all');
   const [, forceSync] = useReducerBk(x => x + 1, 0);
   useEffectBk(() => {
     const onSync = () => forceSync();
@@ -87,7 +88,8 @@ function PrivateBooking() {
     if (window.lucide) window.lucide.createIcons();
   });
   const todayIso = isoOf(new Date());
-  const openSlots = LSL.getSlots().filter(s => s.status === 'open' && s.date >= todayIso);
+  const allOpenSlots = LSL.getSlots().filter(s => s.status === 'open' && s.date >= todayIso);
+  const openSlots = locFilter === 'all' ? allOpenSlots : allOpenSlots.filter(s => s.locId === locFilter);
   const openDates = new Set(openSlots.map(s => s.date));
   const pickService = s => {
     setService(s);
@@ -97,6 +99,7 @@ function PrivateBooking() {
     setSlotId(null);
     setReqTime('');
     setOffset(0);
+    setLocFilter('all');
   };
   const pickDate = iso => {
     setDate(iso);
@@ -188,8 +191,32 @@ function PrivateBooking() {
   }, n)))))))), /*#__PURE__*/React.createElement("div", {
     className: "lsl-sched__col lsl-sched__col--border"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__head"
-  }, col2Head), !service && /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched__head",
+    style: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 8
+    }
+  }, /*#__PURE__*/React.createElement("span", null, col2Head), service && !isReq && !isSoon && /*#__PURE__*/React.createElement("select", {
+    className: "lsl-select",
+    style: {
+      fontSize: 12,
+      padding: '4px 10px',
+      minWidth: 0
+    },
+    value: locFilter,
+    onChange: e => {
+      setLocFilter(e.target.value);
+      setDate(null);
+      setSlotId(null);
+    }
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "all"
+  }, "All Locations"), LSL.getLocs().map(l => /*#__PURE__*/React.createElement("option", {
+    key: l.id,
+    value: l.id
+  }, l.name)))), !service && /*#__PURE__*/React.createElement("div", {
     className: "lsl-sched__ph"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "arrow-left"

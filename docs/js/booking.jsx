@@ -75,6 +75,7 @@ function PrivateBooking() {
   const [slotId, setSlotId] = useStateBk(null);
   const [reqTime, setReqTime] = useStateBk('');
   const [formOpen, setFormOpen] = useStateBk(false);
+  const [locFilter, setLocFilter] = useStateBk('all');
   const [, forceSync] = useReducerBk((x) => x + 1, 0);
 
   useEffectBk(() => {
@@ -86,11 +87,12 @@ function PrivateBooking() {
   useEffectBk(() => { if (window.lucide) window.lucide.createIcons(); });
 
   const todayIso = isoOf(new Date());
-  const openSlots = LSL.getSlots().filter((s) => s.status === 'open' && s.date >= todayIso);
+  const allOpenSlots = LSL.getSlots().filter((s) => s.status === 'open' && s.date >= todayIso);
+  const openSlots = locFilter === 'all' ? allOpenSlots : allOpenSlots.filter((s) => s.locId === locFilter);
   const openDates = new Set(openSlots.map((s) => s.date));
 
   const pickService = (s) => {
-    setService(s); setPlayers(null); setDate(null); setDow(null); setSlotId(null); setReqTime(''); setOffset(0);
+    setService(s); setPlayers(null); setDate(null); setDow(null); setSlotId(null); setReqTime(''); setOffset(0); setLocFilter('all');
   };
   const pickDate = (iso) => { setDate(iso); setSlotId(null); };
   const pickDow = (d) => { setDow(d); setReqTime(''); };
@@ -149,7 +151,17 @@ function PrivateBooking() {
 
           {/* COLUMN 2 — calendar or day-of-week */}
           <div className="lsl-sched__col lsl-sched__col--border">
-            <div className="lsl-sched__head">{col2Head}</div>
+            <div className="lsl-sched__head" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+              <span>{col2Head}</span>
+              {service && !isReq && !isSoon && (
+                <select className="lsl-select" style={{ fontSize: 12, padding: '4px 10px', minWidth: 0 }}
+                  value={locFilter}
+                  onChange={(e) => { setLocFilter(e.target.value); setDate(null); setSlotId(null); }}>
+                  <option value="all">All Locations</option>
+                  {LSL.getLocs().map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+                </select>
+              )}
+            </div>
             {!service && <div className="lsl-sched__ph"><i data-lucide="arrow-left"></i> Choose a service to begin.</div>}
             {isSoon && (
               <div className="lsl-soon">
