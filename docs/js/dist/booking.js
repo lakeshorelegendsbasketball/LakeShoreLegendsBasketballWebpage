@@ -201,9 +201,10 @@ function PrivateBooking() {
   }, /*#__PURE__*/React.createElement("span", null, col2Head), service && !isReq && !isSoon && /*#__PURE__*/React.createElement("select", {
     className: "lsl-select",
     style: {
-      fontSize: 12,
-      padding: '4px 10px',
-      minWidth: 0
+      fontSize: 11,
+      padding: '3px 6px',
+      minWidth: 0,
+      maxWidth: 130
     },
     value: locFilter,
     onChange: e => {

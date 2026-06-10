@@ -154,7 +154,7 @@ function PrivateBooking() {
             <div className="lsl-sched__head" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
               <span>{col2Head}</span>
               {service && !isReq && !isSoon && (
-                <select className="lsl-select" style={{ fontSize: 12, padding: '4px 10px', minWidth: 0 }}
+                <select className="lsl-select" style={{ fontSize: 11, padding: '3px 6px', minWidth: 0, maxWidth: 130 }}
                   value={locFilter}
                   onChange={(e) => { setLocFilter(e.target.value); setDate(null); setSlotId(null); }}>
                   <option value="all">All Locations</option>
