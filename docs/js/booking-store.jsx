@@ -165,5 +165,14 @@
   window.LSL = LSL;
 
   /* Auto-sync on every page load once cloud is configured */
-  syncFromCloud();
+  syncFromCloud().then(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    const slots = LS.get(K.slots, []);
+    const cleaned = slots.filter((s) => s.status !== 'open' || s.date >= today);
+    if (cleaned.length < slots.length) {
+      LS.set(K.slots, cleaned);
+      pushToCloud();
+      window.dispatchEvent(new CustomEvent('lsl-synced'));
+    }
+  });
 })();
