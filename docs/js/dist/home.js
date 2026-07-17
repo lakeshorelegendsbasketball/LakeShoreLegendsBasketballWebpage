@@ -131,7 +131,7 @@ function Philosophy() {
       marginTop: '20px',
       textAlign: 'center'
     }
-  }, "\u201CWe don\u2019t just play the game. We study it.\u201D"))));
+  }, "\u201CWe don\u2019t just play the game\u2026", /*#__PURE__*/React.createElement("br", null), "We study it.\u201D"))));
 }
 function DevelopmentModel() {
   const cols = [{
