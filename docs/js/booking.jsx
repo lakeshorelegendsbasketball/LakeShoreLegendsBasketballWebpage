@@ -212,7 +212,7 @@ function PrivateBooking() {
                 ))}
                 <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
                   <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)', marginBottom: 10, textAlign: 'center', fontSize: '0.85em' }}>
-                    Don&rsquo;t see a date, time, or location you like?<br/>Reach out &mdash; Coach Gio can often make it work.
+                    Don&rsquo;t see a date, time, or location you like?<br/><span style={{ fontSize: '1.08em' }}>Reach out &mdash; Coach Gio can often make it work.</span>
                   </p>
                   <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ width: '100%' }} onClick={() => setReqTrainOpen(true)}>
                     <i data-lucide="mail"></i> Request Training
@@ -246,7 +246,7 @@ function PrivateBooking() {
             {service && !isReq && !isSoon && !date && (
               <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
                 <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)', marginBottom: 12, textAlign: 'center', fontSize: '0.85em' }}>
-                  Don&rsquo;t see a date, time, or location you like?<br/>Reach out &mdash; Coach Gio can often make it work.
+                  Don&rsquo;t see a date, time, or location you like?<br/><span style={{ fontSize: '1.08em' }}>Reach out &mdash; Coach Gio can often make it work.</span>
                 </p>
                 <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ width: '100%' }} onClick={() => setReqTrainOpen(true)}>
                   <i data-lucide="mail"></i> Request Training

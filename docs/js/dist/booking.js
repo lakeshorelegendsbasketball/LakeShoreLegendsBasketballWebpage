@@ -291,7 +291,11 @@ function PrivateBooking() {
       textAlign: 'center',
       fontSize: '0.85em'
     }
-  }, "Don\u2019t see a date, time, or location you like?", /*#__PURE__*/React.createElement("br", null), "Reach out \u2014 Coach Gio can often make it work."), /*#__PURE__*/React.createElement("button", {
+  }, "Don\u2019t see a date, time, or location you like?", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: '1.08em'
+    }
+  }, "Reach out \u2014 Coach Gio can often make it work.")), /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
     style: {
       width: '100%'
@@ -339,7 +343,11 @@ function PrivateBooking() {
       textAlign: 'center',
       fontSize: '0.85em'
     }
-  }, "Don\u2019t see a date, time, or location you like?", /*#__PURE__*/React.createElement("br", null), "Reach out \u2014 Coach Gio can often make it work."), /*#__PURE__*/React.createElement("button", {
+  }, "Don\u2019t see a date, time, or location you like?", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: '1.08em'
+    }
+  }, "Reach out \u2014 Coach Gio can often make it work.")), /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
     style: {
       width: '100%'
