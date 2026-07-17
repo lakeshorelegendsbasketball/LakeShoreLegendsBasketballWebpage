@@ -75,6 +75,7 @@ function PrivateBooking() {
   const [slotId, setSlotId] = useStateBk(null);
   const [reqTime, setReqTime] = useStateBk('');
   const [formOpen, setFormOpen] = useStateBk(false);
+  const [reqTrainOpen, setReqTrainOpen] = useStateBk(false);
   const [locFilter, setLocFilter] = useStateBk('all');
   const [, forceSync] = useReducerBk((x) => x + 1, 0);
 
@@ -233,6 +234,17 @@ function PrivateBooking() {
                 <i data-lucide="calendar-check"></i> Request Booking
               </button>
             )}
+
+            {service && !isReq && !isSoon && (
+              <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
+                <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)', marginBottom: 12 }}>
+                  Don&rsquo;t see a date, time, or location you like? Reach out &mdash; Coach Gio can often make it work.
+                </p>
+                <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ width: '100%' }} onClick={() => setReqTrainOpen(true)}>
+                  <i data-lucide="mail"></i> Request Training
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -248,6 +260,7 @@ function PrivateBooking() {
         <BookingForm desc={desc} onClose={() => setFormOpen(false)}
           onBooked={() => { setSlotId(null); setDate(null); setReqTime(''); setDow(null); }} />
       )}
+      {reqTrainOpen && <TrainingRequestForm onClose={() => setReqTrainOpen(false)} />}
     </section>
   );
 }
@@ -480,4 +493,124 @@ function BookingForm({ desc, onClose, onBooked }) {
   );
 }
 
-Object.assign(window, { PrivateBooking, BookingForm, Calendar });
+function TrainingRequestForm({ onClose }) {
+  const [form, setForm] = useStateBk({ parent: '', athlete: '', email: '', phone: '', reqLocation: '', reqTime: '', reqDate: '', age: '', focus: '', notes: '' });
+  const [errs, setErrs] = useStateBk({});
+  const [busy, setBusy] = useStateBk(false);
+  const [done, setDone] = useStateBk(false);
+
+  useEffectBk(() => {
+    if (window.lucide) window.lucide.createIcons();
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [done]);
+
+  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+
+  function validate() {
+    const e = {};
+    if (!form.parent.trim()) e.parent = 'Required';
+    if (!form.athlete.trim()) e.athlete = 'Required';
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) e.email = 'Enter a valid email';
+    setErrs(e);
+    return Object.keys(e).length === 0;
+  }
+
+  async function submit(e) {
+    e.preventDefault();
+    if (!validate()) return;
+    setBusy(true);
+    const key = LSL.getWeb3Key();
+    if (key) {
+      const message = [
+        'Training Request — ' + form.athlete,
+        'Parent/Guardian: ' + form.parent,
+        form.email + (form.phone ? ' · ' + form.phone : ''),
+        form.reqLocation ? 'Requested Location: ' + form.reqLocation : '',
+        form.reqDate ? 'Requested Date: ' + form.reqDate : '',
+        form.reqTime ? 'Requested Time: ' + form.reqTime : '',
+        form.age ? 'Age/Grade: ' + form.age : '',
+        form.focus ? 'Focus Areas: ' + form.focus : '',
+        form.notes ? 'Notes: ' + form.notes : '',
+      ].filter(Boolean).join('\n');
+      try {
+        await fetch('https://api.web3forms.com/submit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ access_key: key, subject: 'Training Request — ' + form.athlete, message, from_name: 'LakeShore Legends', replyto: form.email, cc: '2244259490@tmomail.net' }),
+        });
+      } catch (_) { /* non-blocking */ }
+    }
+    setBusy(false);
+    setDone(true);
+  }
+
+  return (
+    <div className="lsl-lightbox" onClick={onClose}>
+      <div className="lsl-bkmodal" onClick={(e) => e.stopPropagation()}>
+        <button className="lsl-lightbox__close" onClick={onClose} aria-label="Close" style={{ position: 'absolute', top: 16, right: 16 }}>
+          <i data-lucide="x"></i>
+        </button>
+        {!done ? (
+          <form className="lsl-bkbody" onSubmit={submit}>
+            <h3 className="lsl-h3" style={{ marginTop: 0, marginBottom: 4 }}>Request Training</h3>
+            <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)', marginTop: 0, marginBottom: 16 }}>
+              Fill this out and Coach Gio will reach out to make it work.
+            </p>
+            <div className="lsl-field lsl-field--row">
+              <div><label>Parent / Guardian Name <span className="req">*</span></label>
+                <input className={'lsl-input' + (errs.parent ? ' is-error' : '')} value={form.parent} onChange={set('parent')} placeholder="Jane Smith" />
+                {errs.parent && <span className="lsl-err">{errs.parent}</span>}</div>
+              <div><label>Athlete Name <span className="req">*</span></label>
+                <input className={'lsl-input' + (errs.athlete ? ' is-error' : '')} value={form.athlete} onChange={set('athlete')} placeholder="Alex Smith" />
+                {errs.athlete && <span className="lsl-err">{errs.athlete}</span>}</div>
+            </div>
+            <div className="lsl-field lsl-field--row">
+              <div><label>Email <span className="req">*</span></label>
+                <input className={'lsl-input' + (errs.email ? ' is-error' : '')} type="email" value={form.email} onChange={set('email')} placeholder="you@email.com" />
+                {errs.email && <span className="lsl-err">{errs.email}</span>}</div>
+              <div><label>Phone</label>
+                <input className="lsl-input" value={form.phone} onChange={set('phone')} placeholder="(555) 555-5555" /></div>
+            </div>
+            <div className="lsl-field lsl-field--row">
+              <div><label>Requested Location</label>
+                <input className="lsl-input" value={form.reqLocation} onChange={set('reqLocation')} placeholder="Park Ridge, Mundelein…" /></div>
+              <div><label>Requested Time</label>
+                <input className="lsl-input" value={form.reqTime} onChange={set('reqTime')} placeholder="e.g. 4:00 PM" /></div>
+            </div>
+            <div className="lsl-field lsl-field--row">
+              <div><label>Requested Date</label>
+                <input className="lsl-input" value={form.reqDate} onChange={set('reqDate')} placeholder="e.g. July 25" /></div>
+              <div><label>Athlete Age / Grade</label>
+                <input className="lsl-input" value={form.age} onChange={set('age')} placeholder="7th grade" /></div>
+            </div>
+            <div className="lsl-field">
+              <label>Focus Areas / Goals</label>
+              <input className="lsl-input" value={form.focus} onChange={set('focus')} placeholder="Shooting, ball handling, defense…" />
+            </div>
+            <div className="lsl-field">
+              <label>Additional Notes</label>
+              <textarea className="lsl-textarea" value={form.notes} onChange={set('notes')} placeholder="Anything Coach Gio should know" style={{ minHeight: 76 }}></textarea>
+            </div>
+            <button type="submit" className="lsl-btn lsl-btn--primary" disabled={busy} style={{ width: '100%' }}>
+              <i data-lucide="send"></i>{busy ? ' Sending…' : ' Request Booking'}
+            </button>
+          </form>
+        ) : (
+          <div className="lsl-bkbody lsl-bkdone">
+            <div className="lsl-formsuccess__ico"><i data-lucide="check"></i></div>
+            <h3 className="lsl-h3">Request received!</h3>
+            <p className="lsl-body lsl-body--sm" style={{ marginTop: 0 }}>
+              Thank you, <strong>{form.athlete}</strong>! Coach Gio will reach out to <strong>{form.email}</strong> to confirm your training session.
+            </p>
+            <div className="lsl-bkdone__row">
+              <button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={onClose}>Done</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { PrivateBooking, BookingForm, Calendar, TrainingRequestForm });
