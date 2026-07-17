@@ -287,9 +287,10 @@ function PrivateBooking() {
     className: "lsl-body lsl-body--sm",
     style: {
       color: 'var(--fg2)',
-      marginBottom: 10
+      marginBottom: 10,
+      textAlign: 'center'
     }
-  }, "Don\u2019t see a date, time, or location you like? Reach out \u2014 Coach Gio can often make it work."), /*#__PURE__*/React.createElement("button", {
+  }, "Don\u2019t see a date, time, or location you like?", /*#__PURE__*/React.createElement("br", null), "Reach out \u2014 Coach Gio can often make it work."), /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
     style: {
       width: '100%'
@@ -333,9 +334,10 @@ function PrivateBooking() {
     className: "lsl-body lsl-body--sm",
     style: {
       color: 'var(--fg2)',
-      marginBottom: 12
+      marginBottom: 12,
+      textAlign: 'center'
     }
-  }, "Don\u2019t see a date, time, or location you like? Reach out \u2014 Coach Gio can often make it work."), /*#__PURE__*/React.createElement("button", {
+  }, "Don\u2019t see a date, time, or location you like?", /*#__PURE__*/React.createElement("br", null), "Reach out \u2014 Coach Gio can often make it work."), /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
     style: {
       width: '100%'
