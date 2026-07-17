@@ -210,6 +210,14 @@ function PrivateBooking() {
                     </div>
                   </div>
                 ))}
+                <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+                  <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)', marginBottom: 10 }}>
+                    Don&rsquo;t see a date, time, or location you like? Reach out &mdash; Coach Gio can often make it work.
+                  </p>
+                  <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ width: '100%' }} onClick={() => setReqTrainOpen(true)}>
+                    <i data-lucide="mail"></i> Request Training
+                  </button>
+                </div>
               </div>
             )}
 
@@ -235,7 +243,7 @@ function PrivateBooking() {
               </button>
             )}
 
-            {service && !isReq && !isSoon && (
+            {service && !isReq && !isSoon && !date && (
               <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
                 <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)', marginBottom: 12 }}>
                   Don&rsquo;t see a date, time, or location you like? Reach out &mdash; Coach Gio can often make it work.

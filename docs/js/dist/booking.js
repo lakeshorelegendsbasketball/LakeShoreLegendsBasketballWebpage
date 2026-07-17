@@ -277,7 +277,27 @@ function PrivateBooking() {
     key: s.id,
     className: 'lsl-time' + (slotId === s.id ? ' is-sel' : ''),
     onClick: () => setSlotId(s.id)
-  }, LSL.fmtTime(s.time))))))), isReq && dow == null && /*#__PURE__*/React.createElement("div", {
+  }, LSL.fmtTime(s.time)))))), /*#__PURE__*/React.createElement("div", {
+    style: {
+      marginTop: 16,
+      paddingTop: 14,
+      borderTop: '1px solid var(--border)'
+    }
+  }, /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body lsl-body--sm",
+    style: {
+      color: 'var(--fg2)',
+      marginBottom: 10
+    }
+  }, "Don\u2019t see a date, time, or location you like? Reach out \u2014 Coach Gio can often make it work."), /*#__PURE__*/React.createElement("button", {
+    className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
+    style: {
+      width: '100%'
+    },
+    onClick: () => setReqTrainOpen(true)
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "mail"
+  }), " Request Training"))), isReq && dow == null && /*#__PURE__*/React.createElement("div", {
     className: "lsl-sched__ph"
   }, players ? 'Pick a day of the week first.' : 'Choose group size and a day.'), isReq && dow != null && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "lsl-times__day"
@@ -303,7 +323,7 @@ function PrivateBooking() {
     onClick: () => setFormOpen(true)
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "calendar-check"
-  }), " Request Booking"), service && !isReq && !isSoon && /*#__PURE__*/React.createElement("div", {
+  }), " Request Booking"), service && !isReq && !isSoon && !date && /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 20,
       paddingTop: 16,
