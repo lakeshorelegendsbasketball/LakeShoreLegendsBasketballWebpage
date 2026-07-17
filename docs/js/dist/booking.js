@@ -346,15 +346,6 @@ function PrivateBooking() {
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "mail"
   }), " Request Training")))), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-body",
-    style: {
-      marginTop: 24,
-      marginBottom: 8,
-      color: 'var(--fg2)',
-      textAlign: 'center',
-      fontWeight: 700
-    }
-  }, "Don\u2019t see your preferred location? Reach out \u2014 Coach Gio can often make it work."), /*#__PURE__*/React.createElement("p", {
     className: "lsl-bookpolicy"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "info"

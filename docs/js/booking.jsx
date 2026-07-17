@@ -256,9 +256,6 @@ function PrivateBooking() {
           </div>
         </div>
 
-        <p className="lsl-body" style={{ marginTop: 24, marginBottom: 8, color: 'var(--fg2)', textAlign: 'center', fontWeight: 700 }}>
-          Don&rsquo;t see your preferred location? Reach out &mdash; Coach Gio can often make it work.
-        </p>
         <p className="lsl-bookpolicy">
           <i data-lucide="info"></i>
           <span>{LSL_POLICY.map((line, i) => <React.Fragment key={i}>{line}{i < LSL_POLICY.length - 1 && <br />}</React.Fragment>)}</span>
