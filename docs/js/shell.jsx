@@ -105,7 +105,7 @@ function PageHero({ eyebrow, title, sub, accent }) {
       <div className="lsl-pagehero__inner">
         <span className="lsl-eyebrow lsl-eyebrow--light">{eyebrow}</span>
         <h1 className="lsl-display lsl-display--md">{title}</h1>
-        {sub && <p className="lsl-lede" style={{ maxWidth: 780, color: 'var(--fg-on-dark-2)' }}>{sub}</p>}
+        {sub && <p className="lsl-lede" style={{ maxWidth: 780, color: 'var(--fg-on-dark-2)' }}>{String(sub).split('\n').map((s, i, a) => <React.Fragment key={i}>{s}{i < a.length - 1 && <br/>}</React.Fragment>)}</p>}
       </div>
     </section>
   );

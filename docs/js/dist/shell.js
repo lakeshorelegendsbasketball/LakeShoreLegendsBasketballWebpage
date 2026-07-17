@@ -226,7 +226,9 @@ function PageHero({
       maxWidth: 780,
       color: 'var(--fg-on-dark-2)'
     }
-  }, sub)));
+  }, String(sub).split('\n').map((s, i, a) => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: i
+  }, s, i < a.length - 1 && /*#__PURE__*/React.createElement("br", null))))));
 }
 function CTA({
   title = 'Turn Your Athlete Into a Legend',
