@@ -288,7 +288,8 @@ function PrivateBooking() {
     style: {
       color: 'var(--fg2)',
       marginBottom: 10,
-      textAlign: 'center'
+      textAlign: 'center',
+      fontSize: '0.85em'
     }
   }, "Don\u2019t see a date, time, or location you like?", /*#__PURE__*/React.createElement("br", null), "Reach out \u2014 Coach Gio can often make it work."), /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
@@ -335,7 +336,8 @@ function PrivateBooking() {
     style: {
       color: 'var(--fg2)',
       marginBottom: 12,
-      textAlign: 'center'
+      textAlign: 'center',
+      fontSize: '0.85em'
     }
   }, "Don\u2019t see a date, time, or location you like?", /*#__PURE__*/React.createElement("br", null), "Reach out \u2014 Coach Gio can often make it work."), /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
