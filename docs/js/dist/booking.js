@@ -113,7 +113,8 @@ function PrivateBooking() {
     setDow(d);
     setReqTime('');
   };
-  const daySlots = date ? openSlots.filter(s => s.date === date).sort((a, b) => a.time.localeCompare(b.time)) : [];
+  const allSlotsToday = date ? LSL.getSlots().filter(s => s.date === date && (s.status === 'open' || s.status === 'booked') && (locFilter === 'all' || s.locId === locFilter)).sort((a, b) => a.time.localeCompare(b.time)) : [];
+  const daySlots = allSlotsToday;
   const byLoc = {};
   daySlots.forEach(s => {
     (byLoc[s.locId] = byLoc[s.locId] || []).push(s);
@@ -278,8 +279,9 @@ function PrivateBooking() {
     className: "lsl-times__row"
   }, byLoc[lid].map(s => /*#__PURE__*/React.createElement("button", {
     key: s.id,
-    className: 'lsl-time' + (slotId === s.id ? ' is-sel' : ''),
-    onClick: () => setSlotId(s.id)
+    className: 'lsl-time' + (s.status === 'booked' ? ' is-booked' : '') + (slotId === s.id ? ' is-sel' : ''),
+    disabled: s.status === 'booked',
+    onClick: () => s.status === 'open' && setSlotId(s.id)
   }, LSL.fmtTime(s.time)))), byLoc[lid].some(s => s.id === slotId) && /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--primary lsl-times__req",
     onClick: () => setFormOpen(true)

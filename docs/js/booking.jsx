@@ -102,7 +102,11 @@ function PrivateBooking() {
   const pickDate = (iso) => { setDate(iso); setSlotId(null); };
   const pickDow = (d) => { setDow(d); setReqTime(''); };
 
-  const daySlots = date ? openSlots.filter((s) => s.date === date).sort((a, b) => a.time.localeCompare(b.time)) : [];
+  const allSlotsToday = date
+    ? LSL.getSlots().filter((s) => s.date === date && (s.status === 'open' || s.status === 'booked') && (locFilter === 'all' || s.locId === locFilter))
+        .sort((a, b) => a.time.localeCompare(b.time))
+    : [];
+  const daySlots = allSlotsToday;
   const byLoc = {};
   daySlots.forEach((s) => { (byLoc[s.locId] = byLoc[s.locId] || []).push(s); });
 
@@ -207,7 +211,10 @@ function PrivateBooking() {
                     <div className="lsl-times__loc"><i data-lucide="map-pin"></i>{LSL.locById(lid).name}</div>
                     <div className="lsl-times__row">
                       {byLoc[lid].map((s) => (
-                        <button key={s.id} className={'lsl-time' + (slotId === s.id ? ' is-sel' : '')} onClick={() => setSlotId(s.id)}>
+                        <button key={s.id}
+                          className={'lsl-time' + (s.status === 'booked' ? ' is-booked' : '') + (slotId === s.id ? ' is-sel' : '')}
+                          disabled={s.status === 'booked'}
+                          onClick={() => s.status === 'open' && setSlotId(s.id)}>
                           {LSL.fmtTime(s.time)}
                         </button>
                       ))}
