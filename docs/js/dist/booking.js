@@ -280,12 +280,12 @@ function PrivateBooking() {
     key: s.id,
     className: 'lsl-time' + (slotId === s.id ? ' is-sel' : ''),
     onClick: () => setSlotId(s.id)
-  }, LSL.fmtTime(s.time)))))), slotId && /*#__PURE__*/React.createElement("button", {
+  }, LSL.fmtTime(s.time)))), byLoc[lid].some(s => s.id === slotId) && /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--primary lsl-times__req",
     onClick: () => setFormOpen(true)
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "calendar-check"
-  }), " Request Booking"), /*#__PURE__*/React.createElement("div", {
+  }), " Book Session"))), /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 16,
       paddingTop: 14,
