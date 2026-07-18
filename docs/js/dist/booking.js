@@ -280,7 +280,12 @@ function PrivateBooking() {
     key: s.id,
     className: 'lsl-time' + (slotId === s.id ? ' is-sel' : ''),
     onClick: () => setSlotId(s.id)
-  }, LSL.fmtTime(s.time)))))), /*#__PURE__*/React.createElement("div", {
+  }, LSL.fmtTime(s.time)))))), slotId && /*#__PURE__*/React.createElement("button", {
+    className: "lsl-btn lsl-btn--primary lsl-times__req",
+    onClick: () => setFormOpen(true)
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "calendar-check"
+  }), " Request Booking"), /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 16,
       paddingTop: 14,
@@ -327,7 +332,7 @@ function PrivateBooking() {
       color: 'var(--fg3)',
       marginTop: 10
     }
-  }, "This is a request \u2014 Coach Gio will confirm the time by email.")), desc && /*#__PURE__*/React.createElement("button", {
+  }, "This is a request \u2014 Coach Gio will confirm the time by email.")), isReq && desc && /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--primary lsl-times__req",
     onClick: () => setFormOpen(true)
   }, /*#__PURE__*/React.createElement("i", {

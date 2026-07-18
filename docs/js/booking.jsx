@@ -214,6 +214,11 @@ function PrivateBooking() {
                     </div>
                   </div>
                 ))}
+                {slotId && (
+                  <button className="lsl-btn lsl-btn--primary lsl-times__req" onClick={() => setFormOpen(true)}>
+                    <i data-lucide="calendar-check"></i> Request Booking
+                  </button>
+                )}
                 <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
                   <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)', marginBottom: 10, textAlign: 'center', fontSize: '0.85em' }}>
                     Don&rsquo;t see a date, time, or location you like?<br/><span style={{ fontSize: '1.08em' }}>Reach out &mdash; Coach Gio can often make it work.</span>
@@ -241,7 +246,7 @@ function PrivateBooking() {
               </div>
             )}
 
-            {desc && (
+            {isReq && desc && (
               <button className="lsl-btn lsl-btn--primary lsl-times__req" onClick={() => setFormOpen(true)}>
                 <i data-lucide="calendar-check"></i> Request Booking
               </button>
