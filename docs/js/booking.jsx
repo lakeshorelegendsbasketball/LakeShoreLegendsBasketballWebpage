@@ -65,7 +65,7 @@ async function notifyCoach(rec) {
   try {
     await fetch('https://api.web3forms.com/submit', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ access_key: key, subject, message, from_name: 'LakeShore Legends Booking', replyto: rec.email, cc: '2244259490@tmomail.net' }),
+      body: JSON.stringify({ access_key: key, subject, message, from_name: rec.mode === 'request' ? 'LSL Small Group Booking Request' : 'LSL New 1-on-1 Booking', replyto: rec.email, cc: '2244259490@tmomail.net' }),
     });
   } catch (e) { /* non-blocking */ }
 }
@@ -551,7 +551,7 @@ function TrainingRequestForm({ onClose }) {
       try {
         await fetch('https://api.web3forms.com/submit', {
           method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ access_key: key, subject: 'Training Request — ' + form.athlete, message, from_name: 'LakeShore Legends', replyto: form.email, cc: '2244259490@tmomail.net' }),
+          body: JSON.stringify({ access_key: key, subject: 'Training Request — ' + form.athlete, message, from_name: 'LSL Request Training', replyto: form.email, cc: '2244259490@tmomail.net' }),
         });
       } catch (_) { /* non-blocking */ }
     }

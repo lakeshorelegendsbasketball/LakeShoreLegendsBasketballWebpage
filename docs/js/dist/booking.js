@@ -64,7 +64,7 @@ async function notifyCoach(rec) {
         access_key: key,
         subject,
         message,
-        from_name: 'LakeShore Legends Booking',
+        from_name: rec.mode === 'request' ? 'LSL Small Group Booking Request' : 'LSL New 1-on-1 Booking',
         replyto: rec.email,
         cc: '2244259490@tmomail.net'
       })
@@ -856,7 +856,7 @@ function TrainingRequestForm({
             access_key: key,
             subject: 'Training Request — ' + form.athlete,
             message,
-            from_name: 'LakeShore Legends',
+            from_name: 'LSL Request Training',
             replyto: form.email,
             cc: '2244259490@tmomail.net'
           })

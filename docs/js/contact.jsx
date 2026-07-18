@@ -50,7 +50,7 @@ function ContactForm() {
       try {
         await fetch('https://api.web3forms.com/submit', {
           method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ access_key: key, subject, message, from_name: 'LakeShore Legends Contact', replyto: f.email, cc: '2244259490@tmomail.net' }),
+          body: JSON.stringify({ access_key: key, subject, message, from_name: 'LSL Contact Form', replyto: f.email, cc: '2244259490@tmomail.net' }),
         });
       } catch (e) { /* non-blocking */ }
     }

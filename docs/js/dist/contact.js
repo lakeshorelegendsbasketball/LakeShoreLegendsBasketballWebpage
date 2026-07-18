@@ -57,7 +57,7 @@ function ContactForm() {
             access_key: key,
             subject,
             message,
-            from_name: 'LakeShore Legends Contact',
+            from_name: 'LSL Contact Form',
             replyto: f.email,
             cc: '2244259490@tmomail.net'
           })
