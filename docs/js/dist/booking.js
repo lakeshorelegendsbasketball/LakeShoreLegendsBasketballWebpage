@@ -4,6 +4,9 @@ const {
   useEffect: useEffectBk,
   useReducer: useReducerBk
 } = React;
+const W3F_1ON1 = '57d5ddc7-7fef-4b25-b3c1-6d0ace6f4633';
+const W3F_GROUP = '26db51db-43e4-4bf9-90d5-fa4c7a647de2';
+const W3F_REQTRN = '0202f9d6-795d-4dd1-ae8e-6b5fe7391d92';
 const LSL_POLICY = ['Cancellations made within 48 hours of a session are subject to a 50% retainer.', 'Cancellations made more than 48 hours in advance receive a 100% refund.', 'Training session times and availability are subject to change.'];
 const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const pad2 = n => String(n).padStart(2, '0');
@@ -39,7 +42,7 @@ const REQ_TIMES = (() => {
   return out;
 })();
 async function notifyCoach(rec) {
-  const key = LSL.getWeb3Key();
+  const key = rec.mode === 'request' ? W3F_GROUP : W3F_1ON1;
   if (!key) return;
   const loc = rec.mode !== 'request' ? LSL.locById(rec.locId) : {};
   let subject, message;
@@ -834,7 +837,7 @@ function TrainingRequestForm({
     e.preventDefault();
     if (!validate()) return;
     setBusy(true);
-    const key = LSL.getWeb3Key();
+    const key = W3F_REQTRN;
     if (key) {
       const message = ['Training Request — ' + form.athlete, 'Parent/Guardian: ' + form.parent, form.email + (form.phone ? ' · ' + form.phone : ''), form.reqLocation ? 'Requested Location: ' + form.reqLocation : '', form.reqDate ? 'Requested Date: ' + form.reqDate : '', form.reqTime ? 'Requested Time: ' + form.reqTime : '', form.age ? 'Age/Grade: ' + form.age : '', form.focus ? 'Focus Areas: ' + form.focus : '', form.notes ? 'Notes: ' + form.notes : ''].filter(Boolean).join('\n');
       try {

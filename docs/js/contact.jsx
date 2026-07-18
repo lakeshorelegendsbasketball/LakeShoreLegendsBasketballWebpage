@@ -1,6 +1,8 @@
 /* global React, SectionHead, LSL */
 const { useState: useStateC } = React;
 
+const W3F_CONTACT = '82b032e9-660d-4edb-ade7-e9d2082a85ca';
+
 const INTERESTS = ['Private Training', 'Small-Group Training', 'Summer Camp', 'School Day-Off Camp', 'Jr. Mustangs Feeder', 'Other'];
 
 function ContactForm() {
@@ -27,7 +29,7 @@ function ContactForm() {
     setErr(e);
     if (Object.keys(e).length > 0) return;
     setBusy(true);
-    const key = LSL.getWeb3Key();
+    const key = W3F_CONTACT;
     if (key) {
       const subject = 'New Contact Inquiry — ' + f.interest + ' (' + f.parent + ')';
       const message = [
