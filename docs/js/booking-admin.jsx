@@ -76,6 +76,10 @@ function AvailTab({ force }) {
     setDate(''); setTime(''); force();
   };
   const del = (id) => { LSL.setSlots(LSL.getSlots().filter((s) => s.id !== id)); force(); };
+  const toggleBooked = (id) => {
+    LSL.setSlots(LSL.getSlots().map((s) => s.id === id ? { ...s, status: s.status === 'booked' ? 'open' : 'booked' } : s));
+    force();
+  };
   const slots = LSL.getSlots().slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
   return (
     <div>
@@ -97,6 +101,9 @@ function AvailTab({ force }) {
             <div className="lsl-admin__item" key={s.id}>
               <div className="lsl-admin__itemmain"><strong>{LSL.fmtDate(s.date)}</strong> · {LSL.fmtTime(s.time)} · {l.name}</div>
               <span className={'lsl-pill ' + (s.status === 'booked' ? 'lsl-pill--orange' : 'lsl-pill--outline')}>{s.status === 'booked' ? 'Booked' : 'Open'}</span>
+              <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => toggleBooked(s.id)}>
+                {s.status === 'booked' ? 'Mark Open' : 'Mark Booked'}
+              </button>
               <button className="lsl-admin__del" onClick={() => del(s.id)} aria-label="Delete"><i data-lucide="trash-2"></i></button>
             </div>
           );

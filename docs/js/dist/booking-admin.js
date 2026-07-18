@@ -145,6 +145,13 @@ function AvailTab({
     LSL.setSlots(LSL.getSlots().filter(s => s.id !== id));
     force();
   };
+  const toggleBooked = id => {
+    LSL.setSlots(LSL.getSlots().map(s => s.id === id ? {
+      ...s,
+      status: s.status === 'booked' ? 'open' : 'booked'
+    } : s));
+    force();
+  };
   const slots = LSL.getSlots().slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
@@ -193,6 +200,13 @@ function AvailTab({
     }, /*#__PURE__*/React.createElement("strong", null, LSL.fmtDate(s.date)), " \xB7 ", LSL.fmtTime(s.time), " \xB7 ", l.name), /*#__PURE__*/React.createElement("span", {
       className: 'lsl-pill ' + (s.status === 'booked' ? 'lsl-pill--orange' : 'lsl-pill--outline')
     }, s.status === 'booked' ? 'Booked' : 'Open'), /*#__PURE__*/React.createElement("button", {
+      className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
+      style: {
+        padding: '3px 10px',
+        fontSize: 12
+      },
+      onClick: () => toggleBooked(s.id)
+    }, s.status === 'booked' ? 'Mark Open' : 'Mark Booked'), /*#__PURE__*/React.createElement("button", {
       className: "lsl-admin__del",
       onClick: () => del(s.id),
       "aria-label": "Delete"
