@@ -7,43 +7,20 @@ const {
 const W3F_1ON1 = '57d5ddc7-7fef-4b25-b3c1-6d0ace6f4633';
 const W3F_GROUP = '26db51db-43e4-4bf9-90d5-fa4c7a647de2';
 const W3F_REQTRN = '0202f9d6-795d-4dd1-ae8e-6b5fe7391d92';
+const PAY_1ON1 = 'https://buy.stripe.com/00w9AM0rxcFigGc4M10Jq01';
+const PAY_GROUP = {
+  '2': 'https://buy.stripe.com/28E9AMcaf48Mdu03HX0Jq00',
+  '3': 'https://buy.stripe.com/8x2dR20rx9t64XuguJ0Jq02',
+  '4+': 'https://buy.stripe.com/14AcMYdejaxa89GemB0Jq03'
+};
 const LSL_POLICY = ['Cancellations made within 48 hours of a session are subject to a 50% retainer.', 'Cancellations made more than 48 hours in advance receive a 100% refund.', 'Training session times and availability are subject to change.'];
 const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const pad2 = n => String(n).padStart(2, '0');
 const isoOf = dt => dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + pad2(dt.getDate());
-
-/* Three public services. "dated" services use the posted-opening calendar and
-   forward to Stripe. The "request" service collects a day-of-week + time
-   preference and emails the coach + family — no payment. */
-const SERVICES = [{
-  key: '1on1',
-  name: '1-on-1 Private Training Session',
-  icon: 'user',
-  meta: 'One athlete · 60 min',
-  mode: 'dated',
-  typeId: 'p1',
-  payLink: 'https://buy.stripe.com/00w9AM0rxcFigGc4M10Jq01'
-}, {
-  key: 'small',
-  name: 'Small Group Training Session',
-  icon: 'users',
-  meta: 'Bring your own group',
-  mode: 'request'
-}, {
-  key: 'class',
-  name: 'Group Basketball Classes',
-  icon: 'graduation-cap',
-  meta: 'Open enrollment',
-  mode: 'soon'
-}];
-const REQ_TIMES = (() => {
-  const out = [];
-  for (let h = 8; h <= 20; h++) for (const m of ['00', '30']) out.push(pad2(h) + ':' + m);
-  return out;
-})();
 async function notifyCoach(rec) {
-  const key = rec.mode === 'request' ? W3F_GROUP : W3F_1ON1;
-  if (!key) return;
+  const isGroup = !!rec.players;
+  const key = rec.mode === 'request' ? W3F_GROUP : isGroup ? W3F_GROUP : W3F_1ON1;
+  const fromName = rec.mode === 'request' || isGroup ? 'LSL Small Group Booking Request' : 'LSL New 1-on-1 Booking';
   const loc = rec.mode !== 'request' ? LSL.locById(rec.locId) : {};
   let subject, message;
   if (rec.mode === 'request') {
@@ -51,7 +28,7 @@ async function notifyCoach(rec) {
     message = ['Group Request: ' + rec.athlete, rec.serviceName + ' · ' + rec.players + ' players', DOW[rec.dow] + 's · ' + LSL.fmtTime(rec.reqTime), 'Parent: ' + rec.parent, rec.email + (rec.phone ? ' · ' + rec.phone : ''), rec.age ? 'Age/Grade: ' + rec.age : '', rec.focus ? 'Focus: ' + rec.focus : '', rec.notes ? 'Notes: ' + rec.notes : ''].filter(Boolean).join('\n');
   } else {
     subject = 'New Booking — ' + rec.athlete + ' · ' + LSL.fmtDate(rec.date);
-    message = ['New Booking: ' + rec.athlete, rec.serviceName, LSL.fmtDate(rec.date) + ' · ' + LSL.fmtTime(rec.time), loc.name || '', 'Parent: ' + rec.parent, rec.email + (rec.phone ? ' · ' + rec.phone : ''), rec.age ? 'Age/Grade: ' + rec.age : '', rec.focus ? 'Focus: ' + rec.focus : '', rec.notes ? 'Notes: ' + rec.notes : ''].filter(Boolean).join('\n');
+    message = ['New Booking: ' + rec.athlete, rec.serviceName + (rec.players ? ' · ' + rec.players + ' players' : ''), LSL.fmtDate(rec.date) + ' · ' + LSL.fmtTime(rec.time), loc.name || '', 'Parent: ' + rec.parent, rec.email + (rec.phone ? ' · ' + rec.phone : ''), rec.age ? 'Age/Grade: ' + rec.age : '', rec.focus ? 'Focus: ' + rec.focus : '', rec.notes ? 'Notes: ' + rec.notes : ''].filter(Boolean).join('\n');
   }
   try {
     await fetch('https://api.web3forms.com/submit', {
@@ -64,7 +41,7 @@ async function notifyCoach(rec) {
         access_key: key,
         subject,
         message,
-        from_name: rec.mode === 'request' ? 'LSL Small Group Booking Request' : 'LSL New 1-on-1 Booking',
+        from_name: fromName,
         replyto: rec.email,
         cc: '2244259490@tmomail.net'
       })
@@ -72,16 +49,13 @@ async function notifyCoach(rec) {
   } catch (e) {/* non-blocking */}
 }
 function PrivateBooking() {
-  const [service, setService] = useStateBk(null);
-  const [players, setPlayers] = useStateBk(null);
   const [offset, setOffset] = useStateBk(0);
   const [date, setDate] = useStateBk(null);
-  const [dow, setDow] = useStateBk(null);
   const [slotId, setSlotId] = useStateBk(null);
-  const [reqTime, setReqTime] = useStateBk('');
+  const [svcType, setSvcType] = useStateBk(null); // 'dated' | 'small'
+  const [players, setPlayers] = useStateBk(null);
   const [formOpen, setFormOpen] = useStateBk(false);
   const [reqTrainOpen, setReqTrainOpen] = useStateBk(false);
-  const [locFilter, setLocFilter] = useStateBk('all');
   const [, forceSync] = useReducerBk(x => x + 1, 0);
   useEffectBk(() => {
     const onSync = () => forceSync();
@@ -92,254 +66,50 @@ function PrivateBooking() {
     if (window.lucide) window.lucide.createIcons();
   });
   const todayIso = isoOf(new Date());
-  const allOpenSlots = LSL.getSlots().filter(s => s.status === 'open' && s.date >= todayIso);
-  const openSlots = locFilter === 'all' ? allOpenSlots : allOpenSlots.filter(s => s.locId === locFilter);
-  const openDates = new Set(openSlots.map(s => s.date));
-  const pickService = s => {
-    setService(s);
-    setPlayers(null);
-    setDate(null);
-    setDow(null);
-    setSlotId(null);
-    setReqTime('');
-    setOffset(0);
-    setLocFilter('all');
-  };
+
+  // All open dates across all locations
+  const openDates = new Set(LSL.getSlots().filter(s => s.status === 'open' && s.date >= todayIso).map(s => s.date));
+
+  // Slots for selected date across all locations, sorted by time
+  const daySlots = date ? LSL.getSlots().filter(s => s.date === date && (s.status === 'open' || s.status === 'booked')).sort((a, b) => a.time.localeCompare(b.time)) : [];
+
+  // Group by location
+  const byLoc = {};
+  daySlots.forEach(s => {
+    if (!byLoc[s.locId]) byLoc[s.locId] = [];
+    byLoc[s.locId].push(s);
+  });
   const pickDate = iso => {
     setDate(iso);
     setSlotId(null);
+    setSvcType(null);
+    setPlayers(null);
   };
-  const pickDow = d => {
-    setDow(d);
-    setReqTime('');
+  const pickSlot = id => {
+    setSlotId(id);
+    setSvcType(null);
+    setPlayers(null);
   };
-  const allSlotsToday = date ? LSL.getSlots().filter(s => s.date === date && (s.status === 'open' || s.status === 'booked') && (locFilter === 'all' || s.locId === locFilter)).sort((a, b) => a.time.localeCompare(b.time)) : [];
-  const daySlots = allSlotsToday;
-  const byLoc = {};
-  daySlots.forEach(s => {
-    (byLoc[s.locId] = byLoc[s.locId] || []).push(s);
-  });
-  const isReq = service && service.mode === 'request';
-  const isSoon = service && service.mode === 'soon';
-  const col2Head = isReq ? 'Select a Day' : 'Select a Date';
-  const col3Head = isReq ? 'Request a Time' : 'Available Times';
-
-  // build descriptor for the form
   let desc = null;
-  if (isReq && dow != null && reqTime) desc = {
-    mode: 'request',
-    serviceName: service.name,
-    players,
-    dow,
-    reqTime
-  };else if (service && !isReq && slotId) desc = {
-    mode: 'dated',
-    serviceName: service.name,
-    typeId: service.typeId,
-    payLink: service.payLink,
-    slotId
-  };
-  return /*#__PURE__*/React.createElement("section", {
-    className: "lsl-section lsl-section--cream",
-    id: "book",
-    style: {
-      paddingTop: '44px'
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-wrap"
-  }, /*#__PURE__*/React.createElement(SectionHead, {
-    center: true,
-    wide: true,
-    eyebrow: "Private Training",
-    title: "Book a Session With Coach Gio",
-    sub: "Check out our availability and book the date and time that works for you."
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__col"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__head"
-  }, "Service Offerings"), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-svclist"
-  }, SERVICES.map(s => /*#__PURE__*/React.createElement(React.Fragment, {
-    key: s.key
-  }, /*#__PURE__*/React.createElement("button", {
-    className: 'lsl-svc' + (service && service.key === s.key ? ' is-sel' : ''),
-    onClick: () => pickService(s)
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "lsl-svc__ico"
-  }, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": s.icon
-  })), /*#__PURE__*/React.createElement("span", {
-    className: "lsl-svc__body"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "lsl-svc__name"
-  }, s.name), /*#__PURE__*/React.createElement("span", {
-    className: "lsl-svc__meta"
-  }, s.meta)), /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "chevron-right",
-    className: "lsl-svc__chev"
-  })), s.key === 'small' && service && service.key === 'small' && /*#__PURE__*/React.createElement("div", {
-    className: "lsl-svcsub"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-svcsub__q"
-  }, "How many players do you have in your group?"), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-svcsub__opts"
-  }, ['2', '3', '4', '5', '6+'].map(n => /*#__PURE__*/React.createElement("button", {
-    key: n,
-    className: 'lsl-countchip' + (players === n ? ' is-sel' : ''),
-    onClick: () => {
-      setPlayers(n);
-      setDow(null);
-      setReqTime('');
-    }
-  }, n)))))))), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__col lsl-sched__col--border"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__head",
-    style: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: 8
-    }
-  }, /*#__PURE__*/React.createElement("span", null, col2Head), service && !isReq && !isSoon && /*#__PURE__*/React.createElement("select", {
-    className: "lsl-select",
-    style: {
-      fontSize: 11,
-      padding: '3px 6px',
-      minWidth: 0,
-      maxWidth: 130
-    },
-    value: locFilter,
-    onChange: e => {
-      setLocFilter(e.target.value);
-      setDate(null);
-      setSlotId(null);
-    }
-  }, /*#__PURE__*/React.createElement("option", {
-    value: "all"
-  }, "All Locations"), LSL.getLocs().map(l => /*#__PURE__*/React.createElement("option", {
-    key: l.id,
-    value: l.id
-  }, l.name)))), !service && /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__ph"
-  }, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "arrow-left"
-  }), " Choose a service to begin."), isSoon && /*#__PURE__*/React.createElement("div", {
-    className: "lsl-soon"
-  }, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "clock"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-soon__title"
-  }, "Coming Soon!"), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-soon__sub"
-  }, "Group basketball classes are launching soon. Check back for dates and times.")), service && !isReq && !isSoon && /*#__PURE__*/React.createElement(Calendar, {
-    offset: offset,
-    onOffset: setOffset,
-    openDates: openDates,
-    selected: date,
-    onPick: pickDate,
-    todayIso: todayIso
-  }), isReq && !players && /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__ph"
-  }, "Select your group size first."), isReq && players && /*#__PURE__*/React.createElement("div", {
-    className: "lsl-dows"
-  }, DOW.map((d, i) => /*#__PURE__*/React.createElement("button", {
-    key: d,
-    className: 'lsl-dow' + (dow === i ? ' is-sel' : ''),
-    onClick: () => pickDow(i)
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "lsl-dow__d"
-  }, d), /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "chevron-right"
-  }))))), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__col lsl-sched__col--border"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__head"
-  }, col3Head), isSoon && /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__ph"
-  }, "Stay tuned \u2014 enrollment opens soon."), service && !isReq && !isSoon && !date && /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__ph"
-  }, "Pick a date with a dot to see open times."), service && !isReq && !isSoon && date && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-times__day"
-  }, LSL.fmtDateLong(date)), daySlots.length === 0 && /*#__PURE__*/React.createElement("p", {
-    className: "lsl-body lsl-body--sm",
-    style: {
-      color: 'var(--fg3)'
-    }
-  }, "No open times this day."), Object.keys(byLoc).map(lid => /*#__PURE__*/React.createElement("div", {
-    className: "lsl-times__group",
-    key: lid
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-times__loc"
-  }, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "map-pin"
-  }), LSL.locById(lid).name), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-times__row"
-  }, byLoc[lid].map(s => /*#__PURE__*/React.createElement("button", {
-    key: s.id,
-    className: 'lsl-time' + (s.status === 'booked' ? ' is-booked' : '') + (slotId === s.id ? ' is-sel' : ''),
-    disabled: s.status === 'booked',
-    onClick: () => s.status === 'open' && setSlotId(s.id)
-  }, LSL.fmtTime(s.time)))), byLoc[lid].some(s => s.id === slotId) && /*#__PURE__*/React.createElement("button", {
-    className: "lsl-btn lsl-btn--primary lsl-times__req",
-    onClick: () => setFormOpen(true)
-  }, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "calendar-check"
-  }), " Book Session"))), /*#__PURE__*/React.createElement("div", {
-    style: {
-      marginTop: 16,
-      paddingTop: 14,
-      borderTop: '1px solid var(--border)'
-    }
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "lsl-body lsl-body--sm",
-    style: {
-      color: 'var(--fg2)',
-      marginBottom: 10,
-      textAlign: 'center',
-      fontSize: '0.85em'
-    }
-  }, "Don\u2019t see a date, time, or location you like?", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontSize: '1.08em'
-    }
-  }, "Reach out \u2014 Coach Gio can often make it work.")), /*#__PURE__*/React.createElement("button", {
-    className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
-    style: {
-      width: '100%'
-    },
-    onClick: () => setReqTrainOpen(true)
-  }, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "mail"
-  }), " Request Training"))), isReq && dow == null && /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__ph"
-  }, players ? 'Pick a day of the week first.' : 'Choose group size and a day.'), isReq && dow != null && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-times__day"
-  }, DOW[dow], "s"), /*#__PURE__*/React.createElement("label", {
-    className: "lsl-times__lbl"
-  }, "What time works best?"), /*#__PURE__*/React.createElement("select", {
-    className: "lsl-select",
-    value: reqTime,
-    onChange: e => setReqTime(e.target.value)
-  }, /*#__PURE__*/React.createElement("option", {
-    value: ""
-  }, "Select a preferred time\u2026"), REQ_TIMES.map(t => /*#__PURE__*/React.createElement("option", {
-    key: t,
-    value: t
-  }, LSL.fmtTime(t)))), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-body lsl-body--sm",
-    style: {
-      color: 'var(--fg3)',
-      marginTop: 10
-    }
-  }, "This is a request \u2014 Coach Gio will confirm the time by email.")), isReq && desc && /*#__PURE__*/React.createElement("button", {
-    className: "lsl-btn lsl-btn--primary lsl-times__req",
-    onClick: () => setFormOpen(true)
-  }, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "calendar-check"
-  }), " Request Booking"), service && !isReq && !isSoon && !date && /*#__PURE__*/React.createElement("div", {
+  if (slotId && svcType === 'dated') {
+    desc = {
+      mode: 'dated',
+      serviceName: '1-on-1 Private Training Session',
+      typeId: 'p1',
+      payLink: PAY_1ON1,
+      slotId
+    };
+  } else if (slotId && svcType === 'small' && players) {
+    desc = {
+      mode: 'dated',
+      serviceName: 'Small Group Training Session',
+      typeId: 'sg' + players,
+      payLink: PAY_GROUP[players],
+      slotId,
+      players
+    };
+  }
+  const ReqFooter = () => /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 20,
       paddingTop: 16,
@@ -365,7 +135,124 @@ function PrivateBooking() {
     onClick: () => setReqTrainOpen(true)
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "mail"
-  }), " Request Training")))), /*#__PURE__*/React.createElement("p", {
+  }), " Request Training"));
+  return /*#__PURE__*/React.createElement("section", {
+    className: "lsl-section lsl-section--cream",
+    id: "book",
+    style: {
+      paddingTop: '44px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-wrap"
+  }, /*#__PURE__*/React.createElement(SectionHead, {
+    center: true,
+    wide: true,
+    eyebrow: "Private Training",
+    title: "Book a Session With Coach Gio",
+    sub: "Check out our availability and book the date and time that works for you."
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched__col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched__head"
+  }, "Select a Date"), /*#__PURE__*/React.createElement(Calendar, {
+    offset: offset,
+    onOffset: setOffset,
+    openDates: openDates,
+    selected: date,
+    onPick: pickDate,
+    todayIso: todayIso
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched__col lsl-sched__col--border"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched__head"
+  }, "Available Times"), !date ? /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched__ph"
+  }, "Pick a highlighted date to see open times.") : daySlots.length === 0 ? /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body lsl-body--sm",
+    style: {
+      color: 'var(--fg3)'
+    }
+  }, "No open times on this day.") : Object.keys(byLoc).map(lid => {
+    const loc = LSL.locById(lid);
+    return /*#__PURE__*/React.createElement("div", {
+      key: lid,
+      style: {
+        marginBottom: 16
+      }
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "lsl-times__loc"
+    }, loc ? loc.name : lid), /*#__PURE__*/React.createElement("div", {
+      className: "lsl-times__row"
+    }, byLoc[lid].map(s => /*#__PURE__*/React.createElement("button", {
+      key: s.id,
+      className: 'lsl-time' + (s.status === 'booked' ? ' is-booked' : '') + (slotId === s.id ? ' is-sel' : ''),
+      disabled: s.status === 'booked',
+      onClick: () => s.status === 'open' && pickSlot(s.id)
+    }, LSL.fmtTime(s.time)))));
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched__col lsl-sched__col--border"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched__head"
+  }, "Type of Session"), !slotId ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched__ph"
+  }, "Select a date and time to choose your session type."), /*#__PURE__*/React.createElement(ReqFooter, null)) : /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-svclist"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: 'lsl-svc' + (svcType === 'dated' ? ' is-sel' : ''),
+    onClick: () => {
+      setSvcType('dated');
+      setPlayers(null);
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lsl-svc__ico"
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "user"
+  })), /*#__PURE__*/React.createElement("span", {
+    className: "lsl-svc__body"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lsl-svc__name"
+  }, "1-on-1 Private Training"), /*#__PURE__*/React.createElement("span", {
+    className: "lsl-svc__meta"
+  }, "One athlete \xB7 60 min")), /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "chevron-right",
+    className: "lsl-svc__chev"
+  })), /*#__PURE__*/React.createElement("button", {
+    className: 'lsl-svc' + (svcType === 'small' ? ' is-sel' : ''),
+    onClick: () => {
+      setSvcType('small');
+      setPlayers(null);
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lsl-svc__ico"
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "users"
+  })), /*#__PURE__*/React.createElement("span", {
+    className: "lsl-svc__body"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lsl-svc__name"
+  }, "Small Group Training"), /*#__PURE__*/React.createElement("span", {
+    className: "lsl-svc__meta"
+  }, "Bring your own group")), /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "chevron-right",
+    className: "lsl-svc__chev"
+  }))), svcType === 'small' && /*#__PURE__*/React.createElement("div", {
+    className: "lsl-svcsub"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-svcsub__q"
+  }, "How many players in your group?"), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-svcsub__opts"
+  }, ['2', '3', '4+'].map(n => /*#__PURE__*/React.createElement("button", {
+    key: n,
+    className: 'lsl-countchip' + (players === n ? ' is-sel' : ''),
+    onClick: () => setPlayers(n)
+  }, n)))), desc && /*#__PURE__*/React.createElement("button", {
+    className: "lsl-btn lsl-btn--primary lsl-times__req",
+    onClick: () => setFormOpen(true)
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "calendar-check"
+  }), " Book Session"), /*#__PURE__*/React.createElement(ReqFooter, null)))), /*#__PURE__*/React.createElement("p", {
     className: "lsl-bookpolicy"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "info"
@@ -377,8 +264,8 @@ function PrivateBooking() {
     onBooked: () => {
       setSlotId(null);
       setDate(null);
-      setReqTime('');
-      setDow(null);
+      setSvcType(null);
+      setPlayers(null);
     }
   }), reqTrainOpen && /*#__PURE__*/React.createElement(TrainingRequestForm, {
     onClose: () => setReqTrainOpen(false)
@@ -465,21 +352,9 @@ function BookingForm({
     focus: '',
     notes: ''
   });
-  const [extras, setExtras] = useStateBk([]);
   const [errs, setErrs] = useStateBk({});
   const [busy, setBusy] = useStateBk(false);
   const [result, setResult] = useStateBk(null);
-  const addExtra = () => setExtras([...extras, {
-    parent: '',
-    athlete: '',
-    email: '',
-    phone: ''
-  }]);
-  const removeExtra = i => setExtras(extras.filter((_, idx) => idx !== i));
-  const setExtra = (i, k) => e => setExtras(extras.map((ex, idx) => idx === i ? {
-    ...ex,
-    [k]: e.target.value
-  } : ex));
   useEffectBk(() => {
     if (window.lucide) window.lucide.createIcons();
   }, [result]);
@@ -527,7 +402,6 @@ function BookingForm({
         phone: form.phone,
         focus: form.focus,
         notes: form.notes,
-        extras,
         created: new Date().toISOString(),
         status: 'requested'
       };
@@ -551,6 +425,7 @@ function BookingForm({
         date: slots[sIdx].date,
         time: slots[sIdx].time,
         locId: slots[sIdx].locId,
+        players: desc.players || null,
         parent: form.parent,
         athlete: form.athlete,
         age: form.age,
@@ -600,7 +475,7 @@ function BookingForm({
       marginTop: 0,
       marginBottom: 4
     }
-  }, "Request Booking"), /*#__PURE__*/React.createElement("div", {
+  }, "Book Session"), /*#__PURE__*/React.createElement("div", {
     className: "lsl-bksummary"
   }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "dumbbell"
@@ -610,7 +485,9 @@ function BookingForm({
     "data-lucide": "calendar"
   }), DOW[desc.dow], "s"), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "clock"
-  }), LSL.fmtTime(desc.reqTime))) : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+  }), LSL.fmtTime(desc.reqTime))) : /*#__PURE__*/React.createElement(React.Fragment, null, desc.players && /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "users"
+  }), desc.players, " players"), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "calendar"
   }), LSL.fmtDateLong(slot.date)), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "clock"
@@ -675,59 +552,14 @@ function BookingForm({
     style: {
       minHeight: 76
     }
-  })), isReq && /*#__PURE__*/React.createElement("div", {
-    className: "lsl-extras"
-  }, extras.map((ex, i) => /*#__PURE__*/React.createElement("div", {
-    className: "lsl-extra",
-    key: i
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-extra__head"
-  }, /*#__PURE__*/React.createElement("span", null, "Participant ", i + 2), /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    className: "lsl-extra__remove",
-    onClick: () => removeExtra(i),
-    "aria-label": "Remove"
-  }, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "x"
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-field lsl-field--row"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Parent / Guardian Name"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    value: ex.parent,
-    onChange: setExtra(i, 'parent'),
-    placeholder: "Jane Smith"
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Athlete Name"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    value: ex.athlete,
-    onChange: setExtra(i, 'athlete'),
-    placeholder: "Alex Smith"
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-field lsl-field--row"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Email"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    type: "email",
-    value: ex.email,
-    onChange: setExtra(i, 'email'),
-    placeholder: "you@email.com"
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Phone"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    value: ex.phone,
-    onChange: setExtra(i, 'phone'),
-    placeholder: "(555) 555-5555"
-  }))))), /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    className: "lsl-btn lsl-btn--ghost lsl-btn--sm lsl-extras__add",
-    onClick: addExtra
-  }, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "user-plus"
-  }), " Add Another Participant")), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement("div", {
     className: "lsl-bknote",
     style: {
       marginBottom: 14
     }
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": isReq ? 'mail' : 'shield-check'
-  }), isReq ? /*#__PURE__*/React.createElement("span", null, "This sends a ", /*#__PURE__*/React.createElement("strong", null, "class request"), " to Coach Gio. You'll get a confirmation email \u2014 no payment is taken now.") : /*#__PURE__*/React.createElement("span", null, "After you submit, you'll be taken to ", /*#__PURE__*/React.createElement("strong", null, "Stripe"), " to pay securely and lock in your spot. Stripe emails your receipt.")), /*#__PURE__*/React.createElement("p", {
+  }), isReq ? /*#__PURE__*/React.createElement("span", null, "This sends a ", /*#__PURE__*/React.createElement("strong", null, "request"), " to Coach Gio. You'll get a confirmation email \u2014 no payment is taken now.") : /*#__PURE__*/React.createElement("span", null, "After you submit, you'll be taken to ", /*#__PURE__*/React.createElement("strong", null, "Stripe"), " to pay securely and lock in your spot. Stripe emails your receipt.")), /*#__PURE__*/React.createElement("p", {
     className: "lsl-bkpolicy--modal"
   }, LSL_POLICY.map((line, i) => /*#__PURE__*/React.createElement(React.Fragment, {
     key: i
@@ -773,7 +605,7 @@ function BookingForm({
     style: {
       marginTop: 0
     }
-  }, result.serviceName, " \xB7 ", LSL.fmtDateLong(result.date), " \xB7 ", LSL.fmtTime(result.time), " at ", LSL.locById(result.locId).name, ".", /*#__PURE__*/React.createElement("br", null), payLink ? 'Stripe payment opened in a new tab.' : ''), payLink ? /*#__PURE__*/React.createElement("a", {
+  }, result.serviceName, result.players ? ' · ' + result.players + ' players' : '', " \xB7 ", LSL.fmtDateLong(result.date), " \xB7 ", LSL.fmtTime(result.time), " at ", LSL.locById(result.locId).name, ".", /*#__PURE__*/React.createElement("br", null), payLink ? 'Stripe payment opened in a new tab.' : ''), payLink ? /*#__PURE__*/React.createElement("a", {
     className: "lsl-btn lsl-btn--primary",
     href: payLink,
     target: "_blank",

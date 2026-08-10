@@ -407,7 +407,7 @@ function BooksTab({
       className: "lsl-pill lsl-pill--sky"
     }, LSL.fmtDate(bk.date), " \xB7 ", LSL.fmtTime(bk.time))), /*#__PURE__*/React.createElement("div", {
       className: "lsl-admin__bookmeta"
-    }, req ? /*#__PURE__*/React.createElement(React.Fragment, null, bk.serviceName, " \xB7 ", bk.players, " players") : /*#__PURE__*/React.createElement(React.Fragment, null, bk.serviceName || t.name, " \xB7 ", l.name), /*#__PURE__*/React.createElement("br", null), "Parent: ", bk.parent, " \xB7 ", bk.email, bk.phone ? ' · ' + bk.phone : '', /*#__PURE__*/React.createElement("br", null), bk.age ? 'Age/Grade: ' + bk.age + ' · ' : '', bk.focus ? 'Focus: ' + bk.focus : '', bk.notes ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("br", null), "Notes: ", bk.notes) : null), /*#__PURE__*/React.createElement("div", {
+    }, req ? /*#__PURE__*/React.createElement(React.Fragment, null, bk.serviceName, " \xB7 ", bk.players, " players") : /*#__PURE__*/React.createElement(React.Fragment, null, bk.serviceName || t && t.name, bk.players ? ' · ' + bk.players + ' players' : '', " \xB7 ", l && l.name), /*#__PURE__*/React.createElement("br", null), "Parent: ", bk.parent, " \xB7 ", bk.email, bk.phone ? ' · ' + bk.phone : '', /*#__PURE__*/React.createElement("br", null), bk.age ? 'Age/Grade: ' + bk.age + ' · ' : '', bk.focus ? 'Focus: ' + bk.focus : '', bk.notes ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("br", null), "Notes: ", bk.notes) : null), /*#__PURE__*/React.createElement("div", {
       className: "lsl-admin__bookactions"
     }, !req && /*#__PURE__*/React.createElement("button", {
       className: "lsl-btn lsl-btn--ghost lsl-btn--sm",

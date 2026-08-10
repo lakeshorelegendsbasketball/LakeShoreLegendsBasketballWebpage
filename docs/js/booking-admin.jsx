@@ -198,7 +198,7 @@ function BooksTab({ force }) {
             <div className="lsl-admin__bookmeta">
               {req
                 ? <>{bk.serviceName} · {bk.players} players</>
-                : <>{bk.serviceName || t.name} · {l.name}</>}<br />
+                : <>{bk.serviceName || (t && t.name)}{bk.players ? ' · ' + bk.players + ' players' : ''} · {l && l.name}</>}<br />
               Parent: {bk.parent} · {bk.email}{bk.phone ? ' · ' + bk.phone : ''}<br />
               {bk.age ? 'Age/Grade: ' + bk.age + ' · ' : ''}{bk.focus ? 'Focus: ' + bk.focus : ''}
               {bk.notes ? <><br />Notes: {bk.notes}</> : null}

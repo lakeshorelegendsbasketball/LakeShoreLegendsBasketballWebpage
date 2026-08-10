@@ -5,6 +5,13 @@ const W3F_1ON1   = '57d5ddc7-7fef-4b25-b3c1-6d0ace6f4633';
 const W3F_GROUP  = '26db51db-43e4-4bf9-90d5-fa4c7a647de2';
 const W3F_REQTRN = '0202f9d6-795d-4dd1-ae8e-6b5fe7391d92';
 
+const PAY_1ON1 = 'https://buy.stripe.com/00w9AM0rxcFigGc4M10Jq01';
+const PAY_GROUP = {
+  '2':  'https://buy.stripe.com/28E9AMcaf48Mdu03HX0Jq00',
+  '3':  'https://buy.stripe.com/8x2dR20rx9t64XuguJ0Jq02',
+  '4+': 'https://buy.stripe.com/14AcMYdejaxa89GemB0Jq03',
+};
+
 const LSL_POLICY = [
   'Cancellations made within 48 hours of a session are subject to a 50% retainer.',
   'Cancellations made more than 48 hours in advance receive a 100% refund.',
@@ -15,25 +22,10 @@ const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', '
 const pad2 = (n) => String(n).padStart(2, '0');
 const isoOf = (dt) => dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + pad2(dt.getDate());
 
-/* Three public services. "dated" services use the posted-opening calendar and
-   forward to Stripe. The "request" service collects a day-of-week + time
-   preference and emails the coach + family — no payment. */
-const SERVICES = [
-  { key: '1on1', name: '1-on-1 Private Training Session', icon: 'user', meta: 'One athlete · 60 min', mode: 'dated', typeId: 'p1',
-    payLink: 'https://buy.stripe.com/00w9AM0rxcFigGc4M10Jq01' },
-  { key: 'small', name: 'Small Group Training Session', icon: 'users', meta: 'Bring your own group', mode: 'request' },
-  { key: 'class', name: 'Group Basketball Classes', icon: 'graduation-cap', meta: 'Open enrollment', mode: 'soon' },
-];
-
-const REQ_TIMES = (() => {
-  const out = [];
-  for (let h = 8; h <= 20; h++) for (const m of ['00', '30']) out.push(pad2(h) + ':' + m);
-  return out;
-})();
-
 async function notifyCoach(rec) {
-  const key = rec.mode === 'request' ? W3F_GROUP : W3F_1ON1;
-  if (!key) return;
+  const isGroup = !!(rec.players);
+  const key = rec.mode === 'request' ? W3F_GROUP : (isGroup ? W3F_GROUP : W3F_1ON1);
+  const fromName = rec.mode === 'request' || isGroup ? 'LSL Small Group Booking Request' : 'LSL New 1-on-1 Booking';
   const loc = rec.mode !== 'request' ? LSL.locById(rec.locId) : {};
   let subject, message;
   if (rec.mode === 'request') {
@@ -52,7 +44,7 @@ async function notifyCoach(rec) {
     subject = 'New Booking — ' + rec.athlete + ' · ' + LSL.fmtDate(rec.date);
     message = [
       'New Booking: ' + rec.athlete,
-      rec.serviceName,
+      rec.serviceName + (rec.players ? ' · ' + rec.players + ' players' : ''),
       LSL.fmtDate(rec.date) + ' · ' + LSL.fmtTime(rec.time),
       loc.name || '',
       'Parent: ' + rec.parent,
@@ -65,22 +57,19 @@ async function notifyCoach(rec) {
   try {
     await fetch('https://api.web3forms.com/submit', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ access_key: key, subject, message, from_name: rec.mode === 'request' ? 'LSL Small Group Booking Request' : 'LSL New 1-on-1 Booking', replyto: rec.email, cc: '2244259490@tmomail.net' }),
+      body: JSON.stringify({ access_key: key, subject, message, from_name: fromName, replyto: rec.email, cc: '2244259490@tmomail.net' }),
     });
   } catch (e) { /* non-blocking */ }
 }
 
 function PrivateBooking() {
-  const [service, setService] = useStateBk(null);
-  const [players, setPlayers] = useStateBk(null);
   const [offset, setOffset] = useStateBk(0);
   const [date, setDate] = useStateBk(null);
-  const [dow, setDow] = useStateBk(null);
   const [slotId, setSlotId] = useStateBk(null);
-  const [reqTime, setReqTime] = useStateBk('');
+  const [svcType, setSvcType] = useStateBk(null); // 'dated' | 'small'
+  const [players, setPlayers] = useStateBk(null);
   const [formOpen, setFormOpen] = useStateBk(false);
   const [reqTrainOpen, setReqTrainOpen] = useStateBk(false);
-  const [locFilter, setLocFilter] = useStateBk('all');
   const [, forceSync] = useReducerBk((x) => x + 1, 0);
 
   useEffectBk(() => {
@@ -88,37 +77,47 @@ function PrivateBooking() {
     window.addEventListener('lsl-synced', onSync);
     return () => window.removeEventListener('lsl-synced', onSync);
   }, []);
-
   useEffectBk(() => { if (window.lucide) window.lucide.createIcons(); });
 
   const todayIso = isoOf(new Date());
-  const allOpenSlots = LSL.getSlots().filter((s) => s.status === 'open' && s.date >= todayIso);
-  const openSlots = locFilter === 'all' ? allOpenSlots : allOpenSlots.filter((s) => s.locId === locFilter);
-  const openDates = new Set(openSlots.map((s) => s.date));
 
-  const pickService = (s) => {
-    setService(s); setPlayers(null); setDate(null); setDow(null); setSlotId(null); setReqTime(''); setOffset(0); setLocFilter('all');
-  };
-  const pickDate = (iso) => { setDate(iso); setSlotId(null); };
-  const pickDow = (d) => { setDow(d); setReqTime(''); };
+  // All open dates across all locations
+  const openDates = new Set(
+    LSL.getSlots().filter((s) => s.status === 'open' && s.date >= todayIso).map((s) => s.date)
+  );
 
-  const allSlotsToday = date
-    ? LSL.getSlots().filter((s) => s.date === date && (s.status === 'open' || s.status === 'booked') && (locFilter === 'all' || s.locId === locFilter))
+  // Slots for selected date across all locations, sorted by time
+  const daySlots = date
+    ? LSL.getSlots()
+        .filter((s) => s.date === date && (s.status === 'open' || s.status === 'booked'))
         .sort((a, b) => a.time.localeCompare(b.time))
     : [];
-  const daySlots = allSlotsToday;
+
+  // Group by location
   const byLoc = {};
-  daySlots.forEach((s) => { (byLoc[s.locId] = byLoc[s.locId] || []).push(s); });
+  daySlots.forEach((s) => { if (!byLoc[s.locId]) byLoc[s.locId] = []; byLoc[s.locId].push(s); });
 
-  const isReq = service && service.mode === 'request';
-  const isSoon = service && service.mode === 'soon';
-  const col2Head = isReq ? 'Select a Day' : 'Select a Date';
-  const col3Head = isReq ? 'Request a Time' : 'Available Times';
+  const pickDate = (iso) => { setDate(iso); setSlotId(null); setSvcType(null); setPlayers(null); };
+  const pickSlot = (id) => { setSlotId(id); setSvcType(null); setPlayers(null); };
 
-  // build descriptor for the form
   let desc = null;
-  if (isReq && dow != null && reqTime) desc = { mode: 'request', serviceName: service.name, players, dow, reqTime };
-  else if (service && !isReq && slotId) desc = { mode: 'dated', serviceName: service.name, typeId: service.typeId, payLink: service.payLink, slotId };
+  if (slotId && svcType === 'dated') {
+    desc = { mode: 'dated', serviceName: '1-on-1 Private Training Session', typeId: 'p1', payLink: PAY_1ON1, slotId };
+  } else if (slotId && svcType === 'small' && players) {
+    desc = { mode: 'dated', serviceName: 'Small Group Training Session', typeId: 'sg' + players, payLink: PAY_GROUP[players], slotId, players };
+  }
+
+  const ReqFooter = () => (
+    <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
+      <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)', marginBottom: 12, textAlign: 'center', fontSize: '0.85em' }}>
+        Don&rsquo;t see a date, time, or location you like?<br/>
+        <span style={{ fontSize: '1.08em' }}>Reach out &mdash; Coach Gio can often make it work.</span>
+      </p>
+      <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ width: '100%' }} onClick={() => setReqTrainOpen(true)}>
+        <i data-lucide="mail"></i> Request Training
+      </button>
+    </div>
+  );
 
   return (
     <section className="lsl-section lsl-section--cream" id="book" style={{ paddingTop: '44px' }}>
@@ -128,145 +127,86 @@ function PrivateBooking() {
           sub="Check out our availability and book the date and time that works for you." />
 
         <div className="lsl-sched">
-          {/* COLUMN 1 — services */}
+          {/* COLUMN 1 — calendar (all locations) */}
           <div className="lsl-sched__col">
-            <div className="lsl-sched__head">Service Offerings</div>
-            <div className="lsl-svclist">
-              {SERVICES.map((s) => (
-                <React.Fragment key={s.key}>
-                  <button className={'lsl-svc' + (service && service.key === s.key ? ' is-sel' : '')} onClick={() => pickService(s)}>
-                    <span className="lsl-svc__ico"><i data-lucide={s.icon}></i></span>
+            <div className="lsl-sched__head">Select a Date</div>
+            <Calendar offset={offset} onOffset={setOffset} openDates={openDates} selected={date} onPick={pickDate} todayIso={todayIso} />
+          </div>
+
+          {/* COLUMN 2 — times grouped by location */}
+          <div className="lsl-sched__col lsl-sched__col--border">
+            <div className="lsl-sched__head">Available Times</div>
+            {!date
+              ? <div className="lsl-sched__ph">Pick a highlighted date to see open times.</div>
+              : daySlots.length === 0
+                ? <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)' }}>No open times on this day.</p>
+                : Object.keys(byLoc).map((lid) => {
+                    const loc = LSL.locById(lid);
+                    return (
+                      <div key={lid} style={{ marginBottom: 16 }}>
+                        <div className="lsl-times__loc">{loc ? loc.name : lid}</div>
+                        <div className="lsl-times__row">
+                          {byLoc[lid].map((s) => (
+                            <button key={s.id}
+                              className={'lsl-time' + (s.status === 'booked' ? ' is-booked' : '') + (slotId === s.id ? ' is-sel' : '')}
+                              disabled={s.status === 'booked'}
+                              onClick={() => s.status === 'open' && pickSlot(s.id)}>
+                              {LSL.fmtTime(s.time)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })
+            }
+          </div>
+
+          {/* COLUMN 3 — type of session */}
+          <div className="lsl-sched__col lsl-sched__col--border">
+            <div className="lsl-sched__head">Type of Session</div>
+            {!slotId ? (
+              <>
+                <div className="lsl-sched__ph">Select a date and time to choose your session type.</div>
+                <ReqFooter />
+              </>
+            ) : (
+              <div>
+                <div className="lsl-svclist">
+                  <button className={'lsl-svc' + (svcType === 'dated' ? ' is-sel' : '')}
+                    onClick={() => { setSvcType('dated'); setPlayers(null); }}>
+                    <span className="lsl-svc__ico"><i data-lucide="user"></i></span>
                     <span className="lsl-svc__body">
-                      <span className="lsl-svc__name">{s.name}</span>
-                      <span className="lsl-svc__meta">{s.meta}</span>
+                      <span className="lsl-svc__name">1-on-1 Private Training</span>
+                      <span className="lsl-svc__meta">One athlete · 60 min</span>
                     </span>
                     <i data-lucide="chevron-right" className="lsl-svc__chev"></i>
                   </button>
-                  {s.key === 'small' && service && service.key === 'small' && (
-                    <div className="lsl-svcsub">
-                      <div className="lsl-svcsub__q">How many players do you have in your group?</div>
-                      <div className="lsl-svcsub__opts">
-                        {['2', '3', '4', '5', '6+'].map((n) => (
-                          <button key={n} className={'lsl-countchip' + (players === n ? ' is-sel' : '')}
-                            onClick={() => { setPlayers(n); setDow(null); setReqTime(''); }}>{n}</button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </React.Fragment>
-              ))}
-            </div>
-          </div>
-
-          {/* COLUMN 2 — calendar or day-of-week */}
-          <div className="lsl-sched__col lsl-sched__col--border">
-            <div className="lsl-sched__head" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-              <span>{col2Head}</span>
-              {service && !isReq && !isSoon && (
-                <select className="lsl-select" style={{ fontSize: 11, padding: '3px 6px', minWidth: 0, maxWidth: 130 }}
-                  value={locFilter}
-                  onChange={(e) => { setLocFilter(e.target.value); setDate(null); setSlotId(null); }}>
-                  <option value="all">All Locations</option>
-                  {LSL.getLocs().map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
-                </select>
-              )}
-            </div>
-            {!service && <div className="lsl-sched__ph"><i data-lucide="arrow-left"></i> Choose a service to begin.</div>}
-            {isSoon && (
-              <div className="lsl-soon">
-                <i data-lucide="clock"></i>
-                <div className="lsl-soon__title">Coming Soon!</div>
-                <p className="lsl-soon__sub">Group basketball classes are launching soon. Check back for dates and times.</p>
-              </div>
-            )}
-            {service && !isReq && !isSoon && (
-              <Calendar offset={offset} onOffset={setOffset} openDates={openDates} selected={date} onPick={pickDate} todayIso={todayIso} />
-            )}
-            {isReq && !players && <div className="lsl-sched__ph">Select your group size first.</div>}
-            {isReq && players && (
-              <div className="lsl-dows">
-                {DOW.map((d, i) => (
-                  <button key={d} className={'lsl-dow' + (dow === i ? ' is-sel' : '')} onClick={() => pickDow(i)}>
-                    <span className="lsl-dow__d">{d}</span>
-                    <i data-lucide="chevron-right"></i>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* COLUMN 3 — times */}
-          <div className="lsl-sched__col lsl-sched__col--border">
-            <div className="lsl-sched__head">{col3Head}</div>
-
-            {/* dated times */}
-            {isSoon && <div className="lsl-sched__ph">Stay tuned — enrollment opens soon.</div>}
-            {service && !isReq && !isSoon && !date && <div className="lsl-sched__ph">Pick a date with a dot to see open times.</div>}
-            {service && !isReq && !isSoon && date && (
-              <div>
-                <div className="lsl-times__day">{LSL.fmtDateLong(date)}</div>
-                {daySlots.length === 0 && <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)' }}>No open times this day.</p>}
-                {Object.keys(byLoc).map((lid) => (
-                  <div className="lsl-times__group" key={lid}>
-                    <div className="lsl-times__loc"><i data-lucide="map-pin"></i>{LSL.locById(lid).name}</div>
-                    <div className="lsl-times__row">
-                      {byLoc[lid].map((s) => (
-                        <button key={s.id}
-                          className={'lsl-time' + (s.status === 'booked' ? ' is-booked' : '') + (slotId === s.id ? ' is-sel' : '')}
-                          disabled={s.status === 'booked'}
-                          onClick={() => s.status === 'open' && setSlotId(s.id)}>
-                          {LSL.fmtTime(s.time)}
-                        </button>
-                      ))}
-                    </div>
-                    {byLoc[lid].some((s) => s.id === slotId) && (
-                      <button className="lsl-btn lsl-btn--primary lsl-times__req" onClick={() => setFormOpen(true)}>
-                        <i data-lucide="calendar-check"></i> Book Session
-                      </button>
-                    )}
-                  </div>
-                ))}
-                <div style={{ marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
-                  <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)', marginBottom: 10, textAlign: 'center', fontSize: '0.85em' }}>
-                    Don&rsquo;t see a date, time, or location you like?<br/><span style={{ fontSize: '1.08em' }}>Reach out &mdash; Coach Gio can often make it work.</span>
-                  </p>
-                  <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ width: '100%' }} onClick={() => setReqTrainOpen(true)}>
-                    <i data-lucide="mail"></i> Request Training
+                  <button className={'lsl-svc' + (svcType === 'small' ? ' is-sel' : '')}
+                    onClick={() => { setSvcType('small'); setPlayers(null); }}>
+                    <span className="lsl-svc__ico"><i data-lucide="users"></i></span>
+                    <span className="lsl-svc__body">
+                      <span className="lsl-svc__name">Small Group Training</span>
+                      <span className="lsl-svc__meta">Bring your own group</span>
+                    </span>
+                    <i data-lucide="chevron-right" className="lsl-svc__chev"></i>
                   </button>
                 </div>
-              </div>
-            )}
-
-            {/* request time */}
-            {isReq && (dow == null) && <div className="lsl-sched__ph">{players ? 'Pick a day of the week first.' : 'Choose group size and a day.'}</div>}
-            {isReq && (dow != null) && (
-              <div>
-                <div className="lsl-times__day">{DOW[dow]}s</div>
-                <label className="lsl-times__lbl">What time works best?</label>
-                <select className="lsl-select" value={reqTime} onChange={(e) => setReqTime(e.target.value)}>
-                  <option value="">Select a preferred time…</option>
-                  {REQ_TIMES.map((t) => <option key={t} value={t}>{LSL.fmtTime(t)}</option>)}
-                </select>
-                <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)', marginTop: 10 }}>
-                  This is a request — Coach Gio will confirm the time by email.
-                </p>
-              </div>
-            )}
-
-            {isReq && desc && (
-              <button className="lsl-btn lsl-btn--primary lsl-times__req" onClick={() => setFormOpen(true)}>
-                <i data-lucide="calendar-check"></i> Request Booking
-              </button>
-            )}
-
-            {service && !isReq && !isSoon && !date && (
-              <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid var(--border)' }}>
-                <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)', marginBottom: 12, textAlign: 'center', fontSize: '0.85em' }}>
-                  Don&rsquo;t see a date, time, or location you like?<br/><span style={{ fontSize: '1.08em' }}>Reach out &mdash; Coach Gio can often make it work.</span>
-                </p>
-                <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ width: '100%' }} onClick={() => setReqTrainOpen(true)}>
-                  <i data-lucide="mail"></i> Request Training
-                </button>
+                {svcType === 'small' && (
+                  <div className="lsl-svcsub">
+                    <div className="lsl-svcsub__q">How many players in your group?</div>
+                    <div className="lsl-svcsub__opts">
+                      {['2', '3', '4+'].map((n) => (
+                        <button key={n} className={'lsl-countchip' + (players === n ? ' is-sel' : '')} onClick={() => setPlayers(n)}>{n}</button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {desc && (
+                  <button className="lsl-btn lsl-btn--primary lsl-times__req" onClick={() => setFormOpen(true)}>
+                    <i data-lucide="calendar-check"></i> Book Session
+                  </button>
+                )}
+                <ReqFooter />
               </div>
             )}
           </div>
@@ -279,7 +219,7 @@ function PrivateBooking() {
       </div>
       {formOpen && desc && (
         <BookingForm desc={desc} onClose={() => setFormOpen(false)}
-          onBooked={() => { setSlotId(null); setDate(null); setReqTime(''); setDow(null); }} />
+          onBooked={() => { setSlotId(null); setDate(null); setSvcType(null); setPlayers(null); }} />
       )}
       {reqTrainOpen && <TrainingRequestForm onClose={() => setReqTrainOpen(false)} />}
     </section>
@@ -330,14 +270,9 @@ function Calendar({ offset, onOffset, openDates, selected, onPick, todayIso }) {
 
 function BookingForm({ desc, onClose, onBooked }) {
   const [form, setForm] = useStateBk({ parent: '', athlete: '', age: '', email: '', phone: '', focus: '', notes: '' });
-  const [extras, setExtras] = useStateBk([]);
   const [errs, setErrs] = useStateBk({});
   const [busy, setBusy] = useStateBk(false);
   const [result, setResult] = useStateBk(null);
-
-  const addExtra = () => setExtras([...extras, { parent: '', athlete: '', email: '', phone: '' }]);
-  const removeExtra = (i) => setExtras(extras.filter((_, idx) => idx !== i));
-  const setExtra = (i, k) => (e) => setExtras(extras.map((ex, idx) => idx === i ? { ...ex, [k]: e.target.value } : ex));
 
   useEffectBk(() => { if (window.lucide) window.lucide.createIcons(); }, [result]);
   useEffectBk(() => {
@@ -370,7 +305,7 @@ function BookingForm({ desc, onClose, onBooked }) {
     if (isReq) {
       rec = { id: LSL.uid(), mode: 'request', serviceName: desc.serviceName, players: desc.players, dow: desc.dow, reqTime: desc.reqTime,
         parent: form.parent, athlete: form.athlete, age: form.age, email: form.email, phone: form.phone,
-        focus: form.focus, notes: form.notes, extras, created: new Date().toISOString(), status: 'requested' };
+        focus: form.focus, notes: form.notes, created: new Date().toISOString(), status: 'requested' };
       LSL.setBooks([...LSL.getBooks(), rec]);
     } else {
       const slots = LSL.getSlots();
@@ -378,6 +313,7 @@ function BookingForm({ desc, onClose, onBooked }) {
       if (sIdx < 0 || slots[sIdx].status !== 'open') { setBusy(false); setErrs({ form: 'Sorry — that opening was just taken. Please pick another time.' }); return; }
       rec = { id: LSL.uid(), mode: 'dated', typeId: desc.typeId, serviceName: desc.serviceName, slotId: desc.slotId,
         date: slots[sIdx].date, time: slots[sIdx].time, locId: slots[sIdx].locId,
+        players: desc.players || null,
         parent: form.parent, athlete: form.athlete, age: form.age, email: form.email, phone: form.phone,
         focus: form.focus, notes: form.notes, created: new Date().toISOString(), status: 'awaiting_payment' };
       slots[sIdx] = { ...slots[sIdx], status: 'booked', bookingId: rec.id };
@@ -390,7 +326,6 @@ function BookingForm({ desc, onClose, onBooked }) {
     if (onBooked) onBooked();
   }
 
-
   return (
     <div className="lsl-lightbox" onClick={onClose}>
       <div className="lsl-bkmodal" onClick={(e) => e.stopPropagation()}>
@@ -400,7 +335,7 @@ function BookingForm({ desc, onClose, onBooked }) {
 
         {!result ? (
           <form className="lsl-bkbody" onSubmit={submit}>
-            <h3 className="lsl-h3" style={{ marginTop: 0, marginBottom: 4 }}>Request Booking</h3>
+            <h3 className="lsl-h3" style={{ marginTop: 0, marginBottom: 4 }}>Book Session</h3>
             <div className="lsl-bksummary">
               <span><i data-lucide="dumbbell"></i>{desc.serviceName}</span>
               {isReq ? <>
@@ -408,6 +343,7 @@ function BookingForm({ desc, onClose, onBooked }) {
                 <span><i data-lucide="calendar"></i>{DOW[desc.dow]}s</span>
                 <span><i data-lucide="clock"></i>{LSL.fmtTime(desc.reqTime)}</span>
               </> : <>
+                {desc.players && <span><i data-lucide="users"></i>{desc.players} players</span>}
                 <span><i data-lucide="calendar"></i>{LSL.fmtDateLong(slot.date)}</span>
                 <span><i data-lucide="clock"></i>{LSL.fmtTime(slot.time)}</span>
                 <span><i data-lucide="map-pin"></i>{loc.name}</span>
@@ -438,39 +374,10 @@ function BookingForm({ desc, onClose, onBooked }) {
               <label>Additional Notes</label>
               <textarea className="lsl-textarea" value={form.notes} onChange={set('notes')} placeholder="Anything Coach Gio should know" style={{ minHeight: 76 }}></textarea>
             </div>
-            {isReq && (
-              <div className="lsl-extras">
-                {extras.map((ex, i) => (
-                  <div className="lsl-extra" key={i}>
-                    <div className="lsl-extra__head">
-                      <span>Participant {i + 2}</span>
-                      <button type="button" className="lsl-extra__remove" onClick={() => removeExtra(i)} aria-label="Remove">
-                        <i data-lucide="x"></i>
-                      </button>
-                    </div>
-                    <div className="lsl-field lsl-field--row">
-                      <div><label>Parent / Guardian Name</label>
-                        <input className="lsl-input" value={ex.parent} onChange={setExtra(i, 'parent')} placeholder="Jane Smith" /></div>
-                      <div><label>Athlete Name</label>
-                        <input className="lsl-input" value={ex.athlete} onChange={setExtra(i, 'athlete')} placeholder="Alex Smith" /></div>
-                    </div>
-                    <div className="lsl-field lsl-field--row">
-                      <div><label>Email</label>
-                        <input className="lsl-input" type="email" value={ex.email} onChange={setExtra(i, 'email')} placeholder="you@email.com" /></div>
-                      <div><label>Phone</label>
-                        <input className="lsl-input" value={ex.phone} onChange={setExtra(i, 'phone')} placeholder="(555) 555-5555" /></div>
-                    </div>
-                  </div>
-                ))}
-                <button type="button" className="lsl-btn lsl-btn--ghost lsl-btn--sm lsl-extras__add" onClick={addExtra}>
-                  <i data-lucide="user-plus"></i> Add Another Participant
-                </button>
-              </div>
-            )}
             <div className="lsl-bknote" style={{ marginBottom: 14 }}>
               <i data-lucide={isReq ? 'mail' : 'shield-check'}></i>
               {isReq
-                ? <span>This sends a <strong>class request</strong> to Coach Gio. You'll get a confirmation email — no payment is taken now.</span>
+                ? <span>This sends a <strong>request</strong> to Coach Gio. You'll get a confirmation email — no payment is taken now.</span>
                 : <span>After you submit, you'll be taken to <strong>Stripe</strong> to pay securely and lock in your spot. Stripe emails your receipt.</span>}
             </div>
             <p className="lsl-bkpolicy--modal">{LSL_POLICY.map((line, i) => <React.Fragment key={i}>{line}{i < LSL_POLICY.length - 1 && <br />}</React.Fragment>)}</p>
@@ -497,7 +404,7 @@ function BookingForm({ desc, onClose, onBooked }) {
             <div className="lsl-formsuccess__ico"><i data-lucide="check"></i></div>
             <h3 className="lsl-h3">Spot reserved — one last step</h3>
             <p className="lsl-body lsl-body--sm" style={{ marginTop: 0 }}>
-              {result.serviceName} · {LSL.fmtDateLong(result.date)} · {LSL.fmtTime(result.time)} at {LSL.locById(result.locId).name}.<br />
+              {result.serviceName}{result.players ? ' · ' + result.players + ' players' : ''} · {LSL.fmtDateLong(result.date)} · {LSL.fmtTime(result.time)} at {LSL.locById(result.locId).name}.<br />
               {payLink ? 'Stripe payment opened in a new tab.' : ''}
             </p>
             {payLink
