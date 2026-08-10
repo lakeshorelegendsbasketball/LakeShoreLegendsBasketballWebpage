@@ -125,6 +125,7 @@ function AvailTab({
   const [date, setDate] = useStateAd('');
   const [time, setTime] = useStateAd('');
   const [locId, setLocId] = useStateAd(locs[0] ? locs[0].id : '');
+  const [contingent, setContingent] = useStateAd(false);
   useEffectAd(() => {
     if (window.lucide) window.lucide.createIcons();
   });
@@ -135,10 +136,12 @@ function AvailTab({
       date,
       time,
       locId,
-      status: 'open'
+      status: 'open',
+      contingent: contingent || false
     }]);
     setDate('');
     setTime('');
+    setContingent(false);
     force();
   };
   const del = id => {
@@ -152,6 +155,13 @@ function AvailTab({
     } : s));
     force();
   };
+  const toggleContingent = id => {
+    LSL.setSlots(LSL.getSlots().map(s => s.id === id ? {
+      ...s,
+      contingent: !s.contingent
+    } : s));
+    force();
+  };
   const slots = LSL.getSlots().slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
   return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
@@ -159,7 +169,7 @@ function AvailTab({
       marginTop: 0,
       color: 'var(--fg3)'
     }
-  }, "Add openings as they come up. Booked times drop off the public list automatically."), /*#__PURE__*/React.createElement("div", {
+  }, "Add openings as they come up. Mark a slot ", /*#__PURE__*/React.createElement("strong", null, "Back-to-back"), " to keep it hidden until an adjacent slot at the same location is booked first."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-admin__addrow"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Date"), /*#__PURE__*/React.createElement("input", {
     className: "lsl-input",
@@ -183,7 +193,16 @@ function AvailTab({
     onClick: add
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "plus"
-  }), " Add opening")), /*#__PURE__*/React.createElement("div", {
+  }), " Add opening")), /*#__PURE__*/React.createElement("label", {
+    className: "lsl-admin__check",
+    style: {
+      marginBottom: 18
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: contingent,
+    onChange: e => setContingent(e.target.checked)
+  }), /*#__PURE__*/React.createElement("span", null, "Back-to-back only \u2014 hidden until an adjacent slot is booked")), /*#__PURE__*/React.createElement("div", {
     className: "lsl-admin__list"
   }, slots.length === 0 && /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
@@ -199,7 +218,10 @@ function AvailTab({
       className: "lsl-admin__itemmain"
     }, /*#__PURE__*/React.createElement("strong", null, LSL.fmtDate(s.date)), " \xB7 ", LSL.fmtTime(s.time), " \xB7 ", l.name), /*#__PURE__*/React.createElement("span", {
       className: 'lsl-pill ' + (s.status === 'booked' ? 'lsl-pill--orange' : 'lsl-pill--outline')
-    }, s.status === 'booked' ? 'Booked' : 'Open'), /*#__PURE__*/React.createElement("button", {
+    }, s.status === 'booked' ? 'Booked' : 'Open'), s.contingent && /*#__PURE__*/React.createElement("span", {
+      className: "lsl-pill lsl-pill--sky",
+      title: "Hidden until adjacent slot is booked"
+    }, "B2B"), /*#__PURE__*/React.createElement("button", {
       className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
       style: {
         padding: '3px 10px',
@@ -207,6 +229,15 @@ function AvailTab({
       },
       onClick: () => toggleBooked(s.id)
     }, s.status === 'booked' ? 'Mark Open' : 'Mark Booked'), /*#__PURE__*/React.createElement("button", {
+      className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
+      style: {
+        padding: '3px 10px',
+        fontSize: 12,
+        opacity: s.contingent ? 1 : 0.55
+      },
+      onClick: () => toggleContingent(s.id),
+      title: s.contingent ? 'Click to show always' : 'Click to make back-to-back only'
+    }, s.contingent ? '🔗 B2B' : 'B2B off'), /*#__PURE__*/React.createElement("button", {
       className: "lsl-admin__del",
       onClick: () => del(s.id),
       "aria-label": "Delete"

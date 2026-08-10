@@ -533,7 +533,9 @@ a.lsl-btn { line-height: 1; }
 .lsl-admin__tabs button:hover { color: var(--fg1); }
 .lsl-admin__tabs button.is-active { color: var(--legend-orange); border-bottom-color: var(--legend-orange); }
 
-.lsl-admin__addrow { display: grid; grid-template-columns: 1fr 1fr 1.2fr auto; gap: 12px; align-items: end; margin-bottom: 22px; }
+.lsl-admin__addrow { display: grid; grid-template-columns: 1fr 1fr 1.2fr auto; gap: 12px; align-items: end; margin-bottom: 10px; }
+.lsl-admin__check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--fg2); cursor: pointer; user-select: none; }
+.lsl-admin__check input { width: 15px; height: 15px; accent-color: var(--legend-navy); cursor: pointer; }
 .lsl-admin__addrow label { display: block; font-family: var(--font-cond); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; font-size: 11px; color: var(--fg2); margin-bottom: 6px; }
 .lsl-admin__list { display: flex; flex-direction: column; gap: 10px; }
 .lsl-admin__item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border: 1px solid var(--line-soft); border-radius: var(--r-md); background: var(--legend-cream); }

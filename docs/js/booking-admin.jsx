@@ -68,22 +68,27 @@ function AvailTab({ force }) {
   const [date, setDate] = useStateAd('');
   const [time, setTime] = useStateAd('');
   const [locId, setLocId] = useStateAd(locs[0] ? locs[0].id : '');
+  const [contingent, setContingent] = useStateAd(false);
   useEffectAd(() => { if (window.lucide) window.lucide.createIcons(); });
 
   const add = () => {
     if (!date || !time || !locId) return;
-    LSL.setSlots([...LSL.getSlots(), { id: LSL.uid(), date, time, locId, status: 'open' }]);
-    setDate(''); setTime(''); force();
+    LSL.setSlots([...LSL.getSlots(), { id: LSL.uid(), date, time, locId, status: 'open', contingent: contingent || false }]);
+    setDate(''); setTime(''); setContingent(false); force();
   };
   const del = (id) => { LSL.setSlots(LSL.getSlots().filter((s) => s.id !== id)); force(); };
   const toggleBooked = (id) => {
     LSL.setSlots(LSL.getSlots().map((s) => s.id === id ? { ...s, status: s.status === 'booked' ? 'open' : 'booked' } : s));
     force();
   };
+  const toggleContingent = (id) => {
+    LSL.setSlots(LSL.getSlots().map((s) => s.id === id ? { ...s, contingent: !s.contingent } : s));
+    force();
+  };
   const slots = LSL.getSlots().slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
   return (
     <div>
-      <p className="lsl-body lsl-body--sm" style={{ marginTop: 0, color: 'var(--fg3)' }}>Add openings as they come up. Booked times drop off the public list automatically.</p>
+      <p className="lsl-body lsl-body--sm" style={{ marginTop: 0, color: 'var(--fg3)' }}>Add openings as they come up. Mark a slot <strong>Back-to-back</strong> to keep it hidden until an adjacent slot at the same location is booked first.</p>
       <div className="lsl-admin__addrow">
         <div><label>Date</label><input className="lsl-input" type="date" value={date} onChange={(e) => setDate(e.target.value)} /></div>
         <div><label>Time</label><input className="lsl-input" type="time" value={time} onChange={(e) => setTime(e.target.value)} /></div>
@@ -93,6 +98,10 @@ function AvailTab({ force }) {
           </select></div>
         <button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={add}><i data-lucide="plus"></i> Add opening</button>
       </div>
+      <label className="lsl-admin__check" style={{ marginBottom: 18 }}>
+        <input type="checkbox" checked={contingent} onChange={(e) => setContingent(e.target.checked)} />
+        <span>Back-to-back only — hidden until an adjacent slot is booked</span>
+      </label>
       <div className="lsl-admin__list">
         {slots.length === 0 && <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)' }}>No openings yet. Add your first above.</p>}
         {slots.map((s) => {
@@ -101,8 +110,12 @@ function AvailTab({ force }) {
             <div className="lsl-admin__item" key={s.id}>
               <div className="lsl-admin__itemmain"><strong>{LSL.fmtDate(s.date)}</strong> · {LSL.fmtTime(s.time)} · {l.name}</div>
               <span className={'lsl-pill ' + (s.status === 'booked' ? 'lsl-pill--orange' : 'lsl-pill--outline')}>{s.status === 'booked' ? 'Booked' : 'Open'}</span>
+              {s.contingent && <span className="lsl-pill lsl-pill--sky" title="Hidden until adjacent slot is booked">B2B</span>}
               <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => toggleBooked(s.id)}>
                 {s.status === 'booked' ? 'Mark Open' : 'Mark Booked'}
+              </button>
+              <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ padding: '3px 10px', fontSize: 12, opacity: s.contingent ? 1 : 0.55 }} onClick={() => toggleContingent(s.id)} title={s.contingent ? 'Click to show always' : 'Click to make back-to-back only'}>
+                {s.contingent ? '🔗 B2B' : 'B2B off'}
               </button>
               <button className="lsl-admin__del" onClick={() => del(s.id)} aria-label="Delete"><i data-lucide="trash-2"></i></button>
             </div>

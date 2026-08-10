@@ -78,12 +78,23 @@ function PrivateBooking() {
   }, []);
   const todayIso = isoOf(new Date());
   const locs = LSL.getLocs();
+  const allSlots = LSL.getSlots();
 
-  // Open dates filtered by selected location
-  const openDates = new Set(LSL.getSlots().filter(s => s.status === 'open' && s.date >= todayIso && (!locFilter || s.locId === locFilter)).map(s => s.date));
+  // Contingent slot: only visible when an adjacent slot (±65 min, same date+loc) is booked
+  const toMins = t => {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  };
+  const slotVisible = s => {
+    if (!s.contingent || s.status === 'booked') return true;
+    return allSlots.some(o => o.locId === s.locId && o.date === s.date && o.status === 'booked' && Math.abs(toMins(o.time) - toMins(s.time)) <= 65);
+  };
 
-  // Slots for selected date, filtered by location
-  const daySlots = date ? LSL.getSlots().filter(s => s.date === date && (s.status === 'open' || s.status === 'booked') && (!locFilter || s.locId === locFilter)).sort((a, b) => a.time.localeCompare(b.time)) : [];
+  // Open dates filtered by selected location + contingent visibility
+  const openDates = new Set(allSlots.filter(s => s.status === 'open' && s.date >= todayIso && (!locFilter || s.locId === locFilter) && slotVisible(s)).map(s => s.date));
+
+  // Slots for selected date, filtered by location + contingent visibility
+  const daySlots = date ? allSlots.filter(s => s.date === date && (s.status === 'open' || s.status === 'booked') && (!locFilter || s.locId === locFilter) && (s.status === 'booked' || slotVisible(s))).sort((a, b) => a.time.localeCompare(b.time)) : [];
 
   // Group by location
   const byLoc = {};
