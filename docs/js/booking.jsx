@@ -21,6 +21,7 @@ const LSL_POLICY = [
 const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const pad2 = (n) => String(n).padStart(2, '0');
 const isoOf = (dt) => dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + pad2(dt.getDate());
+const toMins = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
 
 async function notifyCoach(rec) {
   const isGroup = !!(rec.players);
@@ -97,7 +98,6 @@ function PrivateBooking() {
   const allSlots = LSL.getSlots();
 
   // Contingent slot: only visible when its anchor slot is booked
-  const toMins = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
   const slotVisible = (s) => {
     if (!s.contingent || s.status === 'booked') return true;
     if (s.contingentOn) return allSlots.some((o) => o.id === s.contingentOn && o.status === 'booked');
@@ -377,7 +377,22 @@ function BookingForm({ desc, onClose, onBooked }) {
         parent: form.parent, athlete: form.athlete, age: form.age, email: form.email, phone: form.phone,
         focus: form.focus, notes: form.notes, created: new Date().toISOString(), status: 'awaiting_payment' };
       slots[sIdx] = { ...slots[sIdx], status: 'booked', bookingId: rec.id };
-      LSL.setSlots(slots);
+
+      // Resolve cross-location conflicts within the travel buffer
+      const buffer = LSL.getConflictBuffer();
+      const action = LSL.getConflictAction();
+      const bookedMins = toMins(rec.time);
+      const resolved = slots.map((s, i) => {
+        if (i === sIdx || s.status !== 'open' || s.locId === rec.locId || s.date !== rec.date) return s;
+        if (Math.abs(toMins(s.time) - bookedMins) >= buffer) return s;
+        if (action === 'delete') return null;
+        // Bump: push to the edge of the buffer window
+        const newMins = toMins(s.time) >= bookedMins ? bookedMins + buffer : bookedMins - buffer;
+        if (newMins < 0 || newMins >= 1440) return null;
+        return { ...s, time: pad2(Math.floor(newMins / 60)) + ':' + pad2(newMins % 60) };
+      }).filter(Boolean);
+
+      LSL.setSlots(resolved);
       LSL.setBooks([...LSL.getBooks(), rec]);
     }
     await notifyCoach(rec);

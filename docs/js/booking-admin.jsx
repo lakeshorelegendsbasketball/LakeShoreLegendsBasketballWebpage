@@ -254,6 +254,8 @@ function SettingsTab({ force }) {
   const [w3, setW3] = useStateAd(LSL.getWeb3Key());
   const [jbKey, setJbKey] = useStateAd(LSL.getJBKey());
   const [jbBin, setJbBin] = useStateAd(LSL.getJBBin());
+  const [confBuf, setConfBuf] = useStateAd(LSL.getConflictBuffer());
+  const [confAct, setConfAct] = useStateAd(LSL.getConflictAction());
   const [savedMsg, setSavedMsg] = useStateAd('');
   const [jbMsg, setJbMsg] = useStateAd('');
   const [jbBusy, setJbBusy] = useStateAd(false);
@@ -341,6 +343,29 @@ function SettingsTab({ force }) {
           Get a free key at web3forms.com. With it set, every booking emails you the full player &amp; parent details before the family is sent to Stripe.
         </p>
         <button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={saveW3}>Save key</button>
+      </div>
+      <div className="lsl-admin__card">
+        <h4 style={{ margin: '0 0 6px', fontFamily: 'var(--font-cond)', textTransform: 'uppercase', letterSpacing: '.06em', fontSize: 13 }}>Location Conflict Resolution</h4>
+        <p className="lsl-body lsl-body--sm" style={{ marginTop: 0, color: 'var(--fg3)' }}>
+          When a slot is booked, any open slot at a <em>different</em> location within this window gets auto-resolved so you're never double-booked across locations.
+        </p>
+        <div className="lsl-field lsl-field--row" style={{ marginBottom: 10 }}>
+          <div>
+            <label>Travel buffer (minutes)</label>
+            <input className="lsl-input" type="number" min="30" max="240" value={confBuf}
+              onChange={(e) => setConfBuf(+e.target.value)} placeholder="90" />
+          </div>
+          <div>
+            <label>When conflict is found</label>
+            <select className="lsl-select" value={confAct} onChange={(e) => setConfAct(e.target.value)}>
+              <option value="bump">Bump to safe time</option>
+              <option value="delete">Remove the slot</option>
+            </select>
+          </div>
+        </div>
+        <button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={() => { LSL.setConflictBuffer(confBuf); LSL.setConflictAction(confAct); flash('Conflict settings saved.'); }}>
+          Save
+        </button>
       </div>
       <div className="lsl-admin__card">
         <div className="lsl-field" style={{ marginBottom: 8 }}>

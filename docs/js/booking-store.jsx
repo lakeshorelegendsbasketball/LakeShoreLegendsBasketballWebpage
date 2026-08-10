@@ -9,6 +9,7 @@
     types: 'lsl_lessonTypes', locs: 'lsl_locations', slots: 'lsl_slots',
     books: 'lsl_bookings', pass: 'lsl_adminPass', web3: 'lsl_web3key', ver: 'lsl_seedv',
     jbKey: 'lsl_jb_key', jbBin: 'lsl_jb_bin',
+    confBuf: 'lsl_conflict_buffer', confAct: 'lsl_conflict_action',
   };
   const LS = {
     get(k, def) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : def; } catch (e) { return def; } },
@@ -79,6 +80,8 @@
       books: LS.get(K.books, []),
       pass:  LS.get(K.pass,  'legends'),
       web3Key: LS.get(K.web3, ''),
+      conflictBuffer: LS.get(K.confBuf, 90),
+      conflictAction: LS.get(K.confAct, 'bump'),
     };
   }
 
@@ -103,6 +106,8 @@
     if (Array.isArray(r.books))  LS.set(K.books, r.books);
     if (r.pass)                  LS.set(K.pass,  r.pass);
     if (r.web3Key !== undefined)  LS.set(K.web3,  r.web3Key);
+    if (r.conflictBuffer != null) LS.set(K.confBuf, r.conflictBuffer);
+    if (r.conflictAction)         LS.set(K.confAct, r.conflictAction);
     window.dispatchEvent(new CustomEvent('lsl-synced'));
     return true;
   }
@@ -157,6 +162,10 @@
     getWeb3Key:() => LS.get(K.web3,  ''), setWeb3Key:(v) => { LS.set(K.web3, v);  pushToCloud(); },
     getJBKey:  () => LS.get(K.jbKey, ''), setJBKey:  (v) => LS.set(K.jbKey, v),
     getJBBin:  () => LS.get(K.jbBin, ''), setJBBin:  (v) => LS.set(K.jbBin, v),
+    getConflictBuffer: () => LS.get(K.confBuf, 90),
+    setConflictBuffer: (v) => { LS.set(K.confBuf, v); pushToCloud(); },
+    getConflictAction: () => LS.get(K.confAct, 'bump'),
+    setConflictAction: (v) => { LS.set(K.confAct, v); pushToCloud(); },
     locById:   (id) => LSL.getLocs().find((l) => l.id === id) || {},
     typeById:  (id) => LSL.getTypes().find((t) => t.id === id) || {},
     createBin, syncFromCloud, pushToCloud,

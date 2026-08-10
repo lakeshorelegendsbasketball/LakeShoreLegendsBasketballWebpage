@@ -490,6 +490,8 @@ function SettingsTab({
   const [w3, setW3] = useStateAd(LSL.getWeb3Key());
   const [jbKey, setJbKey] = useStateAd(LSL.getJBKey());
   const [jbBin, setJbBin] = useStateAd(LSL.getJBBin());
+  const [confBuf, setConfBuf] = useStateAd(LSL.getConflictBuffer());
+  const [confAct, setConfAct] = useStateAd(LSL.getConflictAction());
   const [savedMsg, setSavedMsg] = useStateAd('');
   const [jbMsg, setJbMsg] = useStateAd('');
   const [jbBusy, setJbBusy] = useStateAd(false);
@@ -677,6 +679,50 @@ function SettingsTab({
     className: "lsl-btn lsl-btn--primary lsl-btn--sm",
     onClick: saveW3
   }, "Save key")), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-admin__card"
+  }, /*#__PURE__*/React.createElement("h4", {
+    style: {
+      margin: '0 0 6px',
+      fontFamily: 'var(--font-cond)',
+      textTransform: 'uppercase',
+      letterSpacing: '.06em',
+      fontSize: 13
+    }
+  }, "Location Conflict Resolution"), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body lsl-body--sm",
+    style: {
+      marginTop: 0,
+      color: 'var(--fg3)'
+    }
+  }, "When a slot is booked, any open slot at a ", /*#__PURE__*/React.createElement("em", null, "different"), " location within this window gets auto-resolved so you're never double-booked across locations."), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-field lsl-field--row",
+    style: {
+      marginBottom: 10
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Travel buffer (minutes)"), /*#__PURE__*/React.createElement("input", {
+    className: "lsl-input",
+    type: "number",
+    min: "30",
+    max: "240",
+    value: confBuf,
+    onChange: e => setConfBuf(+e.target.value),
+    placeholder: "90"
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "When conflict is found"), /*#__PURE__*/React.createElement("select", {
+    className: "lsl-select",
+    value: confAct,
+    onChange: e => setConfAct(e.target.value)
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "bump"
+  }, "Bump to safe time"), /*#__PURE__*/React.createElement("option", {
+    value: "delete"
+  }, "Remove the slot")))), /*#__PURE__*/React.createElement("button", {
+    className: "lsl-btn lsl-btn--primary lsl-btn--sm",
+    onClick: () => {
+      LSL.setConflictBuffer(confBuf);
+      LSL.setConflictAction(confAct);
+      flash('Conflict settings saved.');
+    }
+  }, "Save")), /*#__PURE__*/React.createElement("div", {
     className: "lsl-admin__card"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-field",
