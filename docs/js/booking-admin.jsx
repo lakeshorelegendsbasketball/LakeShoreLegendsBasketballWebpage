@@ -63,32 +63,43 @@ function CoachAdminPage() {
 }
 
 /* ---------- Availability ---------- */
+const adPad2 = (n) => String(n).padStart(2, '0');
+const adShiftTime = (time, mins) => {
+  const [h, m] = time.split(':').map(Number);
+  const total = h * 60 + m + mins;
+  if (total < 0 || total >= 1440) return null;
+  return adPad2(Math.floor(total / 60)) + ':' + adPad2(total % 60);
+};
+
 function AvailTab({ force }) {
   const locs = LSL.getLocs();
   const [date, setDate] = useStateAd('');
   const [time, setTime] = useStateAd('');
   const [locId, setLocId] = useStateAd(locs[0] ? locs[0].id : '');
-  const [contingent, setContingent] = useStateAd(false);
+  const [b2bPicking, setB2bPicking] = useStateAd(null); // slotId currently showing picker
   useEffectAd(() => { if (window.lucide) window.lucide.createIcons(); });
 
   const add = () => {
     if (!date || !time || !locId) return;
-    LSL.setSlots([...LSL.getSlots(), { id: LSL.uid(), date, time, locId, status: 'open', contingent: contingent || false }]);
-    setDate(''); setTime(''); setContingent(false); force();
+    LSL.setSlots([...LSL.getSlots(), { id: LSL.uid(), date, time, locId, status: 'open' }]);
+    setDate(''); setTime(''); force();
   };
   const del = (id) => { LSL.setSlots(LSL.getSlots().filter((s) => s.id !== id)); force(); };
   const toggleBooked = (id) => {
     LSL.setSlots(LSL.getSlots().map((s) => s.id === id ? { ...s, status: s.status === 'booked' ? 'open' : 'booked' } : s));
     force();
   };
-  const toggleContingent = (id) => {
-    LSL.setSlots(LSL.getSlots().map((s) => s.id === id ? { ...s, contingent: !s.contingent } : s));
+  const addB2B = (slot, dir) => {
+    const newTime = adShiftTime(slot.time, dir === 'after' ? 60 : -60);
+    if (!newTime) return;
+    LSL.setSlots([...LSL.getSlots(), { id: LSL.uid(), date: slot.date, time: newTime, locId: slot.locId, status: 'open', contingent: true, contingentOn: slot.id }]);
+    setB2bPicking(null);
     force();
   };
   const slots = LSL.getSlots().slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
   return (
     <div>
-      <p className="lsl-body lsl-body--sm" style={{ marginTop: 0, color: 'var(--fg3)' }}>Add openings as they come up. Mark a slot <strong>Back-to-back</strong> to keep it hidden until an adjacent slot at the same location is booked first.</p>
+      <p className="lsl-body lsl-body--sm" style={{ marginTop: 0, color: 'var(--fg3)' }}>Add openings as they come up. Use <strong>Add Back to Back</strong> on any slot to create a hidden session that only appears once that slot is booked.</p>
       <div className="lsl-admin__addrow">
         <div><label>Date</label><input className="lsl-input" type="date" value={date} onChange={(e) => setDate(e.target.value)} /></div>
         <div><label>Time</label><input className="lsl-input" type="time" value={time} onChange={(e) => setTime(e.target.value)} /></div>
@@ -98,26 +109,36 @@ function AvailTab({ force }) {
           </select></div>
         <button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={add}><i data-lucide="plus"></i> Add opening</button>
       </div>
-      <label className="lsl-admin__check" style={{ marginBottom: 18 }}>
-        <input type="checkbox" checked={contingent} onChange={(e) => setContingent(e.target.checked)} />
-        <span>Back-to-back only — hidden until an adjacent slot is booked</span>
-      </label>
-      <div className="lsl-admin__list">
+      <div className="lsl-admin__list" style={{ marginTop: 8 }}>
         {slots.length === 0 && <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)' }}>No openings yet. Add your first above.</p>}
         {slots.map((s) => {
           const l = LSL.locById(s.locId);
+          const beforeTime = adShiftTime(s.time, -60);
+          const afterTime  = adShiftTime(s.time,  60);
+          const anchorSlot = s.contingentOn ? slots.find((x) => x.id === s.contingentOn) : null;
           return (
-            <div className="lsl-admin__item" key={s.id}>
-              <div className="lsl-admin__itemmain"><strong>{LSL.fmtDate(s.date)}</strong> · {LSL.fmtTime(s.time)} · {l.name}</div>
-              <span className={'lsl-pill ' + (s.status === 'booked' ? 'lsl-pill--orange' : 'lsl-pill--outline')}>{s.status === 'booked' ? 'Booked' : 'Open'}</span>
-              {s.contingent && <span className="lsl-pill lsl-pill--sky" title="Hidden until adjacent slot is booked">B2B</span>}
-              <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => toggleBooked(s.id)}>
-                {s.status === 'booked' ? 'Mark Open' : 'Mark Booked'}
-              </button>
-              <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ padding: '3px 10px', fontSize: 12, opacity: s.contingent ? 1 : 0.55 }} onClick={() => toggleContingent(s.id)} title={s.contingent ? 'Click to show always' : 'Click to make back-to-back only'}>
-                {s.contingent ? '🔗 B2B' : 'B2B off'}
-              </button>
-              <button className="lsl-admin__del" onClick={() => del(s.id)} aria-label="Delete"><i data-lucide="trash-2"></i></button>
+            <div className="lsl-admin__item lsl-admin__item--wrap" key={s.id}>
+              <div className="lsl-admin__itemmain">
+                <strong>{LSL.fmtDate(s.date)}</strong> · {LSL.fmtTime(s.time)} · {l && l.name}
+                {s.contingent && anchorSlot && <span style={{ color: 'var(--fg3)', fontWeight: 400 }}> — unlocks when {LSL.fmtTime(anchorSlot.time)} is booked</span>}
+              </div>
+              <div className="lsl-admin__itemactions">
+                <span className={'lsl-pill ' + (s.status === 'booked' ? 'lsl-pill--orange' : 'lsl-pill--outline')}>{s.status === 'booked' ? 'Booked' : 'Open'}</span>
+                {s.contingent && <span className="lsl-pill lsl-pill--sky">B2B</span>}
+                <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => toggleBooked(s.id)}>
+                  {s.status === 'booked' ? 'Mark Open' : 'Mark Booked'}
+                </button>
+                {b2bPicking === s.id ? (
+                  <div className="lsl-admin__b2bpick">
+                    {beforeTime && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => addB2B(s, 'before')}>← {LSL.fmtTime(beforeTime)}</button>}
+                    {afterTime  && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => addB2B(s, 'after')}>{LSL.fmtTime(afterTime)} →</button>}
+                    <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ opacity: 0.5 }} onClick={() => setB2bPicking(null)}>Cancel</button>
+                  </div>
+                ) : (
+                  !s.contingent && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => setB2bPicking(s.id)}>Add Back to Back</button>
+                )}
+                <button className="lsl-admin__del" onClick={() => del(s.id)} aria-label="Delete"><i data-lucide="trash-2"></i></button>
+              </div>
             </div>
           );
         })}

@@ -80,13 +80,15 @@ function PrivateBooking() {
   const locs = LSL.getLocs();
   const allSlots = LSL.getSlots();
 
-  // Contingent slot: only visible when an adjacent slot (±65 min, same date+loc) is booked
+  // Contingent slot: only visible when its anchor slot is booked
   const toMins = t => {
     const [h, m] = t.split(':').map(Number);
     return h * 60 + m;
   };
   const slotVisible = s => {
     if (!s.contingent || s.status === 'booked') return true;
+    if (s.contingentOn) return allSlots.some(o => o.id === s.contingentOn && o.status === 'booked');
+    // Legacy fallback: any adjacent booked slot within ±65 min
     return allSlots.some(o => o.locId === s.locId && o.date === s.date && o.status === 'booked' && Math.abs(toMins(o.time) - toMins(s.time)) <= 65);
   };
 

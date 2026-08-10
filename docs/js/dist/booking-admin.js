@@ -118,6 +118,13 @@ function CoachAdminPage() {
 }
 
 /* ---------- Availability ---------- */
+const adPad2 = n => String(n).padStart(2, '0');
+const adShiftTime = (time, mins) => {
+  const [h, m] = time.split(':').map(Number);
+  const total = h * 60 + m + mins;
+  if (total < 0 || total >= 1440) return null;
+  return adPad2(Math.floor(total / 60)) + ':' + adPad2(total % 60);
+};
 function AvailTab({
   force
 }) {
@@ -125,7 +132,7 @@ function AvailTab({
   const [date, setDate] = useStateAd('');
   const [time, setTime] = useStateAd('');
   const [locId, setLocId] = useStateAd(locs[0] ? locs[0].id : '');
-  const [contingent, setContingent] = useStateAd(false);
+  const [b2bPicking, setB2bPicking] = useStateAd(null); // slotId currently showing picker
   useEffectAd(() => {
     if (window.lucide) window.lucide.createIcons();
   });
@@ -136,12 +143,10 @@ function AvailTab({
       date,
       time,
       locId,
-      status: 'open',
-      contingent: contingent || false
+      status: 'open'
     }]);
     setDate('');
     setTime('');
-    setContingent(false);
     force();
   };
   const del = id => {
@@ -155,11 +160,19 @@ function AvailTab({
     } : s));
     force();
   };
-  const toggleContingent = id => {
-    LSL.setSlots(LSL.getSlots().map(s => s.id === id ? {
-      ...s,
-      contingent: !s.contingent
-    } : s));
+  const addB2B = (slot, dir) => {
+    const newTime = adShiftTime(slot.time, dir === 'after' ? 60 : -60);
+    if (!newTime) return;
+    LSL.setSlots([...LSL.getSlots(), {
+      id: LSL.uid(),
+      date: slot.date,
+      time: newTime,
+      locId: slot.locId,
+      status: 'open',
+      contingent: true,
+      contingentOn: slot.id
+    }]);
+    setB2bPicking(null);
     force();
   };
   const slots = LSL.getSlots().slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
@@ -169,7 +182,7 @@ function AvailTab({
       marginTop: 0,
       color: 'var(--fg3)'
     }
-  }, "Add openings as they come up. Mark a slot ", /*#__PURE__*/React.createElement("strong", null, "Back-to-back"), " to keep it hidden until an adjacent slot at the same location is booked first."), /*#__PURE__*/React.createElement("div", {
+  }, "Add openings as they come up. Use ", /*#__PURE__*/React.createElement("strong", null, "Add Back to Back"), " on any slot to create a hidden session that only appears once that slot is booked."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-admin__addrow"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Date"), /*#__PURE__*/React.createElement("input", {
     className: "lsl-input",
@@ -193,17 +206,11 @@ function AvailTab({
     onClick: add
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "plus"
-  }), " Add opening")), /*#__PURE__*/React.createElement("label", {
-    className: "lsl-admin__check",
+  }), " Add opening")), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-admin__list",
     style: {
-      marginBottom: 18
+      marginTop: 8
     }
-  }, /*#__PURE__*/React.createElement("input", {
-    type: "checkbox",
-    checked: contingent,
-    onChange: e => setContingent(e.target.checked)
-  }), /*#__PURE__*/React.createElement("span", null, "Back-to-back only \u2014 hidden until an adjacent slot is booked")), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-admin__list"
   }, slots.length === 0 && /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
     style: {
@@ -211,16 +218,25 @@ function AvailTab({
     }
   }, "No openings yet. Add your first above."), slots.map(s => {
     const l = LSL.locById(s.locId);
+    const beforeTime = adShiftTime(s.time, -60);
+    const afterTime = adShiftTime(s.time, 60);
+    const anchorSlot = s.contingentOn ? slots.find(x => x.id === s.contingentOn) : null;
     return /*#__PURE__*/React.createElement("div", {
-      className: "lsl-admin__item",
+      className: "lsl-admin__item lsl-admin__item--wrap",
       key: s.id
     }, /*#__PURE__*/React.createElement("div", {
       className: "lsl-admin__itemmain"
-    }, /*#__PURE__*/React.createElement("strong", null, LSL.fmtDate(s.date)), " \xB7 ", LSL.fmtTime(s.time), " \xB7 ", l.name), /*#__PURE__*/React.createElement("span", {
+    }, /*#__PURE__*/React.createElement("strong", null, LSL.fmtDate(s.date)), " \xB7 ", LSL.fmtTime(s.time), " \xB7 ", l && l.name, s.contingent && anchorSlot && /*#__PURE__*/React.createElement("span", {
+      style: {
+        color: 'var(--fg3)',
+        fontWeight: 400
+      }
+    }, " \u2014 unlocks when ", LSL.fmtTime(anchorSlot.time), " is booked")), /*#__PURE__*/React.createElement("div", {
+      className: "lsl-admin__itemactions"
+    }, /*#__PURE__*/React.createElement("span", {
       className: 'lsl-pill ' + (s.status === 'booked' ? 'lsl-pill--orange' : 'lsl-pill--outline')
     }, s.status === 'booked' ? 'Booked' : 'Open'), s.contingent && /*#__PURE__*/React.createElement("span", {
-      className: "lsl-pill lsl-pill--sky",
-      title: "Hidden until adjacent slot is booked"
+      className: "lsl-pill lsl-pill--sky"
     }, "B2B"), /*#__PURE__*/React.createElement("button", {
       className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
       style: {
@@ -228,22 +244,34 @@ function AvailTab({
         fontSize: 12
       },
       onClick: () => toggleBooked(s.id)
-    }, s.status === 'booked' ? 'Mark Open' : 'Mark Booked'), /*#__PURE__*/React.createElement("button", {
+    }, s.status === 'booked' ? 'Mark Open' : 'Mark Booked'), b2bPicking === s.id ? /*#__PURE__*/React.createElement("div", {
+      className: "lsl-admin__b2bpick"
+    }, beforeTime && /*#__PURE__*/React.createElement("button", {
+      className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
+      onClick: () => addB2B(s, 'before')
+    }, "\u2190 ", LSL.fmtTime(beforeTime)), afterTime && /*#__PURE__*/React.createElement("button", {
+      className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
+      onClick: () => addB2B(s, 'after')
+    }, LSL.fmtTime(afterTime), " \u2192"), /*#__PURE__*/React.createElement("button", {
+      className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
+      style: {
+        opacity: 0.5
+      },
+      onClick: () => setB2bPicking(null)
+    }, "Cancel")) : !s.contingent && /*#__PURE__*/React.createElement("button", {
       className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
       style: {
         padding: '3px 10px',
-        fontSize: 12,
-        opacity: s.contingent ? 1 : 0.55
+        fontSize: 12
       },
-      onClick: () => toggleContingent(s.id),
-      title: s.contingent ? 'Click to show always' : 'Click to make back-to-back only'
-    }, s.contingent ? '🔗 B2B' : 'B2B off'), /*#__PURE__*/React.createElement("button", {
+      onClick: () => setB2bPicking(s.id)
+    }, "Add Back to Back"), /*#__PURE__*/React.createElement("button", {
       className: "lsl-admin__del",
       onClick: () => del(s.id),
       "aria-label": "Delete"
     }, /*#__PURE__*/React.createElement("i", {
       "data-lucide": "trash-2"
-    })));
+    }))));
   })));
 }
 
