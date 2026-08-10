@@ -653,11 +653,11 @@ function BookingForm({
     value: m.name,
     onChange: setMember(i, 'name'),
     placeholder: 'Player ' + (i + 2) + ' name'
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Email or Phone"), /*#__PURE__*/React.createElement("input", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Email or Phone Number"), /*#__PURE__*/React.createElement("input", {
     className: "lsl-input",
     value: m.contact,
     onChange: setMember(i, 'contact'),
-    placeholder: "Email or phone number"
+    placeholder: "If you have it"
   })))))), /*#__PURE__*/React.createElement("div", {
     className: "lsl-bknote",
     style: {

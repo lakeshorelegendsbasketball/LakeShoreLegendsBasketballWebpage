@@ -443,8 +443,8 @@ function BookingForm({ desc, onClose, onBooked }) {
                         <input className="lsl-input" value={m.name} onChange={setMember(i, 'name')} placeholder={'Player ' + (i + 2) + ' name'} />
                       </div>
                       <div>
-                        <label>Email or Phone</label>
-                        <input className="lsl-input" value={m.contact} onChange={setMember(i, 'contact')} placeholder="Email or phone number" />
+                        <label>Email or Phone Number</label>
+                        <input className="lsl-input" value={m.contact} onChange={setMember(i, 'contact')} placeholder="If you have it" />
                       </div>
                     </div>
                   </div>
