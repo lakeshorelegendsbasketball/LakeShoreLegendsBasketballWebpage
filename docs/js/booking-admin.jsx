@@ -135,7 +135,7 @@ function AvailTab({ force }) {
                     <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ opacity: 0.5 }} onClick={() => setB2bPicking(null)}>Cancel</button>
                   </div>
                 ) : (
-                  !s.contingent && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => setB2bPicking(s.id)}>Add Back to Back</button>
+                  <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => setB2bPicking(s.id)}>Add Back to Back</button>
                 )}
                 <button className="lsl-admin__del" onClick={() => del(s.id)} aria-label="Delete"><i data-lucide="trash-2"></i></button>
               </div>

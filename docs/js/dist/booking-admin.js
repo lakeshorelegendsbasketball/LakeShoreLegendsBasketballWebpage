@@ -258,7 +258,7 @@ function AvailTab({
         opacity: 0.5
       },
       onClick: () => setB2bPicking(null)
-    }, "Cancel")) : !s.contingent && /*#__PURE__*/React.createElement("button", {
+    }, "Cancel")) : /*#__PURE__*/React.createElement("button", {
       className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
       style: {
         padding: '3px 10px',
