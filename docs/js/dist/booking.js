@@ -51,6 +51,8 @@ async function notifyCoach(rec) {
 }
 function PrivateBooking() {
   const [locFilter, setLocFilter] = useStateBk(null); // null = all
+  const [dropOpen, setDropOpen] = useStateBk(false);
+  const dropRef = React.useRef(null);
   const [offset, setOffset] = useStateBk(0);
   const [date, setDate] = useStateBk(null);
   const [slotId, setSlotId] = useStateBk(null);
@@ -67,6 +69,13 @@ function PrivateBooking() {
   useEffectBk(() => {
     if (window.lucide) window.lucide.createIcons();
   });
+  useEffectBk(() => {
+    const handler = e => {
+      if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
   const todayIso = isoOf(new Date());
   const locs = LSL.getLocs();
 
@@ -171,17 +180,34 @@ function PrivateBooking() {
       textAlign: 'center'
     }
   }, "Select a Date"), locs.length > 0 && /*#__PURE__*/React.createElement("div", {
-    className: "lsl-locfilter lsl-locfilter--col"
+    className: "lsl-locdrop",
+    ref: dropRef
   }, /*#__PURE__*/React.createElement("button", {
-    className: 'lsl-locchip' + (!locFilter ? ' is-sel' : ''),
-    onClick: () => pickLoc(null)
-  }, "All Locations"), locs.map(loc => /*#__PURE__*/React.createElement("button", {
-    key: loc.id,
-    className: 'lsl-locchip' + (locFilter === loc.id ? ' is-sel' : ''),
-    onClick: () => pickLoc(loc.id)
+    className: "lsl-locdrop__trigger",
+    onClick: () => setDropOpen(!dropOpen)
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "map-pin"
-  }), loc.name))), /*#__PURE__*/React.createElement(Calendar, {
+  }), /*#__PURE__*/React.createElement("span", null, locFilter ? (LSL.locById(locFilter) || {}).name : 'All Locations'), /*#__PURE__*/React.createElement("i", {
+    "data-lucide": dropOpen ? 'chevron-up' : 'chevron-down',
+    className: "lsl-locdrop__chev"
+  })), dropOpen && /*#__PURE__*/React.createElement("div", {
+    className: "lsl-locdrop__menu"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: 'lsl-locdrop__opt' + (!locFilter ? ' is-sel' : ''),
+    onClick: () => {
+      pickLoc(null);
+      setDropOpen(false);
+    }
+  }, "All Locations"), locs.map(loc => /*#__PURE__*/React.createElement("button", {
+    key: loc.id,
+    className: 'lsl-locdrop__opt' + (locFilter === loc.id ? ' is-sel' : ''),
+    onClick: () => {
+      pickLoc(loc.id);
+      setDropOpen(false);
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "map-pin"
+  }), loc.name)))), /*#__PURE__*/React.createElement(Calendar, {
     offset: offset,
     onOffset: setOffset,
     openDates: openDates,
@@ -416,6 +442,7 @@ function BookingForm({
     if (!form.parent.trim()) e.parent = 'Required';
     if (!form.athlete.trim()) e.athlete = 'Required';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) e.email = 'Enter a valid email';
+    if (!form.phone.trim()) e.phone = 'Required';
     setErrs(e);
     return Object.keys(e).length === 0;
   }
@@ -566,12 +593,16 @@ function BookingForm({
     placeholder: "you@email.com"
   }), errs.email && /*#__PURE__*/React.createElement("span", {
     className: "lsl-err"
-  }, errs.email)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Phone"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
+  }, errs.email)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Phone ", /*#__PURE__*/React.createElement("span", {
+    className: "req"
+  }, "*")), /*#__PURE__*/React.createElement("input", {
+    className: 'lsl-input' + (errs.phone ? ' is-error' : ''),
     value: form.phone,
     onChange: set('phone'),
     placeholder: "(555) 555-5555"
-  }))), /*#__PURE__*/React.createElement("div", {
+  }), errs.phone && /*#__PURE__*/React.createElement("span", {
+    className: "lsl-err"
+  }, errs.phone))), /*#__PURE__*/React.createElement("div", {
     className: "lsl-field lsl-field--row"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Athlete Age / Grade"), /*#__PURE__*/React.createElement("input", {
     className: "lsl-input",

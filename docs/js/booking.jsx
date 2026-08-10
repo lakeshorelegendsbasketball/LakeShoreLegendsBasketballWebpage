@@ -69,6 +69,8 @@ async function notifyCoach(rec) {
 
 function PrivateBooking() {
   const [locFilter, setLocFilter] = useStateBk(null); // null = all
+  const [dropOpen, setDropOpen] = useStateBk(false);
+  const dropRef = React.useRef(null);
   const [offset, setOffset] = useStateBk(0);
   const [date, setDate] = useStateBk(null);
   const [slotId, setSlotId] = useStateBk(null);
@@ -84,6 +86,11 @@ function PrivateBooking() {
     return () => window.removeEventListener('lsl-synced', onSync);
   }, []);
   useEffectBk(() => { if (window.lucide) window.lucide.createIcons(); });
+  useEffectBk(() => {
+    const handler = (e) => { if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   const todayIso = isoOf(new Date());
   const locs = LSL.getLocs();
@@ -141,15 +148,26 @@ function PrivateBooking() {
           <div className="lsl-sched__col">
             <div className="lsl-sched__head" style={{ textAlign: 'center' }}>Select a Date</div>
             {locs.length > 0 && (
-              <div className="lsl-locfilter lsl-locfilter--col">
-                <button className={'lsl-locchip' + (!locFilter ? ' is-sel' : '')} onClick={() => pickLoc(null)}>
-                  All Locations
+              <div className="lsl-locdrop" ref={dropRef}>
+                <button className="lsl-locdrop__trigger" onClick={() => setDropOpen(!dropOpen)}>
+                  <i data-lucide="map-pin"></i>
+                  <span>{locFilter ? (LSL.locById(locFilter) || {}).name : 'All Locations'}</span>
+                  <i data-lucide={dropOpen ? 'chevron-up' : 'chevron-down'} className="lsl-locdrop__chev"></i>
                 </button>
-                {locs.map((loc) => (
-                  <button key={loc.id} className={'lsl-locchip' + (locFilter === loc.id ? ' is-sel' : '')} onClick={() => pickLoc(loc.id)}>
-                    <i data-lucide="map-pin"></i>{loc.name}
-                  </button>
-                ))}
+                {dropOpen && (
+                  <div className="lsl-locdrop__menu">
+                    <button className={'lsl-locdrop__opt' + (!locFilter ? ' is-sel' : '')}
+                      onClick={() => { pickLoc(null); setDropOpen(false); }}>
+                      All Locations
+                    </button>
+                    {locs.map((loc) => (
+                      <button key={loc.id} className={'lsl-locdrop__opt' + (locFilter === loc.id ? ' is-sel' : '')}
+                        onClick={() => { pickLoc(loc.id); setDropOpen(false); }}>
+                        <i data-lucide="map-pin"></i>{loc.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
             <Calendar offset={offset} onOffset={setOffset} openDates={openDates} selected={date} onPick={pickDate} todayIso={todayIso} />
@@ -322,6 +340,7 @@ function BookingForm({ desc, onClose, onBooked }) {
     if (!form.parent.trim()) e.parent = 'Required';
     if (!form.athlete.trim()) e.athlete = 'Required';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) e.email = 'Enter a valid email';
+    if (!form.phone.trim()) e.phone = 'Required';
     setErrs(e);
     return Object.keys(e).length === 0;
   }
@@ -392,8 +411,9 @@ function BookingForm({ desc, onClose, onBooked }) {
               <div><label>Email <span className="req">*</span></label>
                 <input className={'lsl-input' + (errs.email ? ' is-error' : '')} type="email" value={form.email} onChange={set('email')} placeholder="you@email.com" />
                 {errs.email && <span className="lsl-err">{errs.email}</span>}</div>
-              <div><label>Phone</label>
-                <input className="lsl-input" value={form.phone} onChange={set('phone')} placeholder="(555) 555-5555" /></div>
+              <div><label>Phone <span className="req">*</span></label>
+                <input className={'lsl-input' + (errs.phone ? ' is-error' : '')} value={form.phone} onChange={set('phone')} placeholder="(555) 555-5555" />
+                {errs.phone && <span className="lsl-err">{errs.phone}</span>}</div>
             </div>
             <div className="lsl-field lsl-field--row">
               <div><label>Athlete Age / Grade</label>
