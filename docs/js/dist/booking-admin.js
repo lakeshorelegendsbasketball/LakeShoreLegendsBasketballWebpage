@@ -699,15 +699,14 @@ function SettingsTab({
     style: {
       marginBottom: 10
     }
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Travel buffer (minutes)"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    type: "number",
-    min: "30",
-    max: "240",
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Travel buffer"), /*#__PURE__*/React.createElement("select", {
+    className: "lsl-select",
     value: confBuf,
-    onChange: e => setConfBuf(+e.target.value),
-    placeholder: "90"
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "When conflict is found"), /*#__PURE__*/React.createElement("select", {
+    onChange: e => setConfBuf(+e.target.value)
+  }, [15, 30, 45, 60, 75, 90, 105, 120].map(m => /*#__PURE__*/React.createElement("option", {
+    key: m,
+    value: m
+  }, m < 60 ? m + ' min' : m === 60 ? '1 hr' : m % 60 === 0 ? m / 60 + ' hr' : Math.floor(m / 60) + ' hr ' + m % 60 + ' min')))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "When conflict is found"), /*#__PURE__*/React.createElement("select", {
     className: "lsl-select",
     value: confAct,
     onChange: e => setConfAct(e.target.value)

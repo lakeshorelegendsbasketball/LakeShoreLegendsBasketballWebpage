@@ -351,9 +351,12 @@ function SettingsTab({ force }) {
         </p>
         <div className="lsl-field lsl-field--row" style={{ marginBottom: 10 }}>
           <div>
-            <label>Travel buffer (minutes)</label>
-            <input className="lsl-input" type="number" min="30" max="240" value={confBuf}
-              onChange={(e) => setConfBuf(+e.target.value)} placeholder="90" />
+            <label>Travel buffer</label>
+            <select className="lsl-select" value={confBuf} onChange={(e) => setConfBuf(+e.target.value)}>
+              {[15,30,45,60,75,90,105,120].map((m) => (
+                <option key={m} value={m}>{m < 60 ? m + ' min' : (m === 60 ? '1 hr' : (m % 60 === 0 ? (m/60) + ' hr' : Math.floor(m/60) + ' hr ' + (m%60) + ' min'))}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label>When conflict is found</label>
