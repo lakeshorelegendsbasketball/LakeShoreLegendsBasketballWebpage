@@ -28,7 +28,8 @@ async function notifyCoach(rec) {
     message = ['Group Request: ' + rec.athlete, rec.serviceName + ' · ' + rec.players + ' players', DOW[rec.dow] + 's · ' + LSL.fmtTime(rec.reqTime), 'Parent: ' + rec.parent, rec.email + (rec.phone ? ' · ' + rec.phone : ''), rec.age ? 'Age/Grade: ' + rec.age : '', rec.focus ? 'Focus: ' + rec.focus : '', rec.notes ? 'Notes: ' + rec.notes : ''].filter(Boolean).join('\n');
   } else {
     subject = 'New Booking — ' + rec.athlete + ' · ' + LSL.fmtDate(rec.date);
-    message = ['New Booking: ' + rec.athlete, rec.serviceName + (rec.players ? ' · ' + rec.players + ' players' : ''), LSL.fmtDate(rec.date) + ' · ' + LSL.fmtTime(rec.time), loc.name || '', 'Parent: ' + rec.parent, rec.email + (rec.phone ? ' · ' + rec.phone : ''), rec.age ? 'Age/Grade: ' + rec.age : '', rec.focus ? 'Focus: ' + rec.focus : '', rec.notes ? 'Notes: ' + rec.notes : ''].filter(Boolean).join('\n');
+    const memberLines = (rec.groupMembers || []).map((m, i) => 'Player ' + (i + 2) + ': ' + (m.name || '—') + (m.contact ? ' · ' + m.contact : ''));
+    message = ['New Booking: ' + rec.athlete, rec.serviceName + (rec.players ? ' · ' + rec.players + ' players' : ''), LSL.fmtDate(rec.date) + ' · ' + LSL.fmtTime(rec.time), loc.name || '', 'Parent: ' + rec.parent, rec.email + (rec.phone ? ' · ' + rec.phone : ''), rec.age ? 'Age/Grade: ' + rec.age : '', rec.focus ? 'Focus: ' + rec.focus : '', rec.notes ? 'Notes: ' + rec.notes : '', memberLines.length ? '\n--- GROUP MEMBERS ---' : '', ...memberLines].filter(Boolean).join('\n');
   }
   try {
     await fetch('https://api.web3forms.com/submit', {
@@ -160,8 +161,17 @@ function PrivateBooking() {
     eyebrow: "Private Training",
     title: "Book a Session With Coach Gio",
     sub: "Check out our availability and book the date and time that works for you."
-  }), locs.length > 0 && /*#__PURE__*/React.createElement("div", {
-    className: "lsl-locfilter"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched__col"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-sched__head",
+    style: {
+      textAlign: 'center'
+    }
+  }, "Select a Date"), locs.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "lsl-locfilter lsl-locfilter--col"
   }, /*#__PURE__*/React.createElement("button", {
     className: 'lsl-locchip' + (!locFilter ? ' is-sel' : ''),
     onClick: () => pickLoc(null)
@@ -171,13 +181,7 @@ function PrivateBooking() {
     onClick: () => pickLoc(loc.id)
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "map-pin"
-  }), loc.name))), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__col"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-sched__head"
-  }, "Select a Date"), /*#__PURE__*/React.createElement(Calendar, {
+  }), loc.name))), /*#__PURE__*/React.createElement(Calendar, {
     offset: offset,
     onOffset: setOffset,
     openDates: openDates,
@@ -376,6 +380,13 @@ function BookingForm({
   const [errs, setErrs] = useStateBk({});
   const [busy, setBusy] = useStateBk(false);
   const [result, setResult] = useStateBk(null);
+  const extraCount = desc.players ? desc.players === '4+' ? 3 : parseInt(desc.players) - 1 : 0;
+  const [groupMembers, setGroupMembers] = useStateBk(() => Array.from({
+    length: extraCount
+  }, () => ({
+    name: '',
+    contact: ''
+  })));
   useEffectBk(() => {
     if (window.lucide) window.lucide.createIcons();
   }, [result]);
@@ -394,6 +405,12 @@ function BookingForm({
     ...form,
     [k]: e.target.value
   });
+  const setMember = (i, k) => e => {
+    setGroupMembers(groupMembers.map((m, idx) => idx === i ? {
+      ...m,
+      [k]: e.target.value
+    } : m));
+  };
   function validate() {
     const e = {};
     if (!form.parent.trim()) e.parent = 'Required';
@@ -407,6 +424,7 @@ function BookingForm({
     if (!validate()) return;
     setBusy(true);
     if (!isReq && payLink) window.open(payLink, '_blank');
+    const members = groupMembers.filter(m => m.name.trim() || m.contact.trim());
     let rec;
     if (isReq) {
       rec = {
@@ -423,6 +441,7 @@ function BookingForm({
         phone: form.phone,
         focus: form.focus,
         notes: form.notes,
+        groupMembers: members,
         created: new Date().toISOString(),
         status: 'requested'
       };
@@ -447,6 +466,7 @@ function BookingForm({
         time: slots[sIdx].time,
         locId: slots[sIdx].locId,
         players: desc.players || null,
+        groupMembers: members,
         parent: form.parent,
         athlete: form.athlete,
         age: form.age,
@@ -573,7 +593,41 @@ function BookingForm({
     style: {
       minHeight: 76
     }
-  })), /*#__PURE__*/React.createElement("div", {
+  })), extraCount > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "lsl-groupmembers"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-groupmembers__head"
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "users"
+  }), "Who else is coming to this session?"), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body lsl-body--sm",
+    style: {
+      color: 'var(--fg3)',
+      marginTop: 0,
+      marginBottom: 14
+    }
+  }, "Add your group members below \u2014 a name and a way to reach them is all we need."), groupMembers.map((m, i) => /*#__PURE__*/React.createElement("div", {
+    key: i,
+    className: "lsl-groupmembers__row"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "lsl-groupmembers__num"
+  }, i + 2), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-field lsl-field--row",
+    style: {
+      flex: 1,
+      margin: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Name"), /*#__PURE__*/React.createElement("input", {
+    className: "lsl-input",
+    value: m.name,
+    onChange: setMember(i, 'name'),
+    placeholder: 'Player ' + (i + 2) + ' name'
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Email or Phone"), /*#__PURE__*/React.createElement("input", {
+    className: "lsl-input",
+    value: m.contact,
+    onChange: setMember(i, 'contact'),
+    placeholder: "Email or phone number"
+  })))))), /*#__PURE__*/React.createElement("div", {
     className: "lsl-bknote",
     style: {
       marginBottom: 14

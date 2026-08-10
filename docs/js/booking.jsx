@@ -42,6 +42,9 @@ async function notifyCoach(rec) {
     ].filter(Boolean).join('\n');
   } else {
     subject = 'New Booking — ' + rec.athlete + ' · ' + LSL.fmtDate(rec.date);
+    const memberLines = (rec.groupMembers || []).map((m, i) =>
+      'Player ' + (i + 2) + ': ' + (m.name || '—') + (m.contact ? ' · ' + m.contact : '')
+    );
     message = [
       'New Booking: ' + rec.athlete,
       rec.serviceName + (rec.players ? ' · ' + rec.players + ' players' : ''),
@@ -52,6 +55,8 @@ async function notifyCoach(rec) {
       rec.age ? 'Age/Grade: ' + rec.age : '',
       rec.focus ? 'Focus: ' + rec.focus : '',
       rec.notes ? 'Notes: ' + rec.notes : '',
+      memberLines.length ? '\n--- GROUP MEMBERS ---' : '',
+      ...memberLines,
     ].filter(Boolean).join('\n');
   }
   try {
@@ -131,23 +136,22 @@ function PrivateBooking() {
           title="Book a Session With Coach Gio"
           sub="Check out our availability and book the date and time that works for you." />
 
-        {locs.length > 0 && (
-          <div className="lsl-locfilter">
-            <button className={'lsl-locchip' + (!locFilter ? ' is-sel' : '')} onClick={() => pickLoc(null)}>
-              All Locations
-            </button>
-            {locs.map((loc) => (
-              <button key={loc.id} className={'lsl-locchip' + (locFilter === loc.id ? ' is-sel' : '')} onClick={() => pickLoc(loc.id)}>
-                <i data-lucide="map-pin"></i>{loc.name}
-              </button>
-            ))}
-          </div>
-        )}
-
         <div className="lsl-sched">
-          {/* COLUMN 1 — calendar (all locations) */}
+          {/* COLUMN 1 — location filter + calendar */}
           <div className="lsl-sched__col">
-            <div className="lsl-sched__head">Select a Date</div>
+            <div className="lsl-sched__head" style={{ textAlign: 'center' }}>Select a Date</div>
+            {locs.length > 0 && (
+              <div className="lsl-locfilter lsl-locfilter--col">
+                <button className={'lsl-locchip' + (!locFilter ? ' is-sel' : '')} onClick={() => pickLoc(null)}>
+                  All Locations
+                </button>
+                {locs.map((loc) => (
+                  <button key={loc.id} className={'lsl-locchip' + (locFilter === loc.id ? ' is-sel' : '')} onClick={() => pickLoc(loc.id)}>
+                    <i data-lucide="map-pin"></i>{loc.name}
+                  </button>
+                ))}
+              </div>
+            )}
             <Calendar offset={offset} onOffset={setOffset} openDates={openDates} selected={date} onPick={pickDate} todayIso={todayIso} />
           </div>
 
@@ -292,6 +296,11 @@ function BookingForm({ desc, onClose, onBooked }) {
   const [busy, setBusy] = useStateBk(false);
   const [result, setResult] = useStateBk(null);
 
+  const extraCount = desc.players ? (desc.players === '4+' ? 3 : parseInt(desc.players) - 1) : 0;
+  const [groupMembers, setGroupMembers] = useStateBk(() =>
+    Array.from({ length: extraCount }, () => ({ name: '', contact: '' }))
+  );
+
   useEffectBk(() => { if (window.lucide) window.lucide.createIcons(); }, [result]);
   useEffectBk(() => {
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -304,6 +313,9 @@ function BookingForm({ desc, onClose, onBooked }) {
   const slot = isReq ? {} : (LSL.getSlots().find((s) => s.id === desc.slotId) || {});
   const loc = isReq ? {} : LSL.locById(slot.locId);
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+  const setMember = (i, k) => (e) => {
+    setGroupMembers(groupMembers.map((m, idx) => idx === i ? { ...m, [k]: e.target.value } : m));
+  };
 
   function validate() {
     const e = {};
@@ -319,11 +331,12 @@ function BookingForm({ desc, onClose, onBooked }) {
     if (!validate()) return;
     setBusy(true);
     if (!isReq && payLink) window.open(payLink, '_blank');
+    const members = groupMembers.filter((m) => m.name.trim() || m.contact.trim());
     let rec;
     if (isReq) {
       rec = { id: LSL.uid(), mode: 'request', serviceName: desc.serviceName, players: desc.players, dow: desc.dow, reqTime: desc.reqTime,
         parent: form.parent, athlete: form.athlete, age: form.age, email: form.email, phone: form.phone,
-        focus: form.focus, notes: form.notes, created: new Date().toISOString(), status: 'requested' };
+        focus: form.focus, notes: form.notes, groupMembers: members, created: new Date().toISOString(), status: 'requested' };
       LSL.setBooks([...LSL.getBooks(), rec]);
     } else {
       const slots = LSL.getSlots();
@@ -331,7 +344,7 @@ function BookingForm({ desc, onClose, onBooked }) {
       if (sIdx < 0 || slots[sIdx].status !== 'open') { setBusy(false); setErrs({ form: 'Sorry — that opening was just taken. Please pick another time.' }); return; }
       rec = { id: LSL.uid(), mode: 'dated', typeId: desc.typeId, serviceName: desc.serviceName, slotId: desc.slotId,
         date: slots[sIdx].date, time: slots[sIdx].time, locId: slots[sIdx].locId,
-        players: desc.players || null,
+        players: desc.players || null, groupMembers: members,
         parent: form.parent, athlete: form.athlete, age: form.age, email: form.email, phone: form.phone,
         focus: form.focus, notes: form.notes, created: new Date().toISOString(), status: 'awaiting_payment' };
       slots[sIdx] = { ...slots[sIdx], status: 'booked', bookingId: rec.id };
@@ -392,6 +405,32 @@ function BookingForm({ desc, onClose, onBooked }) {
               <label>Additional Notes</label>
               <textarea className="lsl-textarea" value={form.notes} onChange={set('notes')} placeholder="Anything Coach Gio should know" style={{ minHeight: 76 }}></textarea>
             </div>
+            {extraCount > 0 && (
+              <div className="lsl-groupmembers">
+                <div className="lsl-groupmembers__head">
+                  <i data-lucide="users"></i>
+                  Who else is coming to this session?
+                </div>
+                <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)', marginTop: 0, marginBottom: 14 }}>
+                  Add your group members below — a name and a way to reach them is all we need.
+                </p>
+                {groupMembers.map((m, i) => (
+                  <div key={i} className="lsl-groupmembers__row">
+                    <span className="lsl-groupmembers__num">{i + 2}</span>
+                    <div className="lsl-field lsl-field--row" style={{ flex: 1, margin: 0 }}>
+                      <div>
+                        <label>Name</label>
+                        <input className="lsl-input" value={m.name} onChange={setMember(i, 'name')} placeholder={'Player ' + (i + 2) + ' name'} />
+                      </div>
+                      <div>
+                        <label>Email or Phone</label>
+                        <input className="lsl-input" value={m.contact} onChange={setMember(i, 'contact')} placeholder="Email or phone number" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="lsl-bknote" style={{ marginBottom: 14 }}>
               <i data-lucide={isReq ? 'mail' : 'shield-check'}></i>
               {isReq
