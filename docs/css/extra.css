@@ -276,6 +276,15 @@ a.lsl-btn { line-height: 1; }
 .lsl-bookpolicy i { width: 16px; height: 16px; flex: none; margin-top: 2px; color: var(--fg3); }
 .lsl-bkpolicy--modal { font-size: 12.5px; line-height: 1.5; color: var(--fg3); margin: 0 0 16px; text-align: center; }
 
+/* ---------- location filter ---------- */
+.lsl-locfilter { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.lsl-locchip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 999px;
+  border: 1.5px solid var(--line-soft); background: #fff; color: var(--fg2); font-size: 13.5px;
+  font-family: var(--font-body); font-weight: 500; cursor: pointer; transition: border-color .15s, background .15s, color .15s; }
+.lsl-locchip i { width: 13px; height: 13px; flex: none; }
+.lsl-locchip:hover { border-color: var(--legend-navy); color: var(--legend-navy); }
+.lsl-locchip.is-sel { background: var(--legend-navy); border-color: var(--legend-navy); color: #fff; font-weight: 600; }
+
 /* ---------- 3-column scheduler ---------- */
 .lsl-sched { display: grid; grid-template-columns: 0.95fr 1.15fr 1fr; background: #fff; border: 1px solid var(--line-soft);
   border-radius: var(--r-xl); box-shadow: var(--shadow-md); overflow: hidden; }

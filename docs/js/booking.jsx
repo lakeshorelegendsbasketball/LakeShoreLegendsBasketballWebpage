@@ -63,6 +63,7 @@ async function notifyCoach(rec) {
 }
 
 function PrivateBooking() {
+  const [locFilter, setLocFilter] = useStateBk(null); // null = all
   const [offset, setOffset] = useStateBk(0);
   const [date, setDate] = useStateBk(null);
   const [slotId, setSlotId] = useStateBk(null);
@@ -80,16 +81,19 @@ function PrivateBooking() {
   useEffectBk(() => { if (window.lucide) window.lucide.createIcons(); });
 
   const todayIso = isoOf(new Date());
+  const locs = LSL.getLocs();
 
-  // All open dates across all locations
+  // Open dates filtered by selected location
   const openDates = new Set(
-    LSL.getSlots().filter((s) => s.status === 'open' && s.date >= todayIso).map((s) => s.date)
+    LSL.getSlots()
+      .filter((s) => s.status === 'open' && s.date >= todayIso && (!locFilter || s.locId === locFilter))
+      .map((s) => s.date)
   );
 
-  // Slots for selected date across all locations, sorted by time
+  // Slots for selected date, filtered by location
   const daySlots = date
     ? LSL.getSlots()
-        .filter((s) => s.date === date && (s.status === 'open' || s.status === 'booked'))
+        .filter((s) => s.date === date && (s.status === 'open' || s.status === 'booked') && (!locFilter || s.locId === locFilter))
         .sort((a, b) => a.time.localeCompare(b.time))
     : [];
 
@@ -97,6 +101,7 @@ function PrivateBooking() {
   const byLoc = {};
   daySlots.forEach((s) => { if (!byLoc[s.locId]) byLoc[s.locId] = []; byLoc[s.locId].push(s); });
 
+  const pickLoc = (id) => { setLocFilter(id); setDate(null); setSlotId(null); setSvcType(null); setPlayers(null); setOffset(0); };
   const pickDate = (iso) => { setDate(iso); setSlotId(null); setSvcType(null); setPlayers(null); };
   const pickSlot = (id) => { setSlotId(id); setSvcType(null); setPlayers(null); };
 
@@ -125,6 +130,19 @@ function PrivateBooking() {
         <SectionHead center wide eyebrow="Private Training"
           title="Book a Session With Coach Gio"
           sub="Check out our availability and book the date and time that works for you." />
+
+        {locs.length > 0 && (
+          <div className="lsl-locfilter">
+            <button className={'lsl-locchip' + (!locFilter ? ' is-sel' : '')} onClick={() => pickLoc(null)}>
+              All Locations
+            </button>
+            {locs.map((loc) => (
+              <button key={loc.id} className={'lsl-locchip' + (locFilter === loc.id ? ' is-sel' : '')} onClick={() => pickLoc(loc.id)}>
+                <i data-lucide="map-pin"></i>{loc.name}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="lsl-sched">
           {/* COLUMN 1 — calendar (all locations) */}

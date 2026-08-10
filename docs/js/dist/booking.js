@@ -49,6 +49,7 @@ async function notifyCoach(rec) {
   } catch (e) {/* non-blocking */}
 }
 function PrivateBooking() {
+  const [locFilter, setLocFilter] = useStateBk(null); // null = all
   const [offset, setOffset] = useStateBk(0);
   const [date, setDate] = useStateBk(null);
   const [slotId, setSlotId] = useStateBk(null);
@@ -66,12 +67,13 @@ function PrivateBooking() {
     if (window.lucide) window.lucide.createIcons();
   });
   const todayIso = isoOf(new Date());
+  const locs = LSL.getLocs();
 
-  // All open dates across all locations
-  const openDates = new Set(LSL.getSlots().filter(s => s.status === 'open' && s.date >= todayIso).map(s => s.date));
+  // Open dates filtered by selected location
+  const openDates = new Set(LSL.getSlots().filter(s => s.status === 'open' && s.date >= todayIso && (!locFilter || s.locId === locFilter)).map(s => s.date));
 
-  // Slots for selected date across all locations, sorted by time
-  const daySlots = date ? LSL.getSlots().filter(s => s.date === date && (s.status === 'open' || s.status === 'booked')).sort((a, b) => a.time.localeCompare(b.time)) : [];
+  // Slots for selected date, filtered by location
+  const daySlots = date ? LSL.getSlots().filter(s => s.date === date && (s.status === 'open' || s.status === 'booked') && (!locFilter || s.locId === locFilter)).sort((a, b) => a.time.localeCompare(b.time)) : [];
 
   // Group by location
   const byLoc = {};
@@ -79,6 +81,14 @@ function PrivateBooking() {
     if (!byLoc[s.locId]) byLoc[s.locId] = [];
     byLoc[s.locId].push(s);
   });
+  const pickLoc = id => {
+    setLocFilter(id);
+    setDate(null);
+    setSlotId(null);
+    setSvcType(null);
+    setPlayers(null);
+    setOffset(0);
+  };
   const pickDate = iso => {
     setDate(iso);
     setSlotId(null);
@@ -150,7 +160,18 @@ function PrivateBooking() {
     eyebrow: "Private Training",
     title: "Book a Session With Coach Gio",
     sub: "Check out our availability and book the date and time that works for you."
-  }), /*#__PURE__*/React.createElement("div", {
+  }), locs.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "lsl-locfilter"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: 'lsl-locchip' + (!locFilter ? ' is-sel' : ''),
+    onClick: () => pickLoc(null)
+  }, "All Locations"), locs.map(loc => /*#__PURE__*/React.createElement("button", {
+    key: loc.id,
+    className: 'lsl-locchip' + (locFilter === loc.id ? ' is-sel' : ''),
+    onClick: () => pickLoc(loc.id)
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "map-pin"
+  }), loc.name))), /*#__PURE__*/React.createElement("div", {
     className: "lsl-sched"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-sched__col"
