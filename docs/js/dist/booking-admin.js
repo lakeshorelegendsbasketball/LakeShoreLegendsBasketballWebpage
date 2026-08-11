@@ -699,14 +699,46 @@ function SettingsTab({
     style: {
       marginBottom: 10
     }
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Travel buffer"), /*#__PURE__*/React.createElement("select", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Travel buffer"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("select", {
     className: "lsl-select",
-    value: confBuf,
-    onChange: e => setConfBuf(+e.target.value)
-  }, [15, 30, 45, 60, 75, 90, 105, 120].map(m => /*#__PURE__*/React.createElement("option", {
+    style: {
+      flex: 1
+    },
+    value: [15, 30, 45, 60, 75, 90, 105, 120].includes(confBuf) ? confBuf : '',
+    onChange: e => {
+      if (e.target.value !== '') setConfBuf(+e.target.value);
+    }
+  }, /*#__PURE__*/React.createElement("option", {
+    value: ""
+  }, "Custom"), [15, 30, 45, 60, 75, 90, 105, 120].map(m => /*#__PURE__*/React.createElement("option", {
     key: m,
     value: m
-  }, m < 60 ? m + ' min' : m === 60 ? '1 hr' : m % 60 === 0 ? m / 60 + ' hr' : Math.floor(m / 60) + ' hr ' + m % 60 + ' min')))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "When conflict is found"), /*#__PURE__*/React.createElement("select", {
+  }, m < 60 ? m + ' min' : m === 60 ? '1 hr' : m % 60 === 0 ? m / 60 + ' hr' : Math.floor(m / 60) + ' hr ' + m % 60 + ' min'))), /*#__PURE__*/React.createElement("input", {
+    className: "lsl-input",
+    type: "number",
+    min: "0",
+    max: "480",
+    style: {
+      width: 72
+    },
+    value: confBuf,
+    onChange: e => {
+      const v = parseInt(e.target.value, 10);
+      if (!isNaN(v) && v >= 0) setConfBuf(v);
+    }
+  }), /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontSize: 13,
+      color: 'var(--fg3)',
+      whiteSpace: 'nowrap'
+    }
+  }, "min"))), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "When conflict is found"), /*#__PURE__*/React.createElement("select", {
     className: "lsl-select",
     value: confAct,
     onChange: e => setConfAct(e.target.value)
