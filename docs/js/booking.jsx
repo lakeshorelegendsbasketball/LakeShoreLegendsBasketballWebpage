@@ -378,18 +378,37 @@ function BookingForm({ desc, onClose, onBooked }) {
         focus: form.focus, notes: form.notes, created: new Date().toISOString(), status: 'awaiting_payment' };
       slots[sIdx] = { ...slots[sIdx], status: 'booked', bookingId: rec.id };
 
-      // Resolve cross-location conflicts within the travel buffer
+      // Resolve cross-location conflicts, cascading to B2B children of any moved slot
       const buffer = LSL.getConflictBuffer();
       const action = LSL.getConflictAction();
       const bookedMins = toMins(rec.time);
-      const resolved = slots.map((s, i) => {
-        if (i === sIdx || s.status !== 'open' || s.locId === rec.locId || s.date !== rec.date) return s;
-        if (Math.abs(toMins(s.time) - bookedMins) >= buffer) return s;
-        if (action === 'delete') return null;
-        // Bump: push to the edge of the buffer window
+
+      // Pass 1: direct cross-location conflicts
+      const changes = {};
+      slots.forEach((s, i) => {
+        if (i === sIdx || s.status !== 'open' || s.locId === rec.locId || s.date !== rec.date) return;
+        if (Math.abs(toMins(s.time) - bookedMins) >= buffer) return;
+        if (action === 'delete') { changes[s.id] = { action: 'delete' }; return; }
         const newMins = toMins(s.time) >= bookedMins ? bookedMins + buffer : bookedMins - buffer;
-        if (newMins < 0 || newMins >= 1440) return null;
-        return { ...s, time: pad2(Math.floor(newMins / 60)) + ':' + pad2(newMins % 60) };
+        if (newMins < 0 || newMins >= 1440) { changes[s.id] = { action: 'delete' }; return; }
+        changes[s.id] = { action: 'bump', newMins, delta: newMins - toMins(s.time) };
+      });
+
+      // Pass 2: cascade to B2B slots linked to any changed slot
+      slots.forEach((s) => {
+        if (!s.contingentOn || !changes[s.contingentOn]) return;
+        const pc = changes[s.contingentOn];
+        if (pc.action === 'delete') { changes[s.id] = { action: 'delete' }; return; }
+        const newMins = toMins(s.time) + pc.delta;
+        if (newMins < 0 || newMins >= 1440) { changes[s.id] = { action: 'delete' }; return; }
+        changes[s.id] = { action: 'bump', newMins, delta: pc.delta };
+      });
+
+      const resolved = slots.map((s) => {
+        if (!changes[s.id]) return s;
+        if (changes[s.id].action === 'delete') return null;
+        const nm = changes[s.id].newMins;
+        return { ...s, time: pad2(Math.floor(nm / 60)) + ':' + pad2(nm % 60) };
       }).filter(Boolean);
 
       LSL.setSlots(resolved);

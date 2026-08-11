@@ -158,21 +158,40 @@ function AvailTab({ force }) {
     if (!target) return;
 
     if (target.status !== 'booked') {
-      // Marking booked — run cross-location conflict resolution and record what changed
+      // Marking booked — run cross-location conflict resolution, cascading to B2B children
       const buf = LSL.getConflictBuffer();
       const act = LSL.getConflictAction();
       const bookedMins = adToMins(target.time);
       const bumpRecord = [];
+
+      // Pass 1: direct cross-location conflicts
+      const changes = {};
+      cur.forEach((s) => {
+        if (s.id === id || s.status !== 'open' || s.locId === target.locId || s.date !== target.date) return;
+        if (Math.abs(adToMins(s.time) - bookedMins) >= buf) return;
+        if (act === 'delete') { changes[s.id] = { action: 'delete' }; return; }
+        const nm = adToMins(s.time) >= bookedMins ? bookedMins + buf : bookedMins - buf;
+        if (nm < 0 || nm >= 1440) { changes[s.id] = { action: 'delete' }; return; }
+        changes[s.id] = { action: 'bump', newMins: nm, delta: nm - adToMins(s.time) };
+      });
+
+      // Pass 2: cascade to B2B slots linked to any changed slot
+      cur.forEach((s) => {
+        if (!s.contingentOn || !changes[s.contingentOn]) return;
+        const pc = changes[s.contingentOn];
+        if (pc.action === 'delete') { changes[s.id] = { action: 'delete' }; return; }
+        const nm = adToMins(s.time) + pc.delta;
+        if (nm < 0 || nm >= 1440) { changes[s.id] = { action: 'delete' }; return; }
+        changes[s.id] = { action: 'bump', newMins: nm, delta: pc.delta };
+      });
+
       const resolved = cur.map((s) => {
         if (s.id === id) return { ...s, status: 'booked' };
-        if (s.status !== 'open' || s.locId === target.locId || s.date !== target.date) return s;
-        if (Math.abs(adToMins(s.time) - bookedMins) >= buf) return s;
-        if (act === 'delete') { bumpRecord.push({ id: s.id, action: 'delete', data: { ...s } }); return null; }
-        const nm = adToMins(s.time) >= bookedMins ? bookedMins + buf : bookedMins - buf;
-        if (nm < 0 || nm >= 1440) { bumpRecord.push({ id: s.id, action: 'delete', data: { ...s } }); return null; }
-        const nt = adPad2(Math.floor(nm / 60)) + ':' + adPad2(nm % 60);
+        if (!changes[s.id]) return s;
+        if (changes[s.id].action === 'delete') { bumpRecord.push({ id: s.id, action: 'delete', data: { ...s } }); return null; }
         bumpRecord.push({ id: s.id, action: 'bump', originalTime: s.time });
-        return { ...s, time: nt };
+        const nm = changes[s.id].newMins;
+        return { ...s, time: adPad2(Math.floor(nm / 60)) + ':' + adPad2(nm % 60) };
       }).filter(Boolean);
       LSL.setSlots(resolved.map((s) => s.id === id ? { ...s, bumpRecord } : s));
     } else {
