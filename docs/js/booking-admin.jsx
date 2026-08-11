@@ -71,20 +71,47 @@ const adShiftTime = (time, mins) => {
   return adPad2(Math.floor(total / 60)) + ':' + adPad2(total % 60);
 };
 
+const AD_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const AD_DOWS   = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+
 function AvailTab({ force }) {
   const locs = LSL.getLocs();
-  const [date, setDate] = useStateAd('');
-  const [time, setTime] = useStateAd('');
-  const [locId, setLocId] = useStateAd(locs[0] ? locs[0].id : '');
-  const [b2bPicking, setB2bPicking] = useStateAd(null); // slotId currently showing picker
+  const todayIso  = new Date().toISOString().slice(0, 10);
+  const todayDate = new Date();
+
+  const [viewYear,  setViewYear]  = useStateAd(todayDate.getFullYear());
+  const [viewMonth, setViewMonth] = useStateAd(todayDate.getMonth());
+  const [selDate,   setSelDate]   = useStateAd(todayIso);
+  const [addTime,   setAddTime]   = useStateAd('');
+  const [addLocId,  setAddLocId]  = useStateAd(locs[0] ? locs[0].id : '');
+  const [b2bPicking, setB2bPicking] = useStateAd(null);
   useEffectAd(() => { if (window.lucide) window.lucide.createIcons(); });
 
-  const add = () => {
-    if (!date || !time || !locId) return;
-    LSL.setSlots([...LSL.getSlots(), { id: LSL.uid(), date, time, locId, status: 'open' }]);
-    setDate(''); setTime(''); force();
+  const allSlots = LSL.getSlots().slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+
+  const slotsByDate = {};
+  allSlots.forEach((s) => { if (!slotsByDate[s.date]) slotsByDate[s.date] = []; slotsByDate[s.date].push(s); });
+
+  const prevMonth = () => { if (viewMonth === 0) { setViewYear(viewYear - 1); setViewMonth(11); } else setViewMonth(viewMonth - 1); };
+  const nextMonth = () => { if (viewMonth === 11) { setViewYear(viewYear + 1); setViewMonth(0); } else setViewMonth(viewMonth + 1); };
+
+  const isoFor = (day) => viewYear + '-' + adPad2(viewMonth + 1) + '-' + adPad2(day);
+  const firstDow    = new Date(viewYear, viewMonth, 1).getDay();
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < firstDow; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+  const daySlots = selDate ? (slotsByDate[selDate] || []) : [];
+  const dayByLoc  = {};
+  daySlots.forEach((s) => { if (!dayByLoc[s.locId]) dayByLoc[s.locId] = []; dayByLoc[s.locId].push(s); });
+
+  const addSlot = () => {
+    if (!selDate || !addTime || !addLocId) return;
+    LSL.setSlots([...LSL.getSlots(), { id: LSL.uid(), date: selDate, time: addTime, locId: addLocId, status: 'open' }]);
+    setAddTime(''); force();
   };
-  const del = (id) => { LSL.setSlots(LSL.getSlots().filter((s) => s.id !== id)); force(); };
+  const delSlot = (id) => { LSL.setSlots(LSL.getSlots().filter((s) => s.id !== id)); force(); };
   const toggleBooked = (id) => {
     LSL.setSlots(LSL.getSlots().map((s) => s.id === id ? { ...s, status: s.status === 'booked' ? 'open' : 'booked' } : s));
     force();
@@ -93,55 +120,137 @@ function AvailTab({ force }) {
     const newTime = adShiftTime(slot.time, dir === 'after' ? 60 : -60);
     if (!newTime) return;
     LSL.setSlots([...LSL.getSlots(), { id: LSL.uid(), date: slot.date, time: newTime, locId: slot.locId, status: 'open', contingent: true, contingentOn: slot.id }]);
-    setB2bPicking(null);
-    force();
+    setB2bPicking(null); force();
   };
-  const slots = LSL.getSlots().slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+
+  const openCount   = daySlots.filter((s) => s.status === 'open').length;
+  const bookedCount = daySlots.filter((s) => s.status === 'booked').length;
+
   return (
-    <div>
-      <p className="lsl-body lsl-body--sm" style={{ marginTop: 0, color: 'var(--fg3)' }}>Add openings as they come up. Use <strong>Add Back to Back</strong> on any slot to create a hidden session that only appears once that slot is booked.</p>
-      <div className="lsl-admin__addrow">
-        <div><label>Date</label><input className="lsl-input" type="date" value={date} onChange={(e) => setDate(e.target.value)} /></div>
-        <div><label>Time</label><input className="lsl-input" type="time" value={time} onChange={(e) => setTime(e.target.value)} /></div>
-        <div><label>Location</label>
-          <select className="lsl-select" value={locId} onChange={(e) => setLocId(e.target.value)}>
-            {locs.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
-          </select></div>
-        <button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={add}><i data-lucide="plus"></i> Add opening</button>
-      </div>
-      <div className="lsl-admin__list" style={{ marginTop: 8 }}>
-        {slots.length === 0 && <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)' }}>No openings yet. Add your first above.</p>}
-        {slots.map((s) => {
-          const l = LSL.locById(s.locId);
-          const beforeTime = adShiftTime(s.time, -60);
-          const afterTime  = adShiftTime(s.time,  60);
-          const anchorSlot = s.contingentOn ? slots.find((x) => x.id === s.contingentOn) : null;
-          return (
-            <div className="lsl-admin__item lsl-admin__item--wrap" key={s.id}>
-              <div className="lsl-admin__itemmain">
-                <strong>{LSL.fmtDate(s.date)}</strong> · {LSL.fmtTime(s.time)} · {l && l.name}
-                {s.contingent && anchorSlot && <span style={{ color: 'var(--fg3)', fontWeight: 400 }}> — unlocks when {LSL.fmtTime(anchorSlot.time)} is booked</span>}
-              </div>
-              <div className="lsl-admin__itemactions">
-                <span className={'lsl-pill ' + (s.status === 'booked' ? 'lsl-pill--orange' : 'lsl-pill--outline')}>{s.status === 'booked' ? 'Booked' : 'Open'}</span>
-                {s.contingent && <span className="lsl-pill lsl-pill--sky">B2B</span>}
-                <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => toggleBooked(s.id)}>
-                  {s.status === 'booked' ? 'Mark Open' : 'Mark Booked'}
-                </button>
-                {b2bPicking === s.id ? (
-                  <div className="lsl-admin__b2bpick">
-                    {beforeTime && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => addB2B(s, 'before')}>← {LSL.fmtTime(beforeTime)}</button>}
-                    {afterTime  && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => addB2B(s, 'after')}>{LSL.fmtTime(afterTime)} →</button>}
-                    <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ opacity: 0.5 }} onClick={() => setB2bPicking(null)}>Cancel</button>
-                  </div>
-                ) : (
-                  <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ padding: '3px 10px', fontSize: 12 }} onClick={() => setB2bPicking(s.id)}>Add Back to Back</button>
+    <div className="lsl-admcal">
+      {/* ---- Left: month grid ---- */}
+      <div className="lsl-admcal__left">
+        <div className="lsl-admcal__head">
+          <button className="lsl-admcal__navbtn" onClick={prevMonth} aria-label="Previous month"><i data-lucide="chevron-left"></i></button>
+          <span className="lsl-admcal__monthlabel">{AD_MONTHS[viewMonth]} {viewYear}</span>
+          <button className="lsl-admcal__navbtn" onClick={nextMonth} aria-label="Next month"><i data-lucide="chevron-right"></i></button>
+        </div>
+        <div className="lsl-admcal__dowrow">
+          {AD_DOWS.map((d) => <span key={d}>{d}</span>)}
+        </div>
+        <div className="lsl-admcal__daygrid">
+          {cells.map((day, i) => {
+            if (!day) return <div key={'e' + i} />;
+            const iso = isoFor(day);
+            const ds        = slotsByDate[iso] || [];
+            const hasOpen   = ds.some((s) => !s.contingent && s.status === 'open');
+            const hasBooked = ds.some((s) => s.status === 'booked');
+            const hasB2B    = ds.some((s) => s.contingent);
+            const isToday   = iso === todayIso;
+            const isSel     = iso === selDate;
+            const isPast    = iso < todayIso;
+            return (
+              <button key={day}
+                className={['lsl-admcal__day', isToday && 'is-today', isSel && 'is-sel', isPast && !isToday && 'is-past'].filter(Boolean).join(' ')}
+                onClick={() => setSelDate(iso)}>
+                <span className="lsl-admcal__daynum">{day}</span>
+                {ds.length > 0 && (
+                  <span className="lsl-admcal__dots">
+                    {hasOpen   && <span className="lsl-admcal__dot lsl-admcal__dot--open" />}
+                    {hasBooked && <span className="lsl-admcal__dot lsl-admcal__dot--booked" />}
+                    {hasB2B    && <span className="lsl-admcal__dot lsl-admcal__dot--b2b" />}
+                  </span>
                 )}
-                <button className="lsl-admin__del" onClick={() => del(s.id)} aria-label="Delete"><i data-lucide="trash-2"></i></button>
+              </button>
+            );
+          })}
+        </div>
+        <div className="lsl-admcal__legend">
+          <span><span className="lsl-admcal__dot lsl-admcal__dot--open" /> Open</span>
+          <span><span className="lsl-admcal__dot lsl-admcal__dot--booked" /> Booked</span>
+          <span><span className="lsl-admcal__dot lsl-admcal__dot--b2b" /> B2B</span>
+        </div>
+      </div>
+
+      {/* ---- Right: day detail panel ---- */}
+      <div className="lsl-admcal__panel">
+        {!selDate ? (
+          <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)' }}>Select a day to manage its slots.</p>
+        ) : (
+          <React.Fragment>
+            <div className="lsl-admcal__panelhead">
+              <h3 className="lsl-admcal__paneltitle">{LSL.fmtDateLong(selDate)}</h3>
+              <div className="lsl-admcal__panelpills">
+                {openCount   > 0 && <span className="lsl-pill lsl-pill--outline">{openCount} open</span>}
+                {bookedCount > 0 && <span className="lsl-pill lsl-pill--orange">{bookedCount} booked</span>}
               </div>
             </div>
-          );
-        })}
+
+            {daySlots.length === 0 && (
+              <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)', marginBottom: 16 }}>No slots on this day yet.</p>
+            )}
+
+            {Object.entries(dayByLoc).map(([lid, locSlots]) => {
+              const loc = LSL.locById(lid);
+              return (
+                <div key={lid} className="lsl-admcal__locgroup">
+                  <div className="lsl-admcal__locname"><i data-lucide="map-pin"></i> {loc.name || lid}</div>
+                  {locSlots.map((s) => {
+                    const anchor     = s.contingentOn ? allSlots.find((x) => x.id === s.contingentOn) : null;
+                    const beforeTime = adShiftTime(s.time, -60);
+                    const afterTime  = adShiftTime(s.time,  60);
+                    return (
+                      <div key={s.id} className={'lsl-admcal__slot' + (s.contingent ? ' is-b2b' : '')}>
+                        <div className="lsl-admcal__slotmain">
+                          <span className="lsl-admcal__slottime">{LSL.fmtTime(s.time)}</span>
+                          <span className={'lsl-pill ' + (s.status === 'booked' ? 'lsl-pill--orange' : 'lsl-pill--outline')}>
+                            {s.status === 'booked' ? 'Booked' : 'Open'}
+                          </span>
+                          {s.contingent && <span className="lsl-pill lsl-pill--sky">B2B</span>}
+                          {s.contingent && anchor && (
+                            <span className="lsl-admcal__slotlock">
+                              <i data-lucide="lock"></i> Unlocks when {LSL.fmtTime(anchor.time)} is booked
+                            </span>
+                          )}
+                        </div>
+                        <div className="lsl-admcal__slotactions">
+                          <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => toggleBooked(s.id)}>
+                            {s.status === 'booked' ? 'Mark Open' : 'Mark Booked'}
+                          </button>
+                          {b2bPicking === s.id ? (
+                            <div className="lsl-admcal__b2bpick">
+                              {beforeTime && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => addB2B(s, 'before')}>← {LSL.fmtTime(beforeTime)}</button>}
+                              {afterTime  && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => addB2B(s, 'after')}>{LSL.fmtTime(afterTime)} →</button>}
+                              <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ opacity: .55 }} onClick={() => setB2bPicking(null)}>Cancel</button>
+                            </div>
+                          ) : (
+                            <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => setB2bPicking(s.id)}>
+                              <i data-lucide="repeat-2"></i> Add B2B
+                            </button>
+                          )}
+                          <button className="lsl-admin__del" onClick={() => delSlot(s.id)} aria-label="Delete">
+                            <i data-lucide="trash-2"></i>
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+
+            <div className="lsl-admcal__addrow">
+              <span className="lsl-admcal__addlabel">Add opening</span>
+              <div className="lsl-admcal__addinputs">
+                <input className="lsl-input lsl-admcal__addinput" type="time" value={addTime} onChange={(e) => setAddTime(e.target.value)} />
+                <select className="lsl-select lsl-admcal__addinput" value={addLocId} onChange={(e) => setAddLocId(e.target.value)}>
+                  {locs.map((l) => <option key={l.id} value={l.id}>{l.name}</option>)}
+                </select>
+                <button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={addSlot}><i data-lucide="plus"></i> Add</button>
+              </div>
+            </div>
+          </React.Fragment>
+        )}
       </div>
     </div>
   );
