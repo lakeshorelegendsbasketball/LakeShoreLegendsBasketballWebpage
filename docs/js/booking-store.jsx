@@ -80,7 +80,7 @@
       books: LS.get(K.books, []),
       pass:  LS.get(K.pass,  'legends'),
       web3Key: LS.get(K.web3, ''),
-      conflictBuffer: LS.get(K.confBuf, 90),
+      conflictBuffer: LS.get(K.confBuf, 120),
       conflictAction: LS.get(K.confAct, 'bump'),
     };
   }
@@ -162,7 +162,7 @@
     getWeb3Key:() => LS.get(K.web3,  ''), setWeb3Key:(v) => { LS.set(K.web3, v);  pushToCloud(); },
     getJBKey:  () => LS.get(K.jbKey, ''), setJBKey:  (v) => LS.set(K.jbKey, v),
     getJBBin:  () => LS.get(K.jbBin, ''), setJBBin:  (v) => LS.set(K.jbBin, v),
-    getConflictBuffer: () => LS.get(K.confBuf, 90),
+    getConflictBuffer: () => LS.get(K.confBuf, 120),
     setConflictBuffer: (v) => { LS.set(K.confBuf, v); pushToCloud(); },
     getConflictAction: () => LS.get(K.confAct, 'bump'),
     setConflictAction: (v) => { LS.set(K.confAct, v); pushToCloud(); },

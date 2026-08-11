@@ -119,6 +119,10 @@ function CoachAdminPage() {
 
 /* ---------- Availability ---------- */
 const adPad2 = n => String(n).padStart(2, '0');
+const adToMins = t => {
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+};
 const adShiftTime = (time, mins) => {
   const [h, m] = time.split(':').map(Number);
   const total = h * 60 + m + mins;
@@ -159,6 +163,21 @@ function AvailTab({
     if (!slotsByDate[s.date]) slotsByDate[s.date] = [];
     slotsByDate[s.date].push(s);
   });
+  const confBuf = LSL.getConflictBuffer();
+
+  // Dates with cross-location conflicts among visible open slots
+  const conflictDates = new Set();
+  Object.entries(slotsByDate).forEach(([date, ds]) => {
+    const vis = ds.filter(s => !s.contingent && s.status === 'open');
+    outer: for (let i = 0; i < vis.length; i++) {
+      for (let j = i + 1; j < vis.length; j++) {
+        if (vis[i].locId !== vis[j].locId && Math.abs(adToMins(vis[i].time) - adToMins(vis[j].time)) < confBuf) {
+          conflictDates.add(date);
+          break outer;
+        }
+      }
+    }
+  });
   const prevMonth = () => {
     if (viewMonth === 0) {
       setViewYear(viewYear - 1);
@@ -183,6 +202,20 @@ function AvailTab({
     if (!dayByLoc[s.locId]) dayByLoc[s.locId] = [];
     dayByLoc[s.locId].push(s);
   });
+
+  // Per-slot conflict map for the selected day
+  const dayConflictMap = {};
+  const visDay = daySlots.filter(s => !s.contingent && s.status === 'open');
+  visDay.forEach(a => {
+    visDay.forEach(b => {
+      if (a.id === b.id || a.locId === b.locId) return;
+      if (Math.abs(adToMins(a.time) - adToMins(b.time)) < confBuf) {
+        if (!dayConflictMap[a.id]) dayConflictMap[a.id] = [];
+        if (!dayConflictMap[a.id].find(x => x.id === b.id)) dayConflictMap[a.id].push(b);
+      }
+    });
+  });
+  const hasConflictsToday = Object.keys(dayConflictMap).length > 0;
   const addSlot = () => {
     if (!selDate || !addTime || !addLocId) return;
     LSL.setSlots([...LSL.getSlots(), {
@@ -272,6 +305,7 @@ function AvailTab({
     const hasOpen = ds.some(s => !s.contingent && s.status === 'open');
     const hasBooked = ds.some(s => s.status === 'booked');
     const hasB2B = ds.some(s => s.contingent);
+    const hasConflict = conflictDates.has(iso);
     const isToday = iso === todayIso;
     const isSel = iso === selDate;
     const isPast = iso < todayIso;
@@ -289,6 +323,8 @@ function AvailTab({
       className: "lsl-admcal__dot lsl-admcal__dot--booked"
     }), hasB2B && /*#__PURE__*/React.createElement("span", {
       className: "lsl-admcal__dot lsl-admcal__dot--b2b"
+    }), hasConflict && /*#__PURE__*/React.createElement("span", {
+      className: "lsl-admcal__dot lsl-admcal__dot--conflict"
     })));
   })), /*#__PURE__*/React.createElement("div", {
     className: "lsl-admcal__legend"
@@ -298,7 +334,9 @@ function AvailTab({
     className: "lsl-admcal__dot lsl-admcal__dot--booked"
   }), " Booked"), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
     className: "lsl-admcal__dot lsl-admcal__dot--b2b"
-  }), " B2B"))), /*#__PURE__*/React.createElement("div", {
+  }), " B2B"), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
+    className: "lsl-admcal__dot lsl-admcal__dot--conflict"
+  }), " Conflict"))), /*#__PURE__*/React.createElement("div", {
     className: "lsl-admcal__panel"
   }, !selDate ? /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
@@ -321,7 +359,11 @@ function AvailTab({
       color: 'var(--fg3)',
       marginBottom: 16
     }
-  }, "No slots on this day yet."), Object.entries(dayByLoc).map(([lid, locSlots]) => {
+  }, "No slots on this day yet."), hasConflictsToday && /*#__PURE__*/React.createElement("div", {
+    className: "lsl-admcal__confwarn"
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "alert-triangle"
+  }), /*#__PURE__*/React.createElement("span", null, "Conflicting slots detected \u2014 if one is booked, the other will auto-bump or be removed. You can also resolve it now by deleting or rescheduling one.")), Object.entries(dayByLoc).map(([lid, locSlots]) => {
     const loc = LSL.locById(lid);
     return /*#__PURE__*/React.createElement("div", {
       key: lid,
@@ -345,7 +387,11 @@ function AvailTab({
         className: 'lsl-pill ' + (s.status === 'booked' ? 'lsl-pill--orange' : 'lsl-pill--outline')
       }, s.status === 'booked' ? 'Booked' : 'Open'), s.contingent && /*#__PURE__*/React.createElement("span", {
         className: "lsl-pill lsl-pill--sky"
-      }, "B2B"), s.contingent && anchor && /*#__PURE__*/React.createElement("span", {
+      }, "B2B"), dayConflictMap[s.id] && /*#__PURE__*/React.createElement("span", {
+        className: "lsl-admcal__slotconflict"
+      }, /*#__PURE__*/React.createElement("i", {
+        "data-lucide": "alert-triangle"
+      }), dayConflictMap[s.id].map(c => 'vs ' + LSL.fmtTime(c.time) + ' · ' + (LSL.locById(c.locId).name || 'other loc')).join(' / ')), s.contingent && anchor && /*#__PURE__*/React.createElement("span", {
         className: "lsl-admcal__slotlock"
       }, /*#__PURE__*/React.createElement("i", {
         "data-lucide": "lock"
@@ -826,12 +872,12 @@ function SettingsTab({
       marginTop: 0,
       color: 'var(--fg3)'
     }
-  }, "When a slot is booked, any open slot at a ", /*#__PURE__*/React.createElement("em", null, "different"), " location within this window gets auto-resolved so you're never double-booked across locations."), /*#__PURE__*/React.createElement("div", {
+  }, "When a slot is booked, any open slot at a ", /*#__PURE__*/React.createElement("em", null, "different"), " location that's too close gets auto-bumped or removed. Set this to ", /*#__PURE__*/React.createElement("strong", null, "session duration + travel time"), " \u2014 e.g. 60 min session + 60 min travel = 120 min."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-field lsl-field--row",
     style: {
       marginBottom: 10
     }
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Travel buffer"), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Min. gap between cross-location starts"), /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
       gap: 8,

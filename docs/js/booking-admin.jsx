@@ -64,6 +64,7 @@ function CoachAdminPage() {
 
 /* ---------- Availability ---------- */
 const adPad2 = (n) => String(n).padStart(2, '0');
+const adToMins = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
 const adShiftTime = (time, mins) => {
   const [h, m] = time.split(':').map(Number);
   const total = h * 60 + m + mins;
@@ -102,6 +103,21 @@ function AvailTab({ force }) {
   const slotsByDate = {};
   allSlots.forEach((s) => { if (!slotsByDate[s.date]) slotsByDate[s.date] = []; slotsByDate[s.date].push(s); });
 
+  const confBuf = LSL.getConflictBuffer();
+
+  // Dates with cross-location conflicts among visible open slots
+  const conflictDates = new Set();
+  Object.entries(slotsByDate).forEach(([date, ds]) => {
+    const vis = ds.filter((s) => !s.contingent && s.status === 'open');
+    outer: for (let i = 0; i < vis.length; i++) {
+      for (let j = i + 1; j < vis.length; j++) {
+        if (vis[i].locId !== vis[j].locId && Math.abs(adToMins(vis[i].time) - adToMins(vis[j].time)) < confBuf) {
+          conflictDates.add(date); break outer;
+        }
+      }
+    }
+  });
+
   const prevMonth = () => { if (viewMonth === 0) { setViewYear(viewYear - 1); setViewMonth(11); } else setViewMonth(viewMonth - 1); };
   const nextMonth = () => { if (viewMonth === 11) { setViewYear(viewYear + 1); setViewMonth(0); } else setViewMonth(viewMonth + 1); };
 
@@ -115,6 +131,20 @@ function AvailTab({ force }) {
   const daySlots = selDate ? (slotsByDate[selDate] || []) : [];
   const dayByLoc  = {};
   daySlots.forEach((s) => { if (!dayByLoc[s.locId]) dayByLoc[s.locId] = []; dayByLoc[s.locId].push(s); });
+
+  // Per-slot conflict map for the selected day
+  const dayConflictMap = {};
+  const visDay = daySlots.filter((s) => !s.contingent && s.status === 'open');
+  visDay.forEach((a) => {
+    visDay.forEach((b) => {
+      if (a.id === b.id || a.locId === b.locId) return;
+      if (Math.abs(adToMins(a.time) - adToMins(b.time)) < confBuf) {
+        if (!dayConflictMap[a.id]) dayConflictMap[a.id] = [];
+        if (!dayConflictMap[a.id].find((x) => x.id === b.id)) dayConflictMap[a.id].push(b);
+      }
+    });
+  });
+  const hasConflictsToday = Object.keys(dayConflictMap).length > 0;
 
   const addSlot = () => {
     if (!selDate || !addTime || !addLocId) return;
@@ -157,13 +187,14 @@ function AvailTab({ force }) {
           {cells.map((day, i) => {
             if (!day) return <div key={'e' + i} />;
             const iso = isoFor(day);
-            const ds        = slotsByDate[iso] || [];
-            const hasOpen   = ds.some((s) => !s.contingent && s.status === 'open');
-            const hasBooked = ds.some((s) => s.status === 'booked');
-            const hasB2B    = ds.some((s) => s.contingent);
-            const isToday   = iso === todayIso;
-            const isSel     = iso === selDate;
-            const isPast    = iso < todayIso;
+            const ds          = slotsByDate[iso] || [];
+            const hasOpen     = ds.some((s) => !s.contingent && s.status === 'open');
+            const hasBooked   = ds.some((s) => s.status === 'booked');
+            const hasB2B      = ds.some((s) => s.contingent);
+            const hasConflict = conflictDates.has(iso);
+            const isToday     = iso === todayIso;
+            const isSel       = iso === selDate;
+            const isPast      = iso < todayIso;
             return (
               <button key={day}
                 className={['lsl-admcal__day', isToday && 'is-today', isSel && 'is-sel', isPast && !isToday && 'is-past'].filter(Boolean).join(' ')}
@@ -171,9 +202,10 @@ function AvailTab({ force }) {
                 <span className="lsl-admcal__daynum">{day}</span>
                 {ds.length > 0 && (
                   <span className="lsl-admcal__dots">
-                    {hasOpen   && <span className="lsl-admcal__dot lsl-admcal__dot--open" />}
-                    {hasBooked && <span className="lsl-admcal__dot lsl-admcal__dot--booked" />}
-                    {hasB2B    && <span className="lsl-admcal__dot lsl-admcal__dot--b2b" />}
+                    {hasOpen     && <span className="lsl-admcal__dot lsl-admcal__dot--open" />}
+                    {hasBooked   && <span className="lsl-admcal__dot lsl-admcal__dot--booked" />}
+                    {hasB2B      && <span className="lsl-admcal__dot lsl-admcal__dot--b2b" />}
+                    {hasConflict && <span className="lsl-admcal__dot lsl-admcal__dot--conflict" />}
                   </span>
                 )}
               </button>
@@ -184,6 +216,7 @@ function AvailTab({ force }) {
           <span><span className="lsl-admcal__dot lsl-admcal__dot--open" /> Open</span>
           <span><span className="lsl-admcal__dot lsl-admcal__dot--booked" /> Booked</span>
           <span><span className="lsl-admcal__dot lsl-admcal__dot--b2b" /> B2B</span>
+          <span><span className="lsl-admcal__dot lsl-admcal__dot--conflict" /> Conflict</span>
         </div>
       </div>
 
@@ -205,6 +238,13 @@ function AvailTab({ force }) {
               <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)', marginBottom: 16 }}>No slots on this day yet.</p>
             )}
 
+            {hasConflictsToday && (
+              <div className="lsl-admcal__confwarn">
+                <i data-lucide="alert-triangle"></i>
+                <span>Conflicting slots detected — if one is booked, the other will auto-bump or be removed. You can also resolve it now by deleting or rescheduling one.</span>
+              </div>
+            )}
+
             {Object.entries(dayByLoc).map(([lid, locSlots]) => {
               const loc = LSL.locById(lid);
               return (
@@ -222,6 +262,12 @@ function AvailTab({ force }) {
                             {s.status === 'booked' ? 'Booked' : 'Open'}
                           </span>
                           {s.contingent && <span className="lsl-pill lsl-pill--sky">B2B</span>}
+                          {dayConflictMap[s.id] && (
+                            <span className="lsl-admcal__slotconflict">
+                              <i data-lucide="alert-triangle"></i>
+                              {dayConflictMap[s.id].map((c) => 'vs ' + LSL.fmtTime(c.time) + ' · ' + (LSL.locById(c.locId).name || 'other loc')).join(' / ')}
+                            </span>
+                          )}
                           {s.contingent && anchor && (
                             <span className="lsl-admcal__slotlock">
                               <i data-lucide="lock"></i> Unlocks when {LSL.fmtTime(anchor.time)} is booked
@@ -471,11 +517,11 @@ function SettingsTab({ force }) {
       <div className="lsl-admin__card">
         <h4 style={{ margin: '0 0 6px', fontFamily: 'var(--font-cond)', textTransform: 'uppercase', letterSpacing: '.06em', fontSize: 13 }}>Location Conflict Resolution</h4>
         <p className="lsl-body lsl-body--sm" style={{ marginTop: 0, color: 'var(--fg3)' }}>
-          When a slot is booked, any open slot at a <em>different</em> location within this window gets auto-resolved so you're never double-booked across locations.
+          When a slot is booked, any open slot at a <em>different</em> location that's too close gets auto-bumped or removed. Set this to <strong>session duration + travel time</strong> — e.g. 60 min session + 60 min travel = 120 min.
         </p>
         <div className="lsl-field lsl-field--row" style={{ marginBottom: 10 }}>
           <div>
-            <label>Travel buffer</label>
+            <label>Min. gap between cross-location starts</label>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
               <select className="lsl-select" style={{ flex: 1 }} value={[15,30,45,60,75,90,105,120].includes(confBuf) ? confBuf : ''} onChange={(e) => { if (e.target.value !== '') setConfBuf(+e.target.value); }}>
                 <option value="">Custom</option>
