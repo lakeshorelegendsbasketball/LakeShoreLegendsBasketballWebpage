@@ -212,7 +212,10 @@ function AvailTab({ force }) {
   const addB2B = (slot, dir) => {
     const newTime = adShiftTime(slot.time, dir === 'after' ? 60 : -60);
     if (!newTime) return;
-    LSL.setSlots([...LSL.getSlots(), { id: LSL.uid(), date: slot.date, time: newTime, locId: slot.locId, status: 'open', contingent: true, contingentOn: slot.id }]);
+    const exists = LSL.getSlots().some((s) => s.date === slot.date && s.time === newTime && s.locId === slot.locId);
+    if (!exists) {
+      LSL.setSlots([...LSL.getSlots(), { id: LSL.uid(), date: slot.date, time: newTime, locId: slot.locId, status: 'open', contingent: true, contingentOn: slot.id }]);
+    }
     setB2bPicking(null); force();
   };
 
@@ -304,9 +307,11 @@ function AvailTab({ force }) {
                 <div key={lid} className="lsl-admcal__locgroup">
                   <div className="lsl-admcal__locname"><i data-lucide="map-pin"></i> {loc.name || lid}</div>
                   {locSlots.map((s) => {
-                    const anchor     = s.contingentOn ? allSlots.find((x) => x.id === s.contingentOn) : null;
-                    const beforeTime = adShiftTime(s.time, -60);
-                    const afterTime  = adShiftTime(s.time,  60);
+                    const anchor       = s.contingentOn ? allSlots.find((x) => x.id === s.contingentOn) : null;
+                    const beforeTime   = adShiftTime(s.time, -60);
+                    const afterTime    = adShiftTime(s.time,  60);
+                    const beforeExists = beforeTime && allSlots.some((x) => x.date === s.date && x.time === beforeTime && x.locId === s.locId);
+                    const afterExists  = afterTime  && allSlots.some((x) => x.date === s.date && x.time === afterTime  && x.locId === s.locId);
                     return (
                       <div key={s.id} className={'lsl-admcal__slot' + (s.contingent ? ' is-b2b' : '')}>
                         <div className="lsl-admcal__slotmain">
@@ -333,8 +338,9 @@ function AvailTab({ force }) {
                           </button>
                           {b2bPicking === s.id ? (
                             <div className="lsl-admcal__b2bpick">
-                              {beforeTime && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => addB2B(s, 'before')}>← {LSL.fmtTime(beforeTime)}</button>}
-                              {afterTime  && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => addB2B(s, 'after')}>{LSL.fmtTime(afterTime)} →</button>}
+                              {beforeTime && !beforeExists && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => addB2B(s, 'before')}>← {LSL.fmtTime(beforeTime)}</button>}
+                              {afterTime  && !afterExists  && <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => addB2B(s, 'after')}>{LSL.fmtTime(afterTime)} →</button>}
+                              {beforeExists && afterExists && <span style={{ fontSize: 13, color: 'var(--fg3)' }}>Slots already exist at both times</span>}
                               <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" style={{ opacity: .55 }} onClick={() => setB2bPicking(null)}>Cancel</button>
                             </div>
                           ) : (

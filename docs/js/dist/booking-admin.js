@@ -347,15 +347,18 @@ function AvailTab({
   const addB2B = (slot, dir) => {
     const newTime = adShiftTime(slot.time, dir === 'after' ? 60 : -60);
     if (!newTime) return;
-    LSL.setSlots([...LSL.getSlots(), {
-      id: LSL.uid(),
-      date: slot.date,
-      time: newTime,
-      locId: slot.locId,
-      status: 'open',
-      contingent: true,
-      contingentOn: slot.id
-    }]);
+    const exists = LSL.getSlots().some(s => s.date === slot.date && s.time === newTime && s.locId === slot.locId);
+    if (!exists) {
+      LSL.setSlots([...LSL.getSlots(), {
+        id: LSL.uid(),
+        date: slot.date,
+        time: newTime,
+        locId: slot.locId,
+        status: 'open',
+        contingent: true,
+        contingentOn: slot.id
+      }]);
+    }
     setB2bPicking(null);
     force();
   };
@@ -481,6 +484,8 @@ function AvailTab({
       const anchor = s.contingentOn ? allSlots.find(x => x.id === s.contingentOn) : null;
       const beforeTime = adShiftTime(s.time, -60);
       const afterTime = adShiftTime(s.time, 60);
+      const beforeExists = beforeTime && allSlots.some(x => x.date === s.date && x.time === beforeTime && x.locId === s.locId);
+      const afterExists = afterTime && allSlots.some(x => x.date === s.date && x.time === afterTime && x.locId === s.locId);
       return /*#__PURE__*/React.createElement("div", {
         key: s.id,
         className: 'lsl-admcal__slot' + (s.contingent ? ' is-b2b' : '')
@@ -507,13 +512,18 @@ function AvailTab({
         onClick: () => toggleBooked(s.id)
       }, s.status === 'booked' ? 'Mark Open' : 'Mark Booked'), b2bPicking === s.id ? /*#__PURE__*/React.createElement("div", {
         className: "lsl-admcal__b2bpick"
-      }, beforeTime && /*#__PURE__*/React.createElement("button", {
+      }, beforeTime && !beforeExists && /*#__PURE__*/React.createElement("button", {
         className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
         onClick: () => addB2B(s, 'before')
-      }, "\u2190 ", LSL.fmtTime(beforeTime)), afterTime && /*#__PURE__*/React.createElement("button", {
+      }, "\u2190 ", LSL.fmtTime(beforeTime)), afterTime && !afterExists && /*#__PURE__*/React.createElement("button", {
         className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
         onClick: () => addB2B(s, 'after')
-      }, LSL.fmtTime(afterTime), " \u2192"), /*#__PURE__*/React.createElement("button", {
+      }, LSL.fmtTime(afterTime), " \u2192"), beforeExists && afterExists && /*#__PURE__*/React.createElement("span", {
+        style: {
+          fontSize: 13,
+          color: 'var(--fg3)'
+        }
+      }, "Slots already exist at both times"), /*#__PURE__*/React.createElement("button", {
         className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
         style: {
           opacity: .55
