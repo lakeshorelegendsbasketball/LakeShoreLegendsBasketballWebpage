@@ -532,7 +532,10 @@ a.lsl-btn { line-height: 1; }
 
 .lsl-admcal__navbtn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--line-med); background: #fff; cursor: pointer;
   display: flex; align-items: center; justify-content: center; color: var(--fg2); transition: border-color .12s, color .12s; flex: none; }
-.lsl-admcal__navbtn:hover { border-color: var(--legend-orange); color: var(--legend-orange); }
+.lsl-admcal__navbtn:hover:not(:disabled) { border-color: var(--legend-orange); color: var(--legend-orange); }
+.lsl-admcal__navbtn:disabled { opacity: .5; cursor: default; }
+.lsl-admcal__navbtn.is-synced { border-color: #27ae60; color: #27ae60; }
+.lsl-admcal__navbtn.is-syncerr { border-color: var(--danger); color: var(--danger); }
 .lsl-admcal__navbtn i { width: 15px; height: 15px; }
 
 .lsl-admcal__dowrow { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center;
@@ -594,6 +597,13 @@ a.lsl-btn { line-height: 1; }
 @media (max-width: 520px) {
   .lsl-admcal__slot { flex-direction: column; align-items: flex-start; }
   .lsl-admcal__slotactions { width: 100%; }
+  .lsl-admcal__addrow { flex-direction: column; align-items: stretch; gap: 8px; }
+  .lsl-admcal__addinputs { flex-wrap: nowrap; }
+  .lsl-admcal__addinput { min-width: 0; }
+  .lsl-admcal__addlabel { font-size: 10px; }
+  /* Slightly smaller day cells on very narrow phones */
+  .lsl-admcal__day { min-height: 30px; }
+  .lsl-admcal__daynum { width: 20px; height: 20px; font-size: 11px; }
 }
 
 /* ---------- coach admin ---------- */

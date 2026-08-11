@@ -85,7 +85,17 @@ function AvailTab({ force }) {
   const [addTime,   setAddTime]   = useStateAd('');
   const [addLocId,  setAddLocId]  = useStateAd(locs[0] ? locs[0].id : '');
   const [b2bPicking, setB2bPicking] = useStateAd(null);
+  const [syncing, setSyncing] = useStateAd(false);
+  const [syncOk, setSyncOk] = useStateAd(null);
   useEffectAd(() => { if (window.lucide) window.lucide.createIcons(); });
+
+  const doSync = async () => {
+    setSyncing(true); setSyncOk(null);
+    const ok = await LSL.syncFromCloud();
+    setSyncing(false); setSyncOk(ok);
+    force();
+    setTimeout(() => setSyncOk(null), 2500);
+  };
 
   const allSlots = LSL.getSlots().slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
 
@@ -133,7 +143,12 @@ function AvailTab({ force }) {
         <div className="lsl-admcal__head">
           <button className="lsl-admcal__navbtn" onClick={prevMonth} aria-label="Previous month"><i data-lucide="chevron-left"></i></button>
           <span className="lsl-admcal__monthlabel">{AD_MONTHS[viewMonth]} {viewYear}</span>
-          <button className="lsl-admcal__navbtn" onClick={nextMonth} aria-label="Next month"><i data-lucide="chevron-right"></i></button>
+          <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+            <button className={'lsl-admcal__navbtn' + (syncOk === true ? ' is-synced' : syncOk === false ? ' is-syncerr' : '')} onClick={doSync} aria-label="Sync from cloud" title="Sync from cloud" disabled={syncing}>
+              <i data-lucide={syncing ? 'loader' : 'refresh-cw'}></i>
+            </button>
+            <button className="lsl-admcal__navbtn" onClick={nextMonth} aria-label="Next month"><i data-lucide="chevron-right"></i></button>
+          </div>
         </div>
         <div className="lsl-admcal__dowrow">
           {AD_DOWS.map((d) => <span key={d}>{d}</span>)}

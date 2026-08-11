@@ -139,9 +139,20 @@ function AvailTab({
   const [addTime, setAddTime] = useStateAd('');
   const [addLocId, setAddLocId] = useStateAd(locs[0] ? locs[0].id : '');
   const [b2bPicking, setB2bPicking] = useStateAd(null);
+  const [syncing, setSyncing] = useStateAd(false);
+  const [syncOk, setSyncOk] = useStateAd(null);
   useEffectAd(() => {
     if (window.lucide) window.lucide.createIcons();
   });
+  const doSync = async () => {
+    setSyncing(true);
+    setSyncOk(null);
+    const ok = await LSL.syncFromCloud();
+    setSyncing(false);
+    setSyncOk(ok);
+    force();
+    setTimeout(() => setSyncOk(null), 2500);
+  };
   const allSlots = LSL.getSlots().slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
   const slotsByDate = {};
   allSlots.forEach(s => {
@@ -226,13 +237,27 @@ function AvailTab({
     "data-lucide": "chevron-left"
   })), /*#__PURE__*/React.createElement("span", {
     className: "lsl-admcal__monthlabel"
-  }, AD_MONTHS[viewMonth], " ", viewYear), /*#__PURE__*/React.createElement("button", {
+  }, AD_MONTHS[viewMonth], " ", viewYear), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 4,
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: 'lsl-admcal__navbtn' + (syncOk === true ? ' is-synced' : syncOk === false ? ' is-syncerr' : ''),
+    onClick: doSync,
+    "aria-label": "Sync from cloud",
+    title: "Sync from cloud",
+    disabled: syncing
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": syncing ? 'loader' : 'refresh-cw'
+  })), /*#__PURE__*/React.createElement("button", {
     className: "lsl-admcal__navbtn",
     onClick: nextMonth,
     "aria-label": "Next month"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "chevron-right"
-  }))), /*#__PURE__*/React.createElement("div", {
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "lsl-admcal__dowrow"
   }, AD_DOWS.map(d => /*#__PURE__*/React.createElement("span", {
     key: d
