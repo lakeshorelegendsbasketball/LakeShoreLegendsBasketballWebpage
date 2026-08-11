@@ -153,7 +153,41 @@ function AvailTab({ force }) {
   };
   const delSlot = (id) => { LSL.setSlots(LSL.getSlots().filter((s) => s.id !== id)); force(); };
   const toggleBooked = (id) => {
-    LSL.setSlots(LSL.getSlots().map((s) => s.id === id ? { ...s, status: s.status === 'booked' ? 'open' : 'booked' } : s));
+    const cur = LSL.getSlots();
+    const target = cur.find((s) => s.id === id);
+    if (!target) return;
+
+    if (target.status !== 'booked') {
+      // Marking booked — run cross-location conflict resolution and record what changed
+      const buf = LSL.getConflictBuffer();
+      const act = LSL.getConflictAction();
+      const bookedMins = adToMins(target.time);
+      const bumpRecord = [];
+      const resolved = cur.map((s) => {
+        if (s.id === id) return { ...s, status: 'booked' };
+        if (s.status !== 'open' || s.locId === target.locId || s.date !== target.date) return s;
+        if (Math.abs(adToMins(s.time) - bookedMins) >= buf) return s;
+        if (act === 'delete') { bumpRecord.push({ id: s.id, action: 'delete', data: { ...s } }); return null; }
+        const nm = adToMins(s.time) >= bookedMins ? bookedMins + buf : bookedMins - buf;
+        if (nm < 0 || nm >= 1440) { bumpRecord.push({ id: s.id, action: 'delete', data: { ...s } }); return null; }
+        const nt = adPad2(Math.floor(nm / 60)) + ':' + adPad2(nm % 60);
+        bumpRecord.push({ id: s.id, action: 'bump', originalTime: s.time });
+        return { ...s, time: nt };
+      }).filter(Boolean);
+      LSL.setSlots(resolved.map((s) => s.id === id ? { ...s, bumpRecord } : s));
+    } else {
+      // Unmarking — revert any bumps/deletions stored on this slot
+      const rec = target.bumpRecord || [];
+      let reverted = cur.map((s) => s.id === id ? { ...s, status: 'open', bumpRecord: undefined } : s);
+      rec.forEach((r) => {
+        if (r.action === 'bump') {
+          reverted = reverted.map((s) => s.id === r.id ? { ...s, time: r.originalTime } : s);
+        } else if (r.action === 'delete') {
+          reverted.push(r.data);
+        }
+      });
+      LSL.setSlots(reverted);
+    }
     force();
   };
   const addB2B = (slot, dir) => {
