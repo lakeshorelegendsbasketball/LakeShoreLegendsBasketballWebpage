@@ -659,9 +659,9 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       onClick: () => run(() => A.api('PATCH', '/api/admin/bookings/' + id, {
         clear_attention: true
       }), 'Marked as handled').then(app.changed)
-    }, "Mark handled")), b.legacy && b.payment_status === 'unknown' && /*#__PURE__*/React.createElement(A.Banner, {
+    }, "Mark handled")), b.legacy && b.kind === 'dated' && /*#__PURE__*/React.createElement(A.Banner, {
       tone: "info"
-    }, "Imported from the old system, which never confirmed payment with Stripe. Check Stripe and record the payment here if it was paid."), /*#__PURE__*/React.createElement("div", {
+    }, "Imported from the old system and marked Paid at import. If this one wasn't paid, correct it under Payment below."), /*#__PURE__*/React.createElement("div", {
       className: "lsl-a-block"
     }, /*#__PURE__*/React.createElement("dl", {
       className: "lsl-a-dl"
@@ -973,6 +973,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       attendance: 'attendance: ' + ((A.ATTENDANCE[d.attendance] || {}).label || d.attendance),
       edited: 'edited ' + (d.fields || []).join(', '),
       resent: 'resent ' + (d.kind || '').replace('_', ' ') + ' (' + d.status + ')',
+      payment_status_corrected: 'payment status changed from ' + ((A.PAYMENT[d.from] || {}).label || d.from) + ' to ' + ((A.PAYMENT[d.to] || {}).label || d.to) + ' — ' + d.reason,
       location_details_updated: 'location details updated',
       conflict_rollback: 'reservation rolled back (time conflict)'
     }[e.type] || e.type.replace(/_/g, ' ');
@@ -1056,7 +1057,10 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       className: "lsl-btn lsl-btn--ghost lsl-btn--xs",
       disabled: busy,
       onClick: () => run(() => A.api('POST', '/api/admin/bookings/' + b.id + '/complimentary'), 'Marked complimentary').then(onChanged)
-    }, "Mark complimentary")), /*#__PURE__*/React.createElement(Expand, {
+    }, "Mark complimentary")), /*#__PURE__*/React.createElement(FixPaymentStatus, {
+      b: b,
+      onChanged: onChanged
+    }), /*#__PURE__*/React.createElement(Expand, {
       title: "Record an offline payment or refund",
       icon: "hand-coins"
     }, /*#__PURE__*/React.createElement("div", {
@@ -1150,38 +1154,93 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       }), 'Credit applied').then(onChanged)
     }, "Apply 1 credit"))));
   }
+  function FixPaymentStatus(_ref17) {
+    var b = _ref17.b,
+      onChanged = _ref17.onChanged;
+    var _A$useAction5 = A.useAction(),
+      _A$useAction6 = _slicedToArray(_A$useAction5, 2),
+      busy = _A$useAction6[0],
+      run = _A$useAction6[1];
+    var _useState21 = useState(b.payment_status === 'paid' ? 'unpaid' : 'paid'),
+      _useState22 = _slicedToArray(_useState21, 2),
+      to = _useState22[0],
+      setTo = _useState22[1];
+    var _useState23 = useState(''),
+      _useState24 = _slicedToArray(_useState23, 2),
+      reason = _useState24[0],
+      setReason = _useState24[1];
+    return /*#__PURE__*/React.createElement(Expand, {
+      title: "Correct payment status",
+      icon: "pencil"
+    }, /*#__PURE__*/React.createElement("p", {
+      className: "lsl-a-muted lsl-a-small",
+      style: {
+        marginTop: 0
+      }
+    }, "For fixing records by hand, e.g. an imported session that wasn't actually paid. Logged with your name and reason."), /*#__PURE__*/React.createElement("div", {
+      className: "lsl-a-row"
+    }, /*#__PURE__*/React.createElement("select", {
+      className: "lsl-select",
+      style: {
+        width: 'auto'
+      },
+      value: to,
+      onChange: e => setTo(e.target.value),
+      "aria-label": "New payment status"
+    }, ['paid', 'unpaid', 'unknown', 'complimentary'].filter(k => k !== b.payment_status).map(k => /*#__PURE__*/React.createElement("option", {
+      key: k,
+      value: k
+    }, A.PAYMENT[k].label))), /*#__PURE__*/React.createElement("input", {
+      className: "lsl-input",
+      style: {
+        flex: 1,
+        minWidth: 160
+      },
+      value: reason,
+      onChange: e => setReason(e.target.value),
+      placeholder: "Reason (required)",
+      "aria-label": "Reason"
+    }), /*#__PURE__*/React.createElement("button", {
+      className: "lsl-btn lsl-btn--primary lsl-btn--xs",
+      disabled: busy || !reason.trim(),
+      onClick: () => run(() => A.api('PATCH', '/api/admin/bookings/' + b.id, {
+        payment_status: to,
+        payment_reason: reason
+      }), 'Payment status updated').then(onChanged)
+    }, "Update")));
+  }
 
   /* ---------------- Cancel ---------------- */
-  function CancelDialog(_ref17) {
-    var b = _ref17.b,
-      onClose = _ref17.onClose,
-      onDone = _ref17.onDone;
+  function CancelDialog(_ref18) {
+    var b = _ref18.b,
+      onClose = _ref18.onClose,
+      onDone = _ref18.onDone;
     var app = A.useApp();
     var toast = A.useToast();
     var q = A.useFetch('/api/admin/bookings/' + b.id + '/cancel');
-    var _useState21 = useState({
+    var _useState25 = useState({
         reopen: true,
         notify: false,
         payment_outcome: 'unchanged',
         reason: '',
         override_policy: false
       }),
-      _useState22 = _slicedToArray(_useState21, 2),
-      v = _useState22[0],
-      setV = _useState22[1];
-    var _useState23 = useState(false),
-      _useState24 = _slicedToArray(_useState23, 2),
-      busy = _useState24[0],
-      setBusy = _useState24[1];
-    var _useState25 = useState(''),
       _useState26 = _slicedToArray(_useState25, 2),
-      err = _useState26[0],
-      setErr = _useState26[1];
+      v = _useState26[0],
+      setV = _useState26[1];
+    var _useState27 = useState(false),
+      _useState28 = _slicedToArray(_useState27, 2),
+      busy = _useState28[0],
+      setBusy = _useState28[1];
+    var _useState29 = useState(''),
+      _useState30 = _slicedToArray(_useState29, 2),
+      err = _useState30[0],
+      setErr = _useState30[1];
     var info = q.data;
     var emailOk = app.integrations ? app.integrations.email.configured : null;
     var paid = ['paid', 'partially_refunded'].includes(b.payment_status);
     var submit = /*#__PURE__*/function () {
-      var _ref18 = _asyncToGenerator(function* () {
+      var _ref19 = _asyncToGenerator(function* () {
         setBusy(true);
         setErr('');
         try {
@@ -1196,7 +1255,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         }
       });
       return function submit() {
-        return _ref18.apply(this, arguments);
+        return _ref19.apply(this, arguments);
       };
     }();
     return /*#__PURE__*/React.createElement(Dialog, {
@@ -1362,10 +1421,10 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
   }
 
   /* ---------------- Slot picker for reschedule / approve ---------------- */
-  function SlotPicker(_ref19) {
-    var value = _ref19.value,
-      _onChange = _ref19.onChange,
-      excludeId = _ref19.excludeId;
+  function SlotPicker(_ref20) {
+    var value = _ref20.value,
+      _onChange = _ref20.onChange,
+      excludeId = _ref20.excludeId;
     var app = A.useApp();
     var to = (() => {
       var _app$today$split$map = app.today.split('-').map(Number),
@@ -1376,14 +1435,14 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       return new Date(Date.UTC(y, m - 1, d + 45)).toISOString().slice(0, 10);
     })();
     var q = A.useFetch('/api/admin/schedule?from=' + app.today + '&to=' + to);
-    var _useState27 = useState({
+    var _useState31 = useState({
         date: '',
         time: '',
         loc_id: (app.locations.find(l => l.active) || {}).id || ''
       }),
-      _useState28 = _slicedToArray(_useState27, 2),
-      custom = _useState28[0],
-      setCustom = _useState28[1];
+      _useState32 = _slicedToArray(_useState31, 2),
+      custom = _useState32[0],
+      setCustom = _useState32[1];
     var open = q.data ? q.data.slots.filter(s => s.status === 'open' && s.id !== excludeId && !s.conflicts.some(c => c.severity === 'hard')) : [];
     var mode = value && value.slot_id ? 'slot' : value && value.date ? 'custom' : value && value.mode || 'slot';
     return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Seg, {
@@ -1474,40 +1533,40 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
     time: t.time,
     loc_id: t.loc_id
   } : {};
-  function RescheduleDialog(_ref20) {
-    var b = _ref20.b,
-      onClose = _ref20.onClose,
-      onDone = _ref20.onDone;
+  function RescheduleDialog(_ref21) {
+    var b = _ref21.b,
+      onClose = _ref21.onClose,
+      onDone = _ref21.onDone;
     var app = A.useApp();
     var toast = A.useToast();
-    var _useState29 = useState(null),
-      _useState30 = _slicedToArray(_useState29, 2),
-      t = _useState30[0],
-      setT = _useState30[1];
-    var _useState31 = useState(true),
-      _useState32 = _slicedToArray(_useState31, 2),
-      notify = _useState32[0],
-      setNotify = _useState32[1];
-    var _useState33 = useState(true),
+    var _useState33 = useState(null),
       _useState34 = _slicedToArray(_useState33, 2),
-      reopen = _useState34[0],
-      setReopen = _useState34[1];
-    var _useState35 = useState(''),
+      t = _useState34[0],
+      setT = _useState34[1];
+    var _useState35 = useState(true),
       _useState36 = _slicedToArray(_useState35, 2),
-      reason = _useState36[0],
-      setReason = _useState36[1];
-    var _useState37 = useState(false),
+      notify = _useState36[0],
+      setNotify = _useState36[1];
+    var _useState37 = useState(true),
       _useState38 = _slicedToArray(_useState37, 2),
-      busy = _useState38[0],
-      setBusy = _useState38[1];
+      reopen = _useState38[0],
+      setReopen = _useState38[1];
     var _useState39 = useState(''),
       _useState40 = _slicedToArray(_useState39, 2),
-      err = _useState40[0],
-      setErr = _useState40[1];
+      reason = _useState40[0],
+      setReason = _useState40[1];
+    var _useState41 = useState(false),
+      _useState42 = _slicedToArray(_useState41, 2),
+      busy = _useState42[0],
+      setBusy = _useState42[1];
+    var _useState43 = useState(''),
+      _useState44 = _slicedToArray(_useState43, 2),
+      err = _useState44[0],
+      setErr = _useState44[1];
     var hrs = b.date ? (LSL.localToInstant(b.date, b.time, app.settings.timezone) - Date.now()) / 3600000 : null;
     var late = hrs != null && hrs < app.settings.cancellation.rescheduleHours;
     var submit = /*#__PURE__*/function () {
-      var _ref21 = _asyncToGenerator(function* () {
+      var _ref22 = _asyncToGenerator(function* () {
         setBusy(true);
         setErr('');
         try {
@@ -1526,7 +1585,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         }
       });
       return function submit() {
-        return _ref21.apply(this, arguments);
+        return _ref22.apply(this, arguments);
       };
     }();
     return /*#__PURE__*/React.createElement(Dialog, {
@@ -1582,47 +1641,47 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       tone: "danger"
     }, err));
   }
-  function ApproveDialog(_ref22) {
-    var b = _ref22.b,
-      onClose = _ref22.onClose,
-      onDone = _ref22.onDone;
+  function ApproveDialog(_ref23) {
+    var b = _ref23.b,
+      onClose = _ref23.onClose,
+      onDone = _ref23.onDone;
     var app = A.useApp();
     var toast = A.useToast();
     var r0 = b.request || {};
-    var _useState41 = useState(r0.slot_id ? {
+    var _useState45 = useState(r0.slot_id ? {
         mode: 'slot',
         slot_id: r0.slot_id
       } : null),
-      _useState42 = _slicedToArray(_useState41, 2),
-      t = _useState42[0],
-      setT = _useState42[1];
-    var _useState43 = useState(b.type_id || (app.types.find(x => x.active) || {}).id),
-      _useState44 = _slicedToArray(_useState43, 2),
-      type = _useState44[0],
-      setType = _useState44[1];
-    var _useState45 = useState(true),
       _useState46 = _slicedToArray(_useState45, 2),
-      requirePay = _useState46[0],
-      setRequirePay = _useState46[1];
-    var _useState47 = useState(true),
+      t = _useState46[0],
+      setT = _useState46[1];
+    var _useState47 = useState(b.type_id || (app.types.find(x => x.active) || {}).id),
       _useState48 = _slicedToArray(_useState47, 2),
-      notify = _useState48[0],
-      setNotify = _useState48[1];
-    var _useState49 = useState(false),
+      type = _useState48[0],
+      setType = _useState48[1];
+    var _useState49 = useState(true),
       _useState50 = _slicedToArray(_useState49, 2),
-      busy = _useState50[0],
-      setBusy = _useState50[1];
-    var _useState51 = useState(''),
+      requirePay = _useState50[0],
+      setRequirePay = _useState50[1];
+    var _useState51 = useState(true),
       _useState52 = _slicedToArray(_useState51, 2),
-      err = _useState52[0],
-      setErr = _useState52[1];
-    var _useState53 = useState(null),
+      notify = _useState52[0],
+      setNotify = _useState52[1];
+    var _useState53 = useState(false),
       _useState54 = _slicedToArray(_useState53, 2),
-      link = _useState54[0],
-      setLink = _useState54[1];
+      busy = _useState54[0],
+      setBusy = _useState54[1];
+    var _useState55 = useState(''),
+      _useState56 = _slicedToArray(_useState55, 2),
+      err = _useState56[0],
+      setErr = _useState56[1];
+    var _useState57 = useState(null),
+      _useState58 = _slicedToArray(_useState57, 2),
+      link = _useState58[0],
+      setLink = _useState58[1];
     var ty = app.typeById(type);
     var submit = /*#__PURE__*/function () {
-      var _ref23 = _asyncToGenerator(function* () {
+      var _ref24 = _asyncToGenerator(function* () {
         setBusy(true);
         setErr('');
         try {
@@ -1641,7 +1700,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         }
       });
       return function submit() {
-        return _ref23.apply(this, arguments);
+        return _ref24.apply(this, arguments);
       };
     }();
     if (link) {
@@ -1719,35 +1778,35 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       tone: "danger"
     }, err));
   }
-  function OfferDialog(_ref24) {
-    var b = _ref24.b,
-      onClose = _ref24.onClose,
-      onDone = _ref24.onDone;
+  function OfferDialog(_ref25) {
+    var b = _ref25.b,
+      onClose = _ref25.onClose,
+      onDone = _ref25.onDone;
     var app = A.useApp();
     var toast = A.useToast();
     var loc0 = (app.locations.find(l => l.active) || {}).id;
-    var _useState55 = useState([{
+    var _useState59 = useState([{
         date: '',
         time: '',
         loc_id: loc0
       }]),
-      _useState56 = _slicedToArray(_useState55, 2),
-      opts = _useState56[0],
-      setOpts = _useState56[1];
-    var _useState57 = useState(''),
-      _useState58 = _slicedToArray(_useState57, 2),
-      message = _useState58[0],
-      setMessage = _useState58[1];
-    var _useState59 = useState(false),
       _useState60 = _slicedToArray(_useState59, 2),
-      busy = _useState60[0],
-      setBusy = _useState60[1];
+      opts = _useState60[0],
+      setOpts = _useState60[1];
     var _useState61 = useState(''),
       _useState62 = _slicedToArray(_useState61, 2),
-      err = _useState62[0],
-      setErr = _useState62[1];
+      message = _useState62[0],
+      setMessage = _useState62[1];
+    var _useState63 = useState(false),
+      _useState64 = _slicedToArray(_useState63, 2),
+      busy = _useState64[0],
+      setBusy = _useState64[1];
+    var _useState65 = useState(''),
+      _useState66 = _slicedToArray(_useState65, 2),
+      err = _useState66[0],
+      setErr = _useState66[1];
     var submit = /*#__PURE__*/function () {
-      var _ref25 = _asyncToGenerator(function* () {
+      var _ref26 = _asyncToGenerator(function* () {
         setBusy(true);
         setErr('');
         try {
@@ -1765,7 +1824,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         }
       });
       return function submit() {
-        return _ref25.apply(this, arguments);
+        return _ref26.apply(this, arguments);
       };
     }();
     var upd = (i, k, v) => setOpts(opts.map((o, j) => j === i ? _objectSpread(_objectSpread({}, o), {}, {
@@ -1842,25 +1901,25 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       tone: "danger"
     }, err));
   }
-  function DeclineDialog(_ref26) {
-    var b = _ref26.b,
-      onClose = _ref26.onClose,
-      onDone = _ref26.onDone;
+  function DeclineDialog(_ref27) {
+    var b = _ref27.b,
+      onClose = _ref27.onClose,
+      onDone = _ref27.onDone;
     var toast = A.useToast();
-    var _useState63 = useState(''),
-      _useState64 = _slicedToArray(_useState63, 2),
-      reason = _useState64[0],
-      setReason = _useState64[1];
-    var _useState65 = useState(true),
-      _useState66 = _slicedToArray(_useState65, 2),
-      notify = _useState66[0],
-      setNotify = _useState66[1];
-    var _useState67 = useState(false),
+    var _useState67 = useState(''),
       _useState68 = _slicedToArray(_useState67, 2),
-      busy = _useState68[0],
-      setBusy = _useState68[1];
+      reason = _useState68[0],
+      setReason = _useState68[1];
+    var _useState69 = useState(true),
+      _useState70 = _slicedToArray(_useState69, 2),
+      notify = _useState70[0],
+      setNotify = _useState70[1];
+    var _useState71 = useState(false),
+      _useState72 = _slicedToArray(_useState71, 2),
+      busy = _useState72[0],
+      setBusy = _useState72[1];
     var submit = /*#__PURE__*/function () {
-      var _ref27 = _asyncToGenerator(function* () {
+      var _ref28 = _asyncToGenerator(function* () {
         setBusy(true);
         try {
           var r = yield A.api('POST', '/api/admin/bookings/' + b.id + '/decline', {
@@ -1877,7 +1936,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         }
       });
       return function submit() {
-        return _ref27.apply(this, arguments);
+        return _ref28.apply(this, arguments);
       };
     }();
     return /*#__PURE__*/React.createElement(Dialog, {
@@ -1910,36 +1969,36 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
   }
 
   /* ---------------- Family drawer ---------------- */
-  function FamilyDrawer(_ref28) {
-    var id = _ref28.id,
-      onClose = _ref28.onClose;
+  function FamilyDrawer(_ref29) {
+    var id = _ref29.id,
+      onClose = _ref29.onClose;
     var app = A.useApp();
     var toast = A.useToast();
     var q = A.useFetch('/api/admin/families/' + id, [app.version]);
-    var _useState69 = useState(null),
-      _useState70 = _slicedToArray(_useState69, 2),
-      fam = _useState70[0],
-      setFam = _useState70[1];
-    var _A$useAction5 = A.useAction(),
-      _A$useAction6 = _slicedToArray(_A$useAction5, 2),
-      busy = _A$useAction6[0],
-      run = _A$useAction6[1];
-    var _useState71 = useState({
+    var _useState73 = useState(null),
+      _useState74 = _slicedToArray(_useState73, 2),
+      fam = _useState74[0],
+      setFam = _useState74[1];
+    var _A$useAction7 = A.useAction(),
+      _A$useAction8 = _slicedToArray(_A$useAction7, 2),
+      busy = _A$useAction8[0],
+      run = _A$useAction8[1];
+    var _useState75 = useState({
         package_id: '',
         amount: '',
         method: 'venmo'
       }),
-      _useState72 = _slicedToArray(_useState71, 2),
-      grant = _useState72[0],
-      setGrant = _useState72[1];
-    var _useState73 = useState(''),
-      _useState74 = _slicedToArray(_useState73, 2),
-      mergeQ = _useState74[0],
-      setMergeQ = _useState74[1];
-    var _useState75 = useState([]),
       _useState76 = _slicedToArray(_useState75, 2),
-      mergeHits = _useState76[0],
-      setMergeHits = _useState76[1];
+      grant = _useState76[0],
+      setGrant = _useState76[1];
+    var _useState77 = useState(''),
+      _useState78 = _slicedToArray(_useState77, 2),
+      mergeQ = _useState78[0],
+      setMergeQ = _useState78[1];
+    var _useState79 = useState([]),
+      _useState80 = _slicedToArray(_useState79, 2),
+      mergeHits = _useState80[0],
+      setMergeHits = _useState80[1];
     var pk = A.useFetch(app.isDirector ? '/api/admin/packages' : null);
     var d = q.data;
     useEffect(() => {
@@ -1965,7 +2024,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
     }, {});
     var saveFam = () => run(() => A.api('PATCH', '/api/admin/families/' + id, fam), 'Family saved').then(app.changed);
     var searchMerge = /*#__PURE__*/function () {
-      var _ref29 = _asyncToGenerator(function* (s) {
+      var _ref30 = _asyncToGenerator(function* (s) {
         setMergeQ(s);
         if (s.trim().length < 2) {
           setMergeHits([]);
@@ -1977,7 +2036,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         } catch (e) {/* ignore */}
       });
       return function searchMerge(_x2) {
-        return _ref29.apply(this, arguments);
+        return _ref30.apply(this, arguments);
       };
     }();
     return /*#__PURE__*/React.createElement(Dialog, {
@@ -2138,10 +2197,10 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       onChange: e => setGrant(_objectSpread(_objectSpread({}, grant), {}, {
         method: e.target.value
       }))
-    }, METHODS.map(_ref30 => {
-      var _ref31 = _slicedToArray(_ref30, 2),
-        k = _ref31[0],
-        l = _ref31[1];
+    }, METHODS.map(_ref31 => {
+      var _ref32 = _slicedToArray(_ref31, 2),
+        k = _ref32[0],
+        l = _ref32[1];
       return /*#__PURE__*/React.createElement("option", {
         key: k,
         value: k
@@ -2186,24 +2245,24 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       }
     }, "Merge into this family")))))));
   }
-  function AthleteRow(_ref32) {
-    var a = _ref32.a,
-      others = _ref32.others,
-      bookings = _ref32.bookings;
+  function AthleteRow(_ref33) {
+    var a = _ref33.a,
+      others = _ref33.others,
+      bookings = _ref33.bookings;
     var app = A.useApp();
-    var _useState77 = useState({
+    var _useState81 = useState({
         name: a.name,
         grade: a.grade || '',
         goals: a.goals || '',
         notes_private: a.notes_private || ''
       }),
-      _useState78 = _slicedToArray(_useState77, 2),
-      v = _useState78[0],
-      setV = _useState78[1];
-    var _A$useAction7 = A.useAction(),
-      _A$useAction8 = _slicedToArray(_A$useAction7, 2),
-      busy = _A$useAction8[0],
-      run = _A$useAction8[1];
+      _useState82 = _slicedToArray(_useState81, 2),
+      v = _useState82[0],
+      setV = _useState82[1];
+    var _A$useAction9 = A.useAction(),
+      _A$useAction0 = _slicedToArray(_A$useAction9, 2),
+      busy = _A$useAction0[0],
+      run = _A$useAction0[1];
     var dirty = v.name !== a.name || v.grade !== (a.grade || '') || v.goals !== (a.goals || '') || v.notes_private !== (a.notes_private || '');
     return /*#__PURE__*/React.createElement("div", {
       className: "lsl-a-card",

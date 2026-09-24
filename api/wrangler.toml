@@ -26,6 +26,23 @@ EMAIL_REDIRECT_TO = ""
 #   STRIPE_SECRET_KEY      optional restricted key (read Payment Links + Prices) for price checks
 #   RESEND_API_KEY         optional; enables family emails
 
+# Test server: Stripe TEST mode, emails redirected, its own database.
+[env.staging]
+name = "lsl-booking-api-staging"
+[env.staging.vars]
+ALLOWED_ORIGINS = "https://www.lakeshorelegendsbasketball.com,https://lakeshorelegendsbasketball.com,http://localhost:8080"
+API_PUBLIC_URL = ""
+EMAIL_MODE = "redirect"
+EMAIL_FROM = ""
+EMAIL_REDIRECT_TO = ""
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "lsl-booking-staging"
+database_id = "REPLACE_WITH_ID_FROM_wrangler_d1_create_staging"
+migrations_dir = "migrations"
+[env.staging.triggers]
+crons = ["*/10 * * * *"]
+
 [env.dev]
 name = "lsl-booking-api-dev"
 [env.dev.vars]

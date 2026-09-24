@@ -21,7 +21,7 @@
     const add = () => run(() => A.api('POST', '/api/admin/locations', { name: 'New location' }), 'Location added — give it a name').then(app.reload);
     return (
       <div>
-        <p className="lsl-body lsl-body--sm" style={{ marginTop: 0, color: 'var(--fg3)' }}>Use general areas/towns. Exact address can be shared privately once a booking is confirmed.</p>
+        <p className="lsl-body lsl-body--sm" style={{ marginTop: 0, color: 'var(--fg3)' }}>Use general areas/towns. After booking, families reach out to you to organize the exact location.</p>
         {!app.isDirector && <A.Banner tone="info">Only a director can edit locations.</A.Banner>}
         {locs.map((l) => <LocCard key={l.id} l={l} />)}
         {app.isDirector && (
@@ -59,24 +59,13 @@
       } finally { setSaving(false); }
     };
     const restore = () => A.api('POST', '/api/admin/locations/' + l.id + '/archive', { archive: false }).then(() => { toast('Location restored'); app.reload(); }).catch((e) => toast(e.message, 'err'));
-    const hasPrivate = ['facility_name', 'address', 'parking', 'indoor_outdoor', 'weather_notes', 'hours'].some((k) => v[k]);
     return (
       <div className={'lsl-admin__card' + (l.archived_at ? ' is-inactive' : '')}>
         <div className="lsl-a-card__head" style={{ marginBottom: 6 }}>
           {l.archived_at ? <Badge tone="muted" icon="archive">Archived</Badge> : <Badge tone="green" icon="circle-check">Active</Badge>}
-          {l.indoor_outdoor && <Badge tone="muted" icon={l.indoor_outdoor === 'outdoor' ? 'sun' : 'house'}>{l.indoor_outdoor}</Badge>}
         </div>
         <Field label="Area / Town" error={errs.name} hint="Public — shown on the booking page"><input className="lsl-input" value={v.name} onChange={set('name')} placeholder="Park Ridge, IL" readOnly={ro} /></Field>
-        <A.Expand title={'Private facility details' + (hasPrivate ? '' : ' (none yet)')} icon="lock">
-          <p className="lsl-a-muted lsl-a-small" style={{ marginTop: 0 }}><Icon name="lock" size={12} /> Shared with families only in confirmation and reminder emails for confirmed bookings — never on the public site.</p>
-          <div className="lsl-a-grid">
-            <Field label="Facility name"><input className="lsl-input" value={v.facility_name} onChange={set('facility_name')} readOnly={ro} placeholder="e.g. Maine South Fieldhouse" /></Field>
-            <Field label="Indoor / outdoor"><select className="lsl-select" value={v.indoor_outdoor} onChange={set('indoor_outdoor')} disabled={ro}><option value="">Not set</option><option value="indoor">Indoor</option><option value="outdoor">Outdoor</option><option value="both">Both</option></select></Field>
-          </div>
-          <Field label="Street address"><input className="lsl-input" value={v.address} onChange={set('address')} readOnly={ro} autoComplete="off" /></Field>
-          <Field label="Parking & entrance instructions"><textarea className="lsl-textarea" value={v.parking} onChange={set('parking')} readOnly={ro} style={{ minHeight: 56 }} /></Field>
-          <Field label="Weather instructions" hint="e.g. what happens if it rains for outdoor sessions"><textarea className="lsl-textarea" value={v.weather_notes} onChange={set('weather_notes')} readOnly={ro} style={{ minHeight: 56 }} /></Field>
-          <Field label="Available hours"><input className="lsl-input" value={v.hours} onChange={set('hours')} readOnly={ro} placeholder="Weekdays 3–9 PM, weekends 8 AM–2 PM" /></Field>
+        <A.Expand title="More options" icon="settings-2">
           {app.isDirector && (
             <div className="lsl-a-grid">
               <Field label="Rental cost ($)" error={errs.rental_cost_cents}><input className="lsl-input" inputMode="decimal" value={v.rental_cost} onChange={set('rental_cost')} /></Field>

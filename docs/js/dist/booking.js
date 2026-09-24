@@ -218,7 +218,15 @@ function PrivateBooking() {
     eyebrow: "Private Training",
     title: "Book a Session With Coach Gio",
     sub: "Check out our availability and book the date and time that works for you."
-  }), !loaded && !loadErr && /*#__PURE__*/React.createElement("p", {
+  }), window.LSL_API_NAME === 'staging' && /*#__PURE__*/React.createElement("p", {
+    className: "lsl-bknote",
+    style: {
+      maxWidth: 560,
+      margin: '0 auto 16px'
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "flask-conical"
+  }), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("strong", null, "Test mode:"), " bookings here go to the test server and use Stripe test payments.")), !loaded && !loadErr && /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
     style: {
       textAlign: 'center',
@@ -776,7 +784,14 @@ function BookingForm(_ref3) {
     }
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": isReq ? 'mail' : 'shield-check'
-  }), isReq ? /*#__PURE__*/React.createElement("span", null, "This sends a ", /*#__PURE__*/React.createElement("strong", null, "request"), " to Coach Gio. Nothing is booked or charged until it\u2019s approved.") : type.has_pay_link ? /*#__PURE__*/React.createElement("span", null, "We\u2019ll hold this time for ", /*#__PURE__*/React.createElement("strong", null, settings.holdMinutes || 30, " minutes"), " while you pay securely with ", /*#__PURE__*/React.createElement("strong", null, "Stripe"), ". It\u2019s confirmed once payment goes through.") : /*#__PURE__*/React.createElement("span", null, "Coach Gio will email you a secure payment link.")), /*#__PURE__*/React.createElement("p", {
+  }), isReq ? /*#__PURE__*/React.createElement("span", null, "This sends a ", /*#__PURE__*/React.createElement("strong", null, "request"), " to Coach Gio. Nothing is booked or charged until it\u2019s approved.") : type.has_pay_link ? /*#__PURE__*/React.createElement("span", null, "We\u2019ll hold this time for ", /*#__PURE__*/React.createElement("strong", null, settings.holdMinutes || 10, " minutes"), " while you pay securely with ", /*#__PURE__*/React.createElement("strong", null, "Stripe"), ". It\u2019s confirmed once payment goes through.") : /*#__PURE__*/React.createElement("span", null, "Coach Gio will email you a secure payment link.")), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-bknote",
+    style: {
+      marginBottom: 14
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "map-pin"
+  }), /*#__PURE__*/React.createElement("span", null, "Sessions are in the ", /*#__PURE__*/React.createElement("strong", null, loc.name), " area. After booking, reach out to Coach Gio to organize the exact location.")), /*#__PURE__*/React.createElement("p", {
     className: "lsl-bkpolicy--modal"
   }, /*#__PURE__*/React.createElement(PolicyText, null)), acks.map(a => /*#__PURE__*/React.createElement("label", {
     key: a.id,
@@ -858,6 +873,15 @@ function BookingForm(_ref3) {
       color: 'var(--fg2)'
     }
   }, "We\u2019re holding this time until ", /*#__PURE__*/React.createElement("strong", null, LSL.fmtInstant(result.hold_expires_at)), ". Your booking is confirmed once Stripe confirms payment \u2014 you\u2019ll get a confirmation email."), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-bknote",
+    style: {
+      marginBottom: 12
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "map-pin"
+  }), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("strong", null, "Next:"), " reach out to Coach Gio to organize the exact location \u2014 reply to your confirmation email or use the ", /*#__PURE__*/React.createElement("a", {
+    href: "contact.html"
+  }, "contact page"), ".")), /*#__PURE__*/React.createElement("div", {
     className: "lsl-bkdone__row"
   }, /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--ghost lsl-btn--sm",

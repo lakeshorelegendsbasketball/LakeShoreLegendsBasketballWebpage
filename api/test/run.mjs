@@ -111,7 +111,13 @@ async function main() {
   ok(r.status === 200 && r.data.counts.bookings === 0 && r.data.counts.slots === 0, 're-import is idempotent', r.data);
   r = await get('/api/admin/bookings');
   const lg = Object.fromEntries(r.data.bookings.filter((b) => b.legacy).map((b) => [b.id, b]));
-  ok(lg.lgb1?.payment_status === 'unknown' && lg.lgb1?.status === 'confirmed', 'legacy booking: confirmed, payment Unknown (not assumed paid)');
+  ok(lg.lgb1?.payment_status === 'paid' && lg.lgb1?.status === 'confirmed', 'legacy booking: confirmed + Paid (director confirmed old bookings were paid)');
+  ok(lg.lgb3?.payment_status === 'unpaid', 'legacy request is not marked paid');
+  r = await call('PATCH', '/api/admin/bookings/lgb4', { payment_status: 'unpaid' });
+  ok(r.status === 400, 'payment correction requires a reason');
+  r = await call('PATCH', '/api/admin/bookings/lgb4', { payment_status: 'unpaid', payment_reason: 'never paid' });
+  const lg4 = await get('/api/admin/bookings/lgb4');
+  ok(lg4.data.booking.payment_status === 'unpaid' && lg4.data.events.some((e) => e.type === 'payment_status_corrected'), 'director can correct an imported booking to Unpaid, with audit event');
   ok(lg.lgb1?.family.id === lg.lgb2?.family.id, 'same email (case-insensitive) → same family');
   ok(lg.lgb4?.family.id !== lg.lgb1?.family.id, 'same athlete name but different email → NOT merged');
   ok(lg.lgb3?.status === 'requested' && lg.lgb3?.request?.day === 'Sundays', 'legacy group request preserved');
@@ -145,6 +151,12 @@ async function main() {
   section('Public booking, hold, and capacity');
   r = await get('/api/public/catalog', null);
   ok(r.status === 200 && r.data.settings.timezone === TZ, 'public catalog');
+  ok(r.data.settings.minNoticeHours === 24 && r.data.settings.holdMinutes === 10, '24-hour notice and 10-minute hold by default');
+  const soon = new Date(Date.now() + 18 * 3600000), soonLocal = zoned(soon, TZ);
+  const soonTime = soonLocal.time.slice(0, 3) + '00';
+  const mk = await post('/api/admin/slots', { date: soonLocal.date, time: soonTime, loc_id: 'mun', duration: 30 });
+  const cat18 = await get('/api/public/catalog', null);
+  ok(mk.status === 201 && !cat18.data.slots.some((s) => s.date === soonLocal.date && s.time === soonTime), 'an opening ~18 hours out is hidden (24-hour notice)', mk.data);
   const pubSlot = r.data.slots.find((s) => s.date === d3 && s.time === '16:00');
   ok(pubSlot && pubSlot.status === 'open', 'opening visible publicly');
   ok(!JSON.stringify(r.data).includes('legacy@example.test'), 'public catalog exposes no family data');

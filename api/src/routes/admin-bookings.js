@@ -64,12 +64,21 @@ export async function patchBooking(env, req, user, id) {
   if (b.payer_mode !== undefined) { assert(['one', 'each'].includes(b.payer_mode), 400, 'Invalid payer mode.'); sets.push('payer_mode = ?'); args.push(b.payer_mode); changed.push('payer_mode'); }
   if (b.players !== undefined) { sets.push('players = ?'); args.push(clean(b.players, 10)); changed.push('players'); }
   if (b.clear_attention) { sets.push('attention = NULL'); changed.push('attention_cleared'); }
+  let payFix = null;
+  if (b.payment_status !== undefined && b.payment_status !== bk.payment_status) {
+    requireDirector(user);
+    assert(['unknown', 'unpaid', 'paid', 'complimentary'].includes(b.payment_status), 400, 'That status is set by Stripe or payment records, not by hand.');
+    assert(clean(b.payment_reason), 400, 'Add a short reason for correcting the payment status.');
+    sets.push('payment_status = ?'); args.push(b.payment_status);
+    payFix = { from: bk.payment_status, to: b.payment_status, reason: clean(b.payment_reason, 300) };
+  }
   if (b.coach_id !== undefined) { requireDirector(user); sets.push('coach_id = ?'); args.push(b.coach_id || null); changed.push('coach'); }
   if (!sets.length) return json({ ok: true });
   sets.push('updated_at = ?'); args.push(t);
   await db.batch([
     stmt(db, `UPDATE bookings SET ${sets.join(', ')} WHERE id = ?`, ...args, id),
-    bookingEvent(db, id, user.id, 'edited', { fields: changed }),
+    ...(changed.length ? [bookingEvent(db, id, user.id, 'edited', { fields: changed })] : []),
+    ...(payFix ? [bookingEvent(db, id, user.id, 'payment_status_corrected', payFix)] : []),
   ]);
   if (b.coach_id !== undefined && bk.slot_id) await run(db, 'UPDATE slots SET coach_id = ? WHERE id = ?', b.coach_id || null, bk.slot_id);
   return json({ ok: true, changed });

@@ -247,7 +247,7 @@
           {b.legacy && <Badge tone="muted" icon="archive">Imported</Badge>}
         </div>
         {b.attention && <A.Banner tone="warn">{b.attention} <button className="lsl-a-linkbtn" onClick={() => run(() => A.api('PATCH', '/api/admin/bookings/' + id, { clear_attention: true }), 'Marked as handled').then(app.changed)}>Mark handled</button></A.Banner>}
-        {b.legacy && b.payment_status === 'unknown' && <A.Banner tone="info">Imported from the old system, which never confirmed payment with Stripe. Check Stripe and record the payment here if it was paid.</A.Banner>}
+        {b.legacy && b.kind === 'dated' && <A.Banner tone="info">Imported from the old system and marked Paid at import. If this one wasn't paid, correct it under Payment below.</A.Banner>}
 
         <div className="lsl-a-block">
           <dl className="lsl-a-dl">
@@ -354,7 +354,7 @@
       canceled: 'canceled — opening ' + (d.reopen ? 'reopened' : 'removed') + ', payment: ' + (d.payment_outcome || 'unchanged').replace('_', ' ') + (d.notify ? ', family notified' : ''),
       approved: 'request approved for ' + (d.date ? LSL.fmtDate(d.date) + ' ' + LSL.fmtTime(d.time) : ''), offered_times: 'offered ' + A.plural((d.options || []).length, 'time'),
       declined: 'request declined', attendance: 'attendance: ' + ((A.ATTENDANCE[d.attendance] || {}).label || d.attendance), edited: 'edited ' + (d.fields || []).join(', '),
-      resent: 'resent ' + (d.kind || '').replace('_', ' ') + ' (' + d.status + ')', location_details_updated: 'location details updated', conflict_rollback: 'reservation rolled back (time conflict)',
+      resent: 'resent ' + (d.kind || '').replace('_', ' ') + ' (' + d.status + ')', payment_status_corrected: 'payment status changed from ' + ((A.PAYMENT[d.from] || {}).label || d.from) + ' to ' + ((A.PAYMENT[d.to] || {}).label || d.to) + ' — ' + d.reason, location_details_updated: 'location details updated', conflict_rollback: 'reservation rolled back (time conflict)',
     }[e.type] || e.type.replace(/_/g, ' ');
     return who + ': ' + t;
   }
@@ -396,6 +396,7 @@
           {b.status === 'awaiting_payment' && <button className="lsl-btn lsl-btn--ghost lsl-btn--xs" disabled={busy} onClick={() => run(() => A.api('POST', '/api/admin/bookings/' + b.id + '/confirm'), 'Confirmed — payment still outstanding').then(onChanged)}>Confirm now, collect payment later</button>}
           {!['complimentary', 'paid'].includes(b.payment_status) && <button className="lsl-btn lsl-btn--ghost lsl-btn--xs" disabled={busy} onClick={() => run(() => A.api('POST', '/api/admin/bookings/' + b.id + '/complimentary'), 'Marked complimentary').then(onChanged)}>Mark complimentary</button>}
         </div>
+        <FixPaymentStatus b={b} onChanged={onChanged} />
         <Expand title="Record an offline payment or refund" icon="hand-coins">
           <div className="lsl-a-grid">
             <Field label="Type"><select className="lsl-select" value={pay.kind} onChange={(e) => setPay({ ...pay, kind: e.target.value })}><option value="charge">Payment received</option><option value="refund">Refund given</option></select></Field>
@@ -419,6 +420,25 @@
           </Expand>
         )}
       </div>
+    );
+  }
+
+  function FixPaymentStatus({ b, onChanged }) {
+    const [busy, run] = A.useAction();
+    const [to, setTo] = useState(b.payment_status === 'paid' ? 'unpaid' : 'paid');
+    const [reason, setReason] = useState('');
+    return (
+      <Expand title="Correct payment status" icon="pencil">
+        <p className="lsl-a-muted lsl-a-small" style={{ marginTop: 0 }}>For fixing records by hand, e.g. an imported session that wasn't actually paid. Logged with your name and reason.</p>
+        <div className="lsl-a-row">
+          <select className="lsl-select" style={{ width: 'auto' }} value={to} onChange={(e) => setTo(e.target.value)} aria-label="New payment status">
+            {['paid', 'unpaid', 'unknown', 'complimentary'].filter((k) => k !== b.payment_status).map((k) => <option key={k} value={k}>{A.PAYMENT[k].label}</option>)}
+          </select>
+          <input className="lsl-input" style={{ flex: 1, minWidth: 160 }} value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Reason (required)" aria-label="Reason" />
+          <button className="lsl-btn lsl-btn--primary lsl-btn--xs" disabled={busy || !reason.trim()}
+            onClick={() => run(() => A.api('PATCH', '/api/admin/bookings/' + b.id, { payment_status: to, payment_reason: reason }), 'Payment status updated').then(onChanged)}>Update</button>
+        </div>
+      </Expand>
     );
   }
 

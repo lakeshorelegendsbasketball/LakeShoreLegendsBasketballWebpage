@@ -24,8 +24,8 @@ This is not a confirmed booking yet. {{coach}} will review it and follow up at t
 Service: {{service}}
 When: {{date}} at {{time}} ({{timezone}})
 Coach: {{coach}}
-Where: {{location}}
-{{location_details}}
+Area: {{location}}
+Exact location: reply to this email to set up where you'll meet.
 {{prep}}
 {{policy}}
 
@@ -38,8 +38,8 @@ See you on the court!
 
 A reminder that {{athlete}} has {{service}} on {{date}} at {{time}} ({{timezone}}) with {{coach}}.
 
-Where: {{location}}
-{{location_details}}
+Area: {{location}}
+Exact location: reply to this email to set up where you'll meet.
 {{prep}}
 {{policy}}
 
@@ -65,8 +65,8 @@ If you have questions, just reply to this email.
 Previously: {{previous}}
 Now: {{date}} at {{time}} ({{timezone}})
 Coach: {{coach}}
-Where: {{location}}
-{{location_details}}
+Area: {{location}}
+Exact location: reply to this email to set up where you'll meet.
 {{policy}}
 
 — LakeShore Legends Basketball`,
@@ -79,7 +79,8 @@ Good news — {{coach}} approved your request.
 
 Service: {{service}}
 When: {{date}} at {{time}} ({{timezone}})
-Where: {{location}}
+Area: {{location}}
+Exact location: reply to this email to set up where you'll meet.
 
 {{payment_step}}
 
@@ -118,9 +119,9 @@ export const DEFAULT_SETTINGS = {
   travelDefault: 60,              // minutes required between sessions at different locations
   travel: {},                     // { 'locA|locB': minutes } — sorted id pair
   conflictAction: 'bump',         // what to do with open slots that conflict with a new booking
-  minNoticeHours: 12,
+  minNoticeHours: 24,
   maxAdvanceDays: 90,
-  holdMinutes: 30,                // checkout reservation window
+  holdMinutes: 10,                // checkout reservation window
   cancellation: {
     fullRefundHours: 48,
     lateRetainerPct: 50,

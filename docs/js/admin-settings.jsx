@@ -10,7 +10,7 @@
     request_received: 'Request received', confirmation: 'Booking confirmed', reminder: 'Reminder', cancellation: 'Cancellation',
     reschedule: 'Rescheduled', approval: 'Request approved', decline: 'Request declined', offer: 'Times offered',
   };
-  const PLACEHOLDERS = ['parent', 'athlete', 'service', 'date', 'time', 'timezone', 'coach', 'location', 'location_details', 'prep', 'policy', 'requested', 'previous', 'cancel_outcome', 'payment_step', 'offer_times', 'message'];
+  const PLACEHOLDERS = ['parent', 'athlete', 'service', 'date', 'time', 'timezone', 'coach', 'location', 'prep', 'policy', 'requested', 'previous', 'cancel_outcome', 'payment_step', 'offer_times', 'message'];
 
   /** A settings section: collapsible card with its own dirty/save state. */
   function Section({ title, icon, pick, children, defaultOpen, note }) {
@@ -227,7 +227,6 @@
           </Field>
           <Field label="Subject"><input className="lsl-input" value={v.subject} onChange={(e) => setV({ ...v, subject: e.target.value })} /></Field>
           <Field label="Body" hint={'Placeholders: ' + PLACEHOLDERS.map((p) => '{{' + p + '}}').join(' ')}><textarea className="lsl-textarea lsl-a-tpl" value={v.body} onChange={(e) => setV({ ...v, body: e.target.value })} /></Field>
-          <p className="lsl-a-muted lsl-a-small">{'{{location_details}}'} (facility, address, parking) is only filled in for confirmed bookings.</p>
           <div className="lsl-a-row">
             <button className="lsl-btn lsl-btn--ghost lsl-btn--xs" onClick={() => doPreview(false)} disabled={busy}><Icon name="eye" /> Preview</button>
             <button className="lsl-btn lsl-btn--ghost lsl-btn--xs" onClick={() => doPreview(true)} disabled={busy}><Icon name="send" /> Send test to me</button>
@@ -396,7 +395,7 @@
       <details className="lsl-a-expand lsl-a-section">
         <summary><Icon name="chevron-right" className="lsl-a-chev" /><Icon name="database" /> Import from the old booking system</summary>
         <div className="lsl-a-expand__body">
-          <p className="lsl-a-small" style={{ marginTop: 0 }}>Copies bookings, openings, session types, and locations from the old JSONbin storage. Safe to run more than once — nothing is duplicated. Imported bookings keep their details; payment shows as <strong>Unknown</strong> because the old system never confirmed payments.</p>
+          <p className="lsl-a-small" style={{ marginTop: 0 }}>Copies bookings, openings, session types, and locations from the old JSONbin storage. Safe to run more than once — nothing is duplicated. Imported sessions are marked <strong>Paid</strong>. If any weren't, open that booking and correct it under Payment.</p>
           <div className="lsl-a-grid">
             <Field label="JSONbin master key" hint="Used once in your browser; not saved."><input className="lsl-input lsl-a-mono" type="password" autoComplete="off" value={v.key} onChange={(e) => setV({ ...v, key: e.target.value })} /></Field>
             <Field label="Bin ID"><input className="lsl-input lsl-a-mono" value={v.bin} onChange={(e) => setV({ ...v, bin: e.target.value })} /></Field>

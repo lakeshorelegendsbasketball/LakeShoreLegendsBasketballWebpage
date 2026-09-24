@@ -61,7 +61,7 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
         marginTop: 0,
         color: 'var(--fg3)'
       }
-    }, "Use general areas/towns. Exact address can be shared privately once a booking is confirmed."), !app.isDirector && /*#__PURE__*/React.createElement(A.Banner, {
+    }, "Use general areas/towns. After booking, families reach out to you to organize the exact location."), !app.isDirector && /*#__PURE__*/React.createElement(A.Banner, {
       tone: "info"
     }, "Only a director can edit locations."), locs.map(l => /*#__PURE__*/React.createElement(LocCard, {
       key: l.id,
@@ -148,7 +148,6 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
       toast('Location restored');
       app.reload();
     }).catch(e => toast(e.message, 'err'));
-    var hasPrivate = ['facility_name', 'address', 'parking', 'indoor_outdoor', 'weather_notes', 'hours'].some(k => v[k]);
     return /*#__PURE__*/React.createElement("div", {
       className: 'lsl-admin__card' + (l.archived_at ? ' is-inactive' : '')
     }, /*#__PURE__*/React.createElement("div", {
@@ -162,10 +161,7 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
     }, "Archived") : /*#__PURE__*/React.createElement(Badge, {
       tone: "green",
       icon: "circle-check"
-    }, "Active"), l.indoor_outdoor && /*#__PURE__*/React.createElement(Badge, {
-      tone: "muted",
-      icon: l.indoor_outdoor === 'outdoor' ? 'sun' : 'house'
-    }, l.indoor_outdoor)), /*#__PURE__*/React.createElement(Field, {
+    }, "Active")), /*#__PURE__*/React.createElement(Field, {
       label: "Area / Town",
       error: errs.name,
       hint: "Public \u2014 shown on the booking page"
@@ -176,79 +172,9 @@ function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = 
       placeholder: "Park Ridge, IL",
       readOnly: ro
     })), /*#__PURE__*/React.createElement(A.Expand, {
-      title: 'Private facility details' + (hasPrivate ? '' : ' (none yet)'),
-      icon: "lock"
-    }, /*#__PURE__*/React.createElement("p", {
-      className: "lsl-a-muted lsl-a-small",
-      style: {
-        marginTop: 0
-      }
-    }, /*#__PURE__*/React.createElement(Icon, {
-      name: "lock",
-      size: 12
-    }), " Shared with families only in confirmation and reminder emails for confirmed bookings \u2014 never on the public site."), /*#__PURE__*/React.createElement("div", {
-      className: "lsl-a-grid"
-    }, /*#__PURE__*/React.createElement(Field, {
-      label: "Facility name"
-    }, /*#__PURE__*/React.createElement("input", {
-      className: "lsl-input",
-      value: v.facility_name,
-      onChange: set('facility_name'),
-      readOnly: ro,
-      placeholder: "e.g. Maine South Fieldhouse"
-    })), /*#__PURE__*/React.createElement(Field, {
-      label: "Indoor / outdoor"
-    }, /*#__PURE__*/React.createElement("select", {
-      className: "lsl-select",
-      value: v.indoor_outdoor,
-      onChange: set('indoor_outdoor'),
-      disabled: ro
-    }, /*#__PURE__*/React.createElement("option", {
-      value: ""
-    }, "Not set"), /*#__PURE__*/React.createElement("option", {
-      value: "indoor"
-    }, "Indoor"), /*#__PURE__*/React.createElement("option", {
-      value: "outdoor"
-    }, "Outdoor"), /*#__PURE__*/React.createElement("option", {
-      value: "both"
-    }, "Both")))), /*#__PURE__*/React.createElement(Field, {
-      label: "Street address"
-    }, /*#__PURE__*/React.createElement("input", {
-      className: "lsl-input",
-      value: v.address,
-      onChange: set('address'),
-      readOnly: ro,
-      autoComplete: "off"
-    })), /*#__PURE__*/React.createElement(Field, {
-      label: "Parking & entrance instructions"
-    }, /*#__PURE__*/React.createElement("textarea", {
-      className: "lsl-textarea",
-      value: v.parking,
-      onChange: set('parking'),
-      readOnly: ro,
-      style: {
-        minHeight: 56
-      }
-    })), /*#__PURE__*/React.createElement(Field, {
-      label: "Weather instructions",
-      hint: "e.g. what happens if it rains for outdoor sessions"
-    }, /*#__PURE__*/React.createElement("textarea", {
-      className: "lsl-textarea",
-      value: v.weather_notes,
-      onChange: set('weather_notes'),
-      readOnly: ro,
-      style: {
-        minHeight: 56
-      }
-    })), /*#__PURE__*/React.createElement(Field, {
-      label: "Available hours"
-    }, /*#__PURE__*/React.createElement("input", {
-      className: "lsl-input",
-      value: v.hours,
-      onChange: set('hours'),
-      readOnly: ro,
-      placeholder: "Weekdays 3\u20139 PM, weekends 8 AM\u20132 PM"
-    })), app.isDirector && /*#__PURE__*/React.createElement("div", {
+      title: "More options",
+      icon: "settings-2"
+    }, app.isDirector && /*#__PURE__*/React.createElement("div", {
       className: "lsl-a-grid"
     }, /*#__PURE__*/React.createElement(Field, {
       label: "Rental cost ($)",

@@ -34,7 +34,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
     decline: 'Request declined',
     offer: 'Times offered'
   };
-  var PLACEHOLDERS = ['parent', 'athlete', 'service', 'date', 'time', 'timezone', 'coach', 'location', 'location_details', 'prep', 'policy', 'requested', 'previous', 'cancel_outcome', 'payment_step', 'offer_times', 'message'];
+  var PLACEHOLDERS = ['parent', 'athlete', 'service', 'date', 'time', 'timezone', 'coach', 'location', 'prep', 'policy', 'requested', 'previous', 'cancel_outcome', 'payment_step', 'offer_times', 'message'];
 
   /** A settings section: collapsible card with its own dirty/save state. */
   function Section(_ref) {
@@ -727,9 +727,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       onChange: e => setV(_objectSpread(_objectSpread({}, v), {}, {
         body: e.target.value
       }))
-    })), /*#__PURE__*/React.createElement("p", {
-      className: "lsl-a-muted lsl-a-small"
-    }, '{{location_details}}', " (facility, address, parking) is only filled in for confirmed bookings."), /*#__PURE__*/React.createElement("div", {
+    })), /*#__PURE__*/React.createElement("div", {
       className: "lsl-a-row"
     }, /*#__PURE__*/React.createElement("button", {
       className: "lsl-btn lsl-btn--ghost lsl-btn--xs",
@@ -1203,7 +1201,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       style: {
         marginTop: 0
       }
-    }, "Copies bookings, openings, session types, and locations from the old JSONbin storage. Safe to run more than once \u2014 nothing is duplicated. Imported bookings keep their details; payment shows as ", /*#__PURE__*/React.createElement("strong", null, "Unknown"), " because the old system never confirmed payments."), /*#__PURE__*/React.createElement("div", {
+    }, "Copies bookings, openings, session types, and locations from the old JSONbin storage. Safe to run more than once \u2014 nothing is duplicated. Imported sessions are marked ", /*#__PURE__*/React.createElement("strong", null, "Paid"), ". If any weren't, open that booking and correct it under Payment."), /*#__PURE__*/React.createElement("div", {
       className: "lsl-a-grid"
     }, /*#__PURE__*/React.createElement(Field, {
       label: "JSONbin master key",

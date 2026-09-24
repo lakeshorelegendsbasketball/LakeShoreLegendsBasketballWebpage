@@ -938,7 +938,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }
     }, "Coach Dashboard"), /*#__PURE__*/React.createElement("span", {
       className: "lsl-pill lsl-pill--sky"
-    }, boot.me.name), /*#__PURE__*/React.createElement("span", {
+    }, boot.me.name), window.LSL_API_NAME === 'staging' && /*#__PURE__*/React.createElement(Badge, {
+      tone: "warn",
+      icon: "flask-conical",
+      title: "Connected to the test server \u2014 not live data"
+    }, "Test server"), /*#__PURE__*/React.createElement("span", {
       className: "lsl-a-tz",
       title: "All times are shown in this time zone"
     }, /*#__PURE__*/React.createElement(Icon, {

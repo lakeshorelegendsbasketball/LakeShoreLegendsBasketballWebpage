@@ -121,7 +121,8 @@ function PrivateBooking() {
           title="Book a Session With Coach Gio"
           sub="Check out our availability and book the date and time that works for you." />
 
-        {!loaded && !loadErr && <p className="lsl-body lsl-body--sm" style={{ textAlign: 'center', color: 'var(--fg3)' }} role="status">Loading availability…</p>}
+        {window.LSL_API_NAME === 'staging' && <p className="lsl-bknote" style={{ maxWidth: 560, margin: '0 auto 16px' }}><i data-lucide="flask-conical"></i><span><strong>Test mode:</strong> bookings here go to the test server and use Stripe test payments.</span></p>}
+        {!loaded && !loadErr &&<p className="lsl-body lsl-body--sm" style={{ textAlign: 'center', color: 'var(--fg3)' }} role="status">Loading availability…</p>}
         {loadErr && (
           <div className="lsl-bknote" role="alert" style={{ maxWidth: 560, margin: '0 auto 20px' }}>
             <i data-lucide="alert-triangle"></i>
@@ -411,8 +412,12 @@ function BookingForm({ desc, onClose, onBooked }) {
               {isReq
                 ? <span>This sends a <strong>request</strong> to Coach Gio. Nothing is booked or charged until it&rsquo;s approved.</span>
                 : type.has_pay_link
-                  ? <span>We&rsquo;ll hold this time for <strong>{settings.holdMinutes || 30} minutes</strong> while you pay securely with <strong>Stripe</strong>. It&rsquo;s confirmed once payment goes through.</span>
+                  ? <span>We&rsquo;ll hold this time for <strong>{settings.holdMinutes || 10} minutes</strong> while you pay securely with <strong>Stripe</strong>. It&rsquo;s confirmed once payment goes through.</span>
                   : <span>Coach Gio will email you a secure payment link.</span>}
+            </div>
+            <div className="lsl-bknote" style={{ marginBottom: 14 }}>
+              <i data-lucide="map-pin"></i>
+              <span>Sessions are in the <strong>{loc.name}</strong> area. After booking, reach out to Coach Gio to organize the exact location.</span>
             </div>
             <p className="lsl-bkpolicy--modal"><PolicyText /></p>
             {acks.map((a) => (
@@ -453,6 +458,10 @@ function BookingForm({ desc, onClose, onBooked }) {
                 We&rsquo;re holding this time until <strong>{LSL.fmtInstant(result.hold_expires_at)}</strong>. Your booking is confirmed once Stripe confirms payment — you&rsquo;ll get a confirmation email.
               </p>
             )}
+            <div className="lsl-bknote" style={{ marginBottom: 12 }}>
+              <i data-lucide="map-pin"></i>
+              <span><strong>Next:</strong> reach out to Coach Gio to organize the exact location — reply to your confirmation email or use the <a href="contact.html">contact page</a>.</span>
+            </div>
             <div className="lsl-bkdone__row">
               <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => LSL.downloadICS({ ...result, athlete: form.athlete })}><i data-lucide="calendar-plus"></i> Add to calendar</button>
             </div>

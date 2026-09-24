@@ -1,6 +1,19 @@
-/* Where the booking API lives. Set PRODUCTION_API after deploying the Worker. */
+/* Where the booking API lives. Fill these in after deploying the Worker.
+   Add ?api=staging to any page URL to use the test server for that tab
+   (?api=production switches back). */
 (function () {
-  var PRODUCTION_API = 'https://lsl-booking-api.REPLACE_ME.workers.dev';
+  var APIS = {
+    production: 'https://lsl-booking-api.REPLACE_ME.workers.dev',
+    staging: 'https://lsl-booking-api-staging.REPLACE_ME.workers.dev',
+    local: 'http://localhost:8787',
+  };
   var local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  window.LSL_API = local ? 'http://localhost:8787' : PRODUCTION_API;
+  var pick = local ? 'local' : 'production';
+  try {
+    var q = new URLSearchParams(location.search).get('api');
+    if (q && APIS[q]) sessionStorage.setItem('lsl_api', q);
+    pick = sessionStorage.getItem('lsl_api') || pick;
+  } catch (e) { /* storage blocked: use the default */ }
+  window.LSL_API = APIS[pick] || APIS.production;
+  window.LSL_API_NAME = pick;
 })();

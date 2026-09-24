@@ -374,6 +374,7 @@
               <img src="assets/badge-crest.png" alt="LakeShore Legends" style={{ height: 40 }} />
               <h1 className="lsl-h3" style={{ margin: 0 }}>Coach Dashboard</h1>
               <span className="lsl-pill lsl-pill--sky">{boot.me.name}</span>
+              {window.LSL_API_NAME === 'staging' && <Badge tone="warn" icon="flask-conical" title="Connected to the test server — not live data">Test server</Badge>}
               <span className="lsl-a-tz" title="All times are shown in this time zone"><Icon name="globe" size={13} />{boot.settings.timezone.replace('_', ' ')} ({tzShort})</span>
               <a className="lsl-admin__exit" href="training.html"><Icon name="external-link" size={14} /> View site</a>
               <button className="lsl-a-signout" onClick={signOut}><Icon name="log-out" size={14} /> Sign out</button>

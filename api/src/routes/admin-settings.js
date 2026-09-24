@@ -190,9 +190,9 @@ export async function importLegacy(env, req, user) {
     const isReq = bk.mode === 'request';
     const row = {
       id: bk.id, kind: isReq ? 'request' : 'dated',
-      // The old site marked the slot booked the moment the form was sent and never
-      // learned whether Stripe was paid: keep them scheduled, payment Unknown.
-      status: isReq ? 'requested' : 'confirmed', payment_status: 'unknown',
+      // The director confirmed all old bookings were paid (any exceptions are
+      // corrected per booking afterwards). Requests were never charged.
+      status: isReq ? 'requested' : 'confirmed', payment_status: isReq ? 'unpaid' : 'paid',
       family_id: familyId, athlete_id: athleteId, type_id: types[typeId] ? typeId : null, snapshot: snap,
       slot_id: isReq ? null : bk.slotId || null, date: isReq ? null : bk.date, time: isReq ? null : bk.time, duration: 60, loc_id: isReq ? null : bk.locId,
       players: bk.players || null, roster: [{ name: form.athlete, primary: true }, ...(bk.groupMembers || []).map((m) => ({ name: clean(m.name, 200), contact: clean(m.contact, 200) }))],
@@ -201,7 +201,7 @@ export async function importLegacy(env, req, user) {
     };
     const { cols, vals } = bookingInsert(db, row);
     const bs = [...stmts, stmt(db, `INSERT OR IGNORE INTO bookings (${cols.join(',')}) VALUES (${cols.map(() => '?').join(',')})`, ...vals),
-      stmt(db, 'INSERT INTO booking_events (id, booking_id, at, actor, type, data) VALUES (?,?,?,?,?,?)', uid(), bk.id, t, user.id, 'imported', JSON.stringify({ legacy_status: bk.status || null, legacy_mode: bk.mode || null }))];
+      stmt(db, 'INSERT INTO booking_events (id, booking_id, at, actor, type, data) VALUES (?,?,?,?,?,?)', uid(), bk.id, t, user.id, 'imported', JSON.stringify({ legacy_status: bk.status || null, legacy_mode: bk.mode || null, payment: isReq ? null : 'marked paid at import (confirmed by director)' }))];
     if (!isReq && bk.slotId) bs.push(stmt(db, "UPDATE slots SET booking_id = ?, status = 'booked' WHERE id = ? AND (booking_id IS NULL OR booking_id = ?)", bk.id, bk.slotId, bk.id));
     try { await db.batch(bs); counts.bookings++; } catch (e) {
       // A second legacy booking on the same slot would violate the one-live-booking rule; keep it, but unlinked.
