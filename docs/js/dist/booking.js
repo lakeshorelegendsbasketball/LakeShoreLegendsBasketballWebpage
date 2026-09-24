@@ -1,72 +1,115 @@
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 /* global React, SectionHead, LSL */
-const {
-  useState: useStateBk,
-  useEffect: useEffectBk,
-  useReducer: useReducerBk
-} = React;
-const W3F_1ON1 = '57d5ddc7-7fef-4b25-b3c1-6d0ace6f4633';
-const W3F_GROUP = '26db51db-43e4-4bf9-90d5-fa4c7a647de2';
-const W3F_REQTRN = '0202f9d6-795d-4dd1-ae8e-6b5fe7391d92';
-const PAY_1ON1 = 'https://buy.stripe.com/00w9AM0rxcFigGc4M10Jq01';
-const PAY_GROUP = {
-  '2': 'https://buy.stripe.com/28E9AMcaf48Mdu03HX0Jq00',
-  '3': 'https://buy.stripe.com/8x2dR20rx9t64XuguJ0Jq02',
-  '4+': 'https://buy.stripe.com/14AcMYdejaxa89GemB0Jq03'
-};
-const LSL_POLICY = ['Cancellations made within 48 hours of a session are subject to a 50% retainer.', 'Cancellations made more than 48 hours in advance receive a 100% refund.', 'Training session times and availability are subject to change.'];
-const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const pad2 = n => String(n).padStart(2, '0');
-const isoOf = dt => dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + pad2(dt.getDate());
-const toMins = t => {
-  const [h, m] = t.split(':').map(Number);
-  return h * 60 + m;
-};
-async function notifyCoach(rec) {
-  const isGroup = !!rec.players;
-  const key = rec.mode === 'request' ? W3F_GROUP : isGroup ? W3F_GROUP : W3F_1ON1;
-  const fromName = rec.mode === 'request' || isGroup ? 'LSL Small Group Booking Request' : 'LSL New 1-on-1 Booking';
-  const loc = rec.mode !== 'request' ? LSL.locById(rec.locId) : {};
-  let subject, message;
-  if (rec.mode === 'request') {
-    subject = 'New Group Request — ' + rec.athlete;
-    message = ['Group Request: ' + rec.athlete, rec.serviceName + ' · ' + rec.players + ' players', DOW[rec.dow] + 's · ' + LSL.fmtTime(rec.reqTime), 'Parent: ' + rec.parent, rec.email + (rec.phone ? ' · ' + rec.phone : ''), rec.age ? 'Age/Grade: ' + rec.age : '', rec.focus ? 'Focus: ' + rec.focus : '', rec.notes ? 'Notes: ' + rec.notes : ''].filter(Boolean).join('\n');
-  } else {
-    subject = 'New Booking — ' + rec.athlete + ' · ' + LSL.fmtDate(rec.date);
-    const memberLines = (rec.groupMembers || []).map((m, i) => 'Player ' + (i + 2) + ': ' + (m.name || '—') + (m.contact ? ' · ' + m.contact : ''));
-    message = ['New Booking: ' + rec.athlete, rec.serviceName + (rec.players ? ' · ' + rec.players + ' players' : ''), LSL.fmtDate(rec.date) + ' · ' + LSL.fmtTime(rec.time), loc.name || '', 'Parent: ' + rec.parent, rec.email + (rec.phone ? ' · ' + rec.phone : ''), rec.age ? 'Age/Grade: ' + rec.age : '', rec.focus ? 'Focus: ' + rec.focus : '', rec.notes ? 'Notes: ' + rec.notes : '', memberLines.length ? '\n--- GROUP MEMBERS ---' : '', ...memberLines].filter(Boolean).join('\n');
-  }
-  try {
-    await fetch('https://api.web3forms.com/submit', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify({
-        access_key: key,
-        subject,
-        message,
-        from_name: fromName,
-        replyto: rec.email,
-        cc: '2244259490@tmomail.net'
-      })
-    });
-  } catch (e) {/* non-blocking */}
+var _React = React,
+  useStateBk = _React.useState,
+  useEffectBk = _React.useEffect,
+  useReducerBk = _React.useReducer;
+
+// Web3Forms keys are public by design (they only let this form email the coach).
+var W3F_1ON1 = '57d5ddc7-7fef-4b25-b3c1-6d0ace6f4633';
+var W3F_GROUP = '26db51db-43e4-4bf9-90d5-fa4c7a647de2';
+var W3F_REQTRN = '0202f9d6-795d-4dd1-ae8e-6b5fe7391d92';
+var DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+var pad2 = n => String(n).padStart(2, '0');
+var isoOf = dt => dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + pad2(dt.getDate());
+var policyLines = () => LSL.getSettings().policyLines || [];
+var groupLabel = t => t.max_participants > t.min_participants ? t.min_participants + '+' : String(t.min_participants);
+function notifyCoach(_x) {
+  return _notifyCoach.apply(this, arguments);
+}
+function _notifyCoach() {
+  _notifyCoach = _asyncToGenerator(function* (rec) {
+    var isGroup = !!rec.players;
+    var key = rec.mode === 'request' ? W3F_REQTRN : isGroup ? W3F_GROUP : W3F_1ON1;
+    var fromName = rec.mode === 'request' ? 'LSL Request Training' : isGroup ? 'LSL Small Group Booking' : 'LSL New 1-on-1 Booking';
+    var f = rec.form;
+    var lines = rec.mode === 'request' ? ['Training Request — ' + f.athlete, rec.requestLine] : ['New Booking: ' + f.athlete, rec.service + (rec.players ? ' · ' + rec.players + ' players' : ''), LSL.fmtDate(rec.date) + ' · ' + LSL.fmtTime(rec.time) + ' ' + LSL.tzLabel(rec.date, rec.time), rec.location, rec.status === 'awaiting_payment' ? 'Status: reserved, waiting for Stripe payment' : 'Status: ' + rec.status];
+    var message = [...lines, 'Parent: ' + f.parent, f.email + (f.phone ? ' · ' + f.phone : ''), f.age ? 'Age/Grade: ' + f.age : '', f.focus ? 'Focus: ' + f.focus : '', f.notes ? 'Notes: ' + f.notes : '', ...(rec.roster || []).filter(m => !m.primary).map((m, i) => 'Player ' + (i + 2) + ': ' + (m.name || '—') + (m.contact ? ' · ' + m.contact : '')), 'Booking ID: ' + rec.id].filter(Boolean).join('\n');
+    try {
+      yield fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: key,
+          subject: (rec.mode === 'request' ? 'Training Request — ' : 'New Booking — ') + f.athlete,
+          message,
+          from_name: fromName,
+          replyto: f.email,
+          cc: '2244259490@tmomail.net'
+        })
+      });
+    } catch (e) {/* non-blocking */}
+  });
+  return _notifyCoach.apply(this, arguments);
+}
+function PolicyText(_ref) {
+  var className = _ref.className;
+  var lines = policyLines();
+  if (!lines.length) return null;
+  return /*#__PURE__*/React.createElement("span", {
+    className: className
+  }, lines.map((line, i) => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: i
+  }, line, i < lines.length - 1 && /*#__PURE__*/React.createElement("br", null))));
 }
 function PrivateBooking() {
-  const [locFilter, setLocFilter] = useStateBk(null); // null = all
-  const [dropOpen, setDropOpen] = useStateBk(false);
-  const dropRef = React.useRef(null);
-  const [offset, setOffset] = useStateBk(0);
-  const [date, setDate] = useStateBk(null);
-  const [slotId, setSlotId] = useStateBk(null);
-  const [svcType, setSvcType] = useStateBk(null); // 'dated' | 'small'
-  const [players, setPlayers] = useStateBk(null);
-  const [formOpen, setFormOpen] = useStateBk(false);
-  const [reqTrainOpen, setReqTrainOpen] = useStateBk(false);
-  const [, forceSync] = useReducerBk(x => x + 1, 0);
+  var _useStateBk = useStateBk(null),
+    _useStateBk2 = _slicedToArray(_useStateBk, 2),
+    locFilter = _useStateBk2[0],
+    setLocFilter = _useStateBk2[1]; // null = all
+  var _useStateBk3 = useStateBk(false),
+    _useStateBk4 = _slicedToArray(_useStateBk3, 2),
+    dropOpen = _useStateBk4[0],
+    setDropOpen = _useStateBk4[1];
+  var dropRef = React.useRef(null);
+  var _useStateBk5 = useStateBk(0),
+    _useStateBk6 = _slicedToArray(_useStateBk5, 2),
+    offset = _useStateBk6[0],
+    setOffset = _useStateBk6[1];
+  var _useStateBk7 = useStateBk(null),
+    _useStateBk8 = _slicedToArray(_useStateBk7, 2),
+    date = _useStateBk8[0],
+    setDate = _useStateBk8[1];
+  var _useStateBk9 = useStateBk(null),
+    _useStateBk0 = _slicedToArray(_useStateBk9, 2),
+    slotId = _useStateBk0[0],
+    setSlotId = _useStateBk0[1];
+  var _useStateBk1 = useStateBk(null),
+    _useStateBk10 = _slicedToArray(_useStateBk1, 2),
+    svcType = _useStateBk10[0],
+    setSvcType = _useStateBk10[1]; // 'solo' | 'small'
+  var _useStateBk11 = useStateBk(null),
+    _useStateBk12 = _slicedToArray(_useStateBk11, 2),
+    groupTypeId = _useStateBk12[0],
+    setGroupTypeId = _useStateBk12[1];
+  var _useStateBk13 = useStateBk(null),
+    _useStateBk14 = _slicedToArray(_useStateBk13, 2),
+    formDesc = _useStateBk14[0],
+    setFormDesc = _useStateBk14[1]; // snapshot, so the result stays up after the selection resets
+  var _useStateBk15 = useStateBk(false),
+    _useStateBk16 = _slicedToArray(_useStateBk15, 2),
+    reqTrainOpen = _useStateBk16[0],
+    setReqTrainOpen = _useStateBk16[1];
+  var _useReducerBk = useReducerBk(x => x + 1, 0),
+    _useReducerBk2 = _slicedToArray(_useReducerBk, 2),
+    forceSync = _useReducerBk2[1];
   useEffectBk(() => {
-    const onSync = () => forceSync();
+    var onSync = () => forceSync();
     window.addEventListener('lsl-synced', onSync);
     return () => window.removeEventListener('lsl-synced', onSync);
   }, []);
@@ -74,75 +117,66 @@ function PrivateBooking() {
     if (window.lucide) window.lucide.createIcons();
   });
   useEffectBk(() => {
-    const handler = e => {
+    var handler = e => {
       if (dropRef.current && !dropRef.current.contains(e.target)) setDropOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
-  const todayIso = isoOf(new Date());
-  const locs = LSL.getLocs();
-  const allSlots = LSL.getSlots();
-
-  // Contingent slot: only visible when its anchor slot is booked
-  const slotVisible = s => {
-    if (!s.contingent || s.status === 'booked') return true;
-    if (s.contingentOn) return allSlots.some(o => o.id === s.contingentOn && o.status === 'booked');
-    // Legacy fallback: any adjacent booked slot within ±65 min
-    return allSlots.some(o => o.locId === s.locId && o.date === s.date && o.status === 'booked' && Math.abs(toMins(o.time) - toMins(s.time)) <= 65);
-  };
-
-  // Open dates filtered by selected location + contingent visibility
-  const openDates = new Set(allSlots.filter(s => s.status === 'open' && s.date >= todayIso && (!locFilter || s.locId === locFilter) && slotVisible(s)).map(s => s.date));
-
-  // Slots for selected date, filtered by location + contingent visibility
-  const daySlots = date ? allSlots.filter(s => s.date === date && (s.status === 'open' || s.status === 'booked') && (!locFilter || s.locId === locFilter) && (s.status === 'booked' || slotVisible(s))).sort((a, b) => a.time.localeCompare(b.time)) : [];
-
-  // Group by location
-  const byLoc = {};
+  var todayIso = LSL.today() || isoOf(new Date());
+  var locs = LSL.getLocs();
+  var allSlots = LSL.getSlots();
+  var types = LSL.getTypes();
+  var loaded = LSL.isLoaded();
+  var loadErr = LSL.loadError();
+  var openDates = new Set(allSlots.filter(s => s.status === 'open' && (!locFilter || s.locId === locFilter)).map(s => s.date));
+  var daySlots = date ? allSlots.filter(s => s.date === date && (!locFilter || s.locId === locFilter)).sort((a, b) => a.time.localeCompare(b.time)) : [];
+  var byLoc = {};
   daySlots.forEach(s => {
     if (!byLoc[s.locId]) byLoc[s.locId] = [];
     byLoc[s.locId].push(s);
   });
-  const pickLoc = id => {
+  var slot = allSlots.find(s => s.id === slotId) || null;
+  var offeredHere = t => {
+    if (!slot) return false;
+    var loc = LSL.locById(slot.locId);
+    return (!t.eligible_loc_ids || t.eligible_loc_ids.includes(slot.locId)) && (!loc.eligible_type_ids || loc.eligible_type_ids.includes(t.id));
+  };
+  var soloType = types.find(t => t.max_participants === 1 && offeredHere(t));
+  var groupTypes = types.filter(t => t.max_participants > 1 && offeredHere(t)).sort((a, b) => a.min_participants - b.min_participants);
+  var pickLoc = id => {
     setLocFilter(id);
     setDate(null);
     setSlotId(null);
     setSvcType(null);
-    setPlayers(null);
+    setGroupTypeId(null);
     setOffset(0);
   };
-  const pickDate = iso => {
+  var pickDate = iso => {
     setDate(iso);
     setSlotId(null);
     setSvcType(null);
-    setPlayers(null);
+    setGroupTypeId(null);
   };
-  const pickSlot = id => {
+  var pickSlot = id => {
     setSlotId(id);
     setSvcType(null);
-    setPlayers(null);
+    setGroupTypeId(null);
   };
-  let desc = null;
-  if (slotId && svcType === 'dated') {
-    desc = {
-      mode: 'dated',
-      serviceName: '1-on-1 Private Training Session',
-      typeId: 'p1',
-      payLink: PAY_1ON1,
-      slotId
-    };
-  } else if (slotId && svcType === 'small' && players) {
-    desc = {
-      mode: 'dated',
-      serviceName: 'Small Group Training Session',
-      typeId: 'sg' + players,
-      payLink: PAY_GROUP[players],
-      slotId,
-      players
+  var desc = null;
+  if (slot && svcType === 'solo' && soloType) desc = {
+    type: soloType,
+    slot,
+    players: null
+  };else if (slot && svcType === 'small' && groupTypeId) {
+    var gt = groupTypes.find(t => t.id === groupTypeId);
+    if (gt) desc = {
+      type: gt,
+      slot,
+      players: groupLabel(gt)
     };
   }
-  const ReqFooter = () => /*#__PURE__*/React.createElement("div", {
+  var ReqFooter = () => /*#__PURE__*/React.createElement("div", {
     style: {
       marginTop: 20,
       paddingTop: 16,
@@ -169,6 +203,7 @@ function PrivateBooking() {
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "mail"
   }), " Request Training"));
+  var zone = LSL.tzLabel();
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-section lsl-section--cream",
     id: "book",
@@ -183,7 +218,26 @@ function PrivateBooking() {
     eyebrow: "Private Training",
     title: "Book a Session With Coach Gio",
     sub: "Check out our availability and book the date and time that works for you."
-  }), /*#__PURE__*/React.createElement("div", {
+  }), !loaded && !loadErr && /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body lsl-body--sm",
+    style: {
+      textAlign: 'center',
+      color: 'var(--fg3)'
+    },
+    role: "status"
+  }, "Loading availability\u2026"), loadErr && /*#__PURE__*/React.createElement("div", {
+    className: "lsl-bknote",
+    role: "alert",
+    style: {
+      maxWidth: 560,
+      margin: '0 auto 20px'
+    }
+  }, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "alert-triangle"
+  }), /*#__PURE__*/React.createElement("span", null, "We couldn\u2019t load open times right now. ", /*#__PURE__*/React.createElement("button", {
+    className: "lsl-linkbtn",
+    onClick: () => LSL.refresh()
+  }, "Try again"), " or use Request Training below.")), /*#__PURE__*/React.createElement("div", {
     className: "lsl-sched"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-sched__col"
@@ -197,7 +251,8 @@ function PrivateBooking() {
     ref: dropRef
   }, /*#__PURE__*/React.createElement("button", {
     className: "lsl-locdrop__trigger",
-    onClick: () => setDropOpen(!dropOpen)
+    onClick: () => setDropOpen(!dropOpen),
+    "aria-expanded": dropOpen
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "map-pin"
   }), /*#__PURE__*/React.createElement("span", null, locFilter ? (LSL.locById(locFilter) || {}).name : 'All Locations'), /*#__PURE__*/React.createElement("i", {
@@ -231,31 +286,37 @@ function PrivateBooking() {
     className: "lsl-sched__col lsl-sched__col--border"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-sched__head"
-  }, "Available Times"), !date ? /*#__PURE__*/React.createElement("div", {
+  }, "Available Times ", /*#__PURE__*/React.createElement("span", {
+    style: {
+      fontWeight: 400,
+      color: 'var(--fg3)',
+      textTransform: 'none',
+      letterSpacing: 0
+    }
+  }, "(", zone, ")")), !date ? /*#__PURE__*/React.createElement("div", {
     className: "lsl-sched__ph"
   }, "Pick a highlighted date to see open times.") : daySlots.length === 0 ? /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
     style: {
       color: 'var(--fg3)'
     }
-  }, "No open times on this day.") : Object.keys(byLoc).map(lid => {
-    const loc = LSL.locById(lid);
-    return /*#__PURE__*/React.createElement("div", {
-      key: lid,
-      style: {
-        marginBottom: 16
-      }
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "lsl-times__loc"
-    }, loc ? loc.name : lid), /*#__PURE__*/React.createElement("div", {
-      className: "lsl-times__row"
-    }, byLoc[lid].map(s => /*#__PURE__*/React.createElement("button", {
-      key: s.id,
-      className: 'lsl-time' + (s.status === 'booked' ? ' is-booked' : '') + (slotId === s.id ? ' is-sel' : ''),
-      disabled: s.status === 'booked',
-      onClick: () => s.status === 'open' && pickSlot(s.id)
-    }, LSL.fmtTime(s.time)))));
-  })), /*#__PURE__*/React.createElement("div", {
+  }, "No open times on this day.") : Object.keys(byLoc).map(lid => /*#__PURE__*/React.createElement("div", {
+    key: lid,
+    style: {
+      marginBottom: 16
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-times__loc"
+  }, LSL.locById(lid).name || lid), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-times__row"
+  }, byLoc[lid].map(s => /*#__PURE__*/React.createElement("button", {
+    key: s.id,
+    className: 'lsl-time' + (s.status !== 'open' ? ' is-booked' : '') + (slotId === s.id ? ' is-sel' : ''),
+    disabled: s.status !== 'open',
+    "aria-pressed": slotId === s.id,
+    "aria-label": LSL.fmtTime(s.time) + (s.status !== 'open' ? ', booked' : ''),
+    onClick: () => s.status === 'open' && pickSlot(s.id)
+  }, LSL.fmtTime(s.time))))))), /*#__PURE__*/React.createElement("div", {
     className: "lsl-sched__col lsl-sched__col--border"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-sched__head"
@@ -263,11 +324,11 @@ function PrivateBooking() {
     className: "lsl-sched__ph"
   }, "Select a date and time to choose your session type."), /*#__PURE__*/React.createElement(ReqFooter, null)) : /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
     className: "lsl-svclist"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: 'lsl-svc' + (svcType === 'dated' ? ' is-sel' : ''),
+  }, soloType && /*#__PURE__*/React.createElement("button", {
+    className: 'lsl-svc' + (svcType === 'solo' ? ' is-sel' : ''),
     onClick: () => {
-      setSvcType('dated');
-      setPlayers(null);
+      setSvcType('solo');
+      setGroupTypeId(null);
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "lsl-svc__ico"
@@ -279,14 +340,14 @@ function PrivateBooking() {
     className: "lsl-svc__name"
   }, "1-on-1 Private Training"), /*#__PURE__*/React.createElement("span", {
     className: "lsl-svc__meta"
-  }, "One athlete \xB7 60 min")), /*#__PURE__*/React.createElement("i", {
+  }, "One athlete \xB7 ", soloType.duration, " min", LSL.priceLabel(soloType) ? ' · ' + LSL.priceLabel(soloType) : '')), /*#__PURE__*/React.createElement("i", {
     "data-lucide": "chevron-right",
     className: "lsl-svc__chev"
-  })), /*#__PURE__*/React.createElement("button", {
+  })), groupTypes.length > 0 && /*#__PURE__*/React.createElement("button", {
     className: 'lsl-svc' + (svcType === 'small' ? ' is-sel' : ''),
     onClick: () => {
       setSvcType('small');
-      setPlayers(null);
+      setGroupTypeId(null);
     }
   }, /*#__PURE__*/React.createElement("span", {
     className: "lsl-svc__ico"
@@ -304,62 +365,67 @@ function PrivateBooking() {
   }))), svcType === 'small' && /*#__PURE__*/React.createElement("div", {
     className: "lsl-svcsub"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "lsl-svcsub__q"
+    className: "lsl-svcsub__q",
+    id: "lsl-players-q"
   }, "How many players in your group?"), /*#__PURE__*/React.createElement("div", {
-    className: "lsl-svcsub__opts"
-  }, ['2', '3', '4+'].map(n => /*#__PURE__*/React.createElement("button", {
-    key: n,
-    className: 'lsl-countchip' + (players === n ? ' is-sel' : ''),
-    onClick: () => setPlayers(n)
-  }, n)))), desc && /*#__PURE__*/React.createElement("button", {
+    className: "lsl-svcsub__opts",
+    role: "group",
+    "aria-labelledby": "lsl-players-q"
+  }, groupTypes.map(t => /*#__PURE__*/React.createElement("button", {
+    key: t.id,
+    className: 'lsl-countchip' + (groupTypeId === t.id ? ' is-sel' : ''),
+    "aria-pressed": groupTypeId === t.id,
+    onClick: () => setGroupTypeId(t.id)
+  }, groupLabel(t))))), desc && /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--primary lsl-times__req",
-    onClick: () => setFormOpen(true)
+    onClick: () => setFormDesc(desc)
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "calendar-check"
-  }), " Book Session"), /*#__PURE__*/React.createElement(ReqFooter, null)))), /*#__PURE__*/React.createElement("p", {
+  }), " ", desc.type.booking_mode === 'request' ? 'Request Session' : 'Book Session'), /*#__PURE__*/React.createElement(ReqFooter, null)))), /*#__PURE__*/React.createElement("p", {
     className: "lsl-bookpolicy"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "info"
-  }), /*#__PURE__*/React.createElement("span", null, LSL_POLICY.map((line, i) => /*#__PURE__*/React.createElement(React.Fragment, {
-    key: i
-  }, line, i < LSL_POLICY.length - 1 && /*#__PURE__*/React.createElement("br", null)))))), formOpen && desc && /*#__PURE__*/React.createElement(BookingForm, {
-    desc: desc,
-    onClose: () => setFormOpen(false),
+  }), /*#__PURE__*/React.createElement(PolicyText, null))), formDesc && /*#__PURE__*/React.createElement(BookingForm, {
+    desc: formDesc,
+    onClose: () => setFormDesc(null),
     onBooked: () => {
       setSlotId(null);
       setDate(null);
       setSvcType(null);
-      setPlayers(null);
+      setGroupTypeId(null);
+      LSL.refresh();
     }
   }), reqTrainOpen && /*#__PURE__*/React.createElement(TrainingRequestForm, {
     onClose: () => setReqTrainOpen(false)
   }));
 }
-function Calendar({
-  offset,
-  onOffset,
-  openDates,
-  selected,
-  onPick,
-  todayIso
-}) {
+function Calendar(_ref2) {
+  var offset = _ref2.offset,
+    onOffset = _ref2.onOffset,
+    openDates = _ref2.openDates,
+    selected = _ref2.selected,
+    onPick = _ref2.onPick,
+    todayIso = _ref2.todayIso;
   useEffectBk(() => {
     if (window.lucide) window.lucide.createIcons();
   });
-  const today = new Date();
-  const base = new Date(today.getFullYear(), today.getMonth() + offset, 1);
-  const y = base.getFullYear(),
+  var _todayIso$split$map = todayIso.split('-').map(Number),
+    _todayIso$split$map2 = _slicedToArray(_todayIso$split$map, 2),
+    ty = _todayIso$split$map2[0],
+    tm = _todayIso$split$map2[1];
+  var base = new Date(ty, tm - 1 + offset, 1);
+  var y = base.getFullYear(),
     m = base.getMonth();
-  const firstDow = new Date(y, m, 1).getDay();
-  const days = new Date(y, m + 1, 0).getDate();
-  const cells = [];
-  for (let i = 0; i < firstDow; i++) cells.push(null);
-  for (let d = 1; d <= days; d++) cells.push(d);
-  const monthName = base.toLocaleDateString('en-US', {
+  var firstDow = new Date(y, m, 1).getDay();
+  var days = new Date(y, m + 1, 0).getDate();
+  var cells = [];
+  for (var i = 0; i < firstDow; i++) cells.push(null);
+  for (var d = 1; d <= days; d++) cells.push(d);
+  var monthName = base.toLocaleDateString('en-US', {
     month: 'long',
     year: 'numeric'
   });
-  const dows = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  var dows = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   return /*#__PURE__*/React.createElement("div", {
     className: "lsl-cal"
   }, /*#__PURE__*/React.createElement("div", {
@@ -371,7 +437,8 @@ function Calendar({
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "chevron-left"
   })), /*#__PURE__*/React.createElement("span", {
-    className: "lsl-cal__month"
+    className: "lsl-cal__month",
+    "aria-live": "polite"
   }, monthName), /*#__PURE__*/React.createElement("button", {
     onClick: () => onOffset(offset + 1),
     "aria-label": "Next month"
@@ -388,13 +455,13 @@ function Calendar({
       key: 'b' + i,
       className: "lsl-cal__cell is-empty"
     });
-    const iso = y + '-' + pad2(m + 1) + '-' + pad2(d);
-    const hasOpen = openDates.has(iso);
-    const isPast = iso < todayIso;
-    const can = hasOpen && !isPast;
+    var iso = y + '-' + pad2(m + 1) + '-' + pad2(d);
+    var can = openDates.has(iso) && iso >= todayIso;
     return /*#__PURE__*/React.createElement("button", {
       key: iso,
       disabled: !can,
+      "aria-label": LSL.fmtDateLong(iso) + (can ? ', has open times' : ''),
+      "aria-pressed": selected === iso,
       className: 'lsl-cal__cell' + (can ? ' is-open' : '') + (selected === iso ? ' is-sel' : ''),
       onClick: () => can && onPick(iso)
     }, d, can && /*#__PURE__*/React.createElement("span", {
@@ -402,202 +469,163 @@ function Calendar({
     }));
   })));
 }
-function BookingForm({
-  desc,
-  onClose,
-  onBooked
-}) {
-  const [form, setForm] = useStateBk({
-    parent: '',
-    athlete: '',
-    age: '',
-    email: '',
-    phone: '',
-    focus: '',
-    notes: ''
-  });
-  const [errs, setErrs] = useStateBk({});
-  const [busy, setBusy] = useStateBk(false);
-  const [result, setResult] = useStateBk(null);
-  const extraCount = desc.players ? desc.players === '4+' ? 3 : parseInt(desc.players) - 1 : 0;
-  const [groupMembers, setGroupMembers] = useStateBk(() => Array.from({
-    length: extraCount
-  }, () => ({
-    name: '',
-    contact: ''
-  })));
+function useModalKeys(onClose, deps) {
   useEffectBk(() => {
     if (window.lucide) window.lucide.createIcons();
-  }, [result]);
-  useEffectBk(() => {
-    const onKey = e => {
+    var onKey = e => {
       if (e.key === 'Escape') onClose();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
-  const isReq = desc.mode === 'request';
-  const payLink = desc.payLink || null;
-  const slot = isReq ? {} : LSL.getSlots().find(s => s.id === desc.slotId) || {};
-  const loc = isReq ? {} : LSL.locById(slot.locId);
-  const set = k => e => setForm({
-    ...form,
+  }, deps);
+}
+function BookingForm(_ref3) {
+  var desc = _ref3.desc,
+    onClose = _ref3.onClose,
+    onBooked = _ref3.onBooked;
+  var settings = LSL.getSettings();
+  var fields = settings.registration && settings.registration.fields || {};
+  var acks = settings.registration && settings.registration.acknowledgments || [];
+  var _useStateBk17 = useStateBk({
+      parent: '',
+      athlete: '',
+      age: '',
+      email: '',
+      phone: '',
+      focus: '',
+      notes: '',
+      website: ''
+    }),
+    _useStateBk18 = _slicedToArray(_useStateBk17, 2),
+    form = _useStateBk18[0],
+    setForm = _useStateBk18[1];
+  var _useStateBk19 = useStateBk([]),
+    _useStateBk20 = _slicedToArray(_useStateBk19, 2),
+    ackd = _useStateBk20[0],
+    setAckd = _useStateBk20[1];
+  var _useStateBk21 = useStateBk({}),
+    _useStateBk22 = _slicedToArray(_useStateBk21, 2),
+    errs = _useStateBk22[0],
+    setErrs = _useStateBk22[1];
+  var _useStateBk23 = useStateBk(false),
+    _useStateBk24 = _slicedToArray(_useStateBk23, 2),
+    busy = _useStateBk24[0],
+    setBusy = _useStateBk24[1];
+  var _useStateBk25 = useStateBk(null),
+    _useStateBk26 = _slicedToArray(_useStateBk25, 2),
+    result = _useStateBk26[0],
+    setResult = _useStateBk26[1];
+  var type = desc.type,
+    slot = desc.slot;
+  var isReq = type.booking_mode === 'request';
+  var extraCount = Math.max(0, (type.min_participants || 1) - 1);
+  var _useStateBk27 = useStateBk(() => Array.from({
+      length: extraCount
+    }, () => ({
+      name: '',
+      contact: ''
+    }))),
+    _useStateBk28 = _slicedToArray(_useStateBk27, 2),
+    groupMembers = _useStateBk28[0],
+    setGroupMembers = _useStateBk28[1];
+  useModalKeys(onClose, [result]);
+  var loc = LSL.locById(slot.locId);
+  var show = k => !fields[k] || fields[k].show !== false;
+  var req = k => ['parent', 'athlete', 'email'].includes(k) || !!(fields[k] && fields[k].required);
+  var label = (k, def) => fields[k] && fields[k].label || def;
+  var set = k => e => setForm(_objectSpread(_objectSpread({}, form), {}, {
     [k]: e.target.value
-  });
-  const setMember = (i, k) => e => {
-    setGroupMembers(groupMembers.map((m, idx) => idx === i ? {
-      ...m,
-      [k]: e.target.value
-    } : m));
-  };
+  }));
+  var setMember = (i, k) => e => setGroupMembers(groupMembers.map((m, idx) => idx === i ? _objectSpread(_objectSpread({}, m), {}, {
+    [k]: e.target.value
+  }) : m));
   function validate() {
-    const e = {};
+    var e = {};
     if (!form.parent.trim()) e.parent = 'Required';
     if (!form.athlete.trim()) e.athlete = 'Required';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) e.email = 'Enter a valid email';
-    if (!form.phone.trim()) e.phone = 'Required';
+    ['phone', 'age', 'focus', 'notes'].forEach(k => {
+      if (show(k) && req(k) && !String(form[k]).trim()) e[k] = 'Required';
+    });
+    acks.forEach(a => {
+      if (a.required && !ackd.includes(a.id)) e['ack_' + a.id] = 'Please confirm';
+    });
     setErrs(e);
     return Object.keys(e).length === 0;
   }
-  async function submit(e) {
-    e.preventDefault();
-    if (!validate()) return;
-    setBusy(true);
-    if (!isReq && payLink) window.open(payLink, '_blank');
-    const members = groupMembers.filter(m => m.name.trim() || m.contact.trim());
-    let rec;
-    if (isReq) {
-      rec = {
-        id: LSL.uid(),
-        mode: 'request',
-        serviceName: desc.serviceName,
-        players: desc.players,
-        dow: desc.dow,
-        reqTime: desc.reqTime,
-        parent: form.parent,
-        athlete: form.athlete,
-        age: form.age,
-        email: form.email,
-        phone: form.phone,
-        focus: form.focus,
-        notes: form.notes,
-        groupMembers: members,
-        created: new Date().toISOString(),
-        status: 'requested'
-      };
-      LSL.setBooks([...LSL.getBooks(), rec]);
-    } else {
-      const slots = LSL.getSlots();
-      const sIdx = slots.findIndex(s => s.id === desc.slotId);
-      if (sIdx < 0 || slots[sIdx].status !== 'open') {
-        setBusy(false);
-        setErrs({
-          form: 'Sorry — that opening was just taken. Please pick another time.'
-        });
-        return;
-      }
-      rec = {
-        id: LSL.uid(),
-        mode: 'dated',
-        typeId: desc.typeId,
-        serviceName: desc.serviceName,
-        slotId: desc.slotId,
-        date: slots[sIdx].date,
-        time: slots[sIdx].time,
-        locId: slots[sIdx].locId,
-        players: desc.players || null,
-        groupMembers: members,
-        parent: form.parent,
-        athlete: form.athlete,
-        age: form.age,
-        email: form.email,
-        phone: form.phone,
-        focus: form.focus,
-        notes: form.notes,
-        created: new Date().toISOString(),
-        status: 'awaiting_payment'
-      };
-      slots[sIdx] = {
-        ...slots[sIdx],
-        status: 'booked',
-        bookingId: rec.id
-      };
-
-      // Resolve cross-location conflicts, cascading to B2B children of any moved slot
-      const buffer = LSL.getConflictBuffer();
-      const action = LSL.getConflictAction();
-      const bookedMins = toMins(rec.time);
-
-      // Pass 1: direct cross-location conflicts
-      const changes = {};
-      slots.forEach((s, i) => {
-        if (i === sIdx || s.status !== 'open' || s.locId === rec.locId || s.date !== rec.date) return;
-        if (Math.abs(toMins(s.time) - bookedMins) >= buffer) return;
-        if (action === 'delete') {
-          changes[s.id] = {
-            action: 'delete'
-          };
-          return;
-        }
-        const newMins = toMins(s.time) >= bookedMins ? bookedMins + buffer : bookedMins - buffer;
-        if (newMins < 0 || newMins >= 1440) {
-          changes[s.id] = {
-            action: 'delete'
-          };
-          return;
-        }
-        changes[s.id] = {
-          action: 'bump',
-          newMins,
-          delta: newMins - toMins(s.time)
-        };
-      });
-
-      // Pass 2: cascade to B2B slots linked to any changed slot
-      slots.forEach(s => {
-        if (!s.contingentOn || !changes[s.contingentOn]) return;
-        const pc = changes[s.contingentOn];
-        if (pc.action === 'delete') {
-          changes[s.id] = {
-            action: 'delete'
-          };
-          return;
-        }
-        const newMins = toMins(s.time) + pc.delta;
-        if (newMins < 0 || newMins >= 1440) {
-          changes[s.id] = {
-            action: 'delete'
-          };
-          return;
-        }
-        changes[s.id] = {
-          action: 'bump',
-          newMins,
-          delta: pc.delta
-        };
-      });
-      const resolved = slots.map(s => {
-        if (!changes[s.id]) return s;
-        if (changes[s.id].action === 'delete') return null;
-        const nm = changes[s.id].newMins;
-        return {
-          ...s,
-          time: pad2(Math.floor(nm / 60)) + ':' + pad2(nm % 60)
-        };
-      }).filter(Boolean);
-      LSL.setSlots(resolved);
-      LSL.setBooks([...LSL.getBooks(), rec]);
-    }
-    await notifyCoach(rec);
-    setBusy(false);
-    setResult(rec);
-    if (onBooked) onBooked();
+  function submit(_x2) {
+    return _submit.apply(this, arguments);
   }
+  function _submit() {
+    _submit = _asyncToGenerator(function* (e) {
+      e.preventDefault();
+      if (!validate()) return;
+      setBusy(true);
+      try {
+        var members = groupMembers.filter(m => m.name.trim() || m.contact.trim());
+        var res = yield LSL.createBooking({
+          slotId: slot.id,
+          typeId: type.id,
+          players: desc.players,
+          form,
+          roster: members,
+          acks: ackd,
+          website: form.website
+        });
+        var rec = _objectSpread(_objectSpread({}, res.booking), {}, {
+          mode: 'dated',
+          players: desc.players,
+          form,
+          roster: [{
+            primary: true
+          }, ...members],
+          checkoutUrl: res.checkoutUrl,
+          next: res.next,
+          duration: type.duration
+        });
+        notifyCoach(rec);
+        setResult(rec);
+        if (onBooked) onBooked();
+      } catch (err) {
+        setErrs(_objectSpread(_objectSpread({}, err.fields || {}), {}, {
+          form: err.message
+        }));
+        if (err.status === 409) LSL.refresh();
+      } finally {
+        setBusy(false);
+      }
+    });
+    return _submit.apply(this, arguments);
+  }
+  var Field = _ref4 => {
+    var k = _ref4.k,
+      def = _ref4.def,
+      inputType = _ref4.type,
+      placeholder = _ref4.placeholder;
+    return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+      htmlFor: 'bk-' + k
+    }, label(k, def), " ", req(k) && /*#__PURE__*/React.createElement("span", {
+      className: "req"
+    }, "*")), /*#__PURE__*/React.createElement("input", {
+      id: 'bk-' + k,
+      className: 'lsl-input' + (errs[k] ? ' is-error' : ''),
+      type: inputType || 'text',
+      value: form[k],
+      onChange: set(k),
+      placeholder: placeholder,
+      "aria-invalid": !!errs[k]
+    }), errs[k] && /*#__PURE__*/React.createElement("span", {
+      className: "lsl-err"
+    }, errs[k]));
+  };
   return /*#__PURE__*/React.createElement("div", {
     className: "lsl-lightbox",
     onClick: onClose
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-bkmodal",
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-labelledby": "bk-title",
     onClick: e => e.stopPropagation()
   }, /*#__PURE__*/React.createElement("button", {
     className: "lsl-lightbox__close",
@@ -612,101 +640,102 @@ function BookingForm({
     "data-lucide": "x"
   })), !result ? /*#__PURE__*/React.createElement("form", {
     className: "lsl-bkbody",
-    onSubmit: submit
+    onSubmit: submit,
+    noValidate: true
   }, /*#__PURE__*/React.createElement("h3", {
     className: "lsl-h3",
+    id: "bk-title",
     style: {
       marginTop: 0,
       marginBottom: 4
     }
-  }, "Book Session"), /*#__PURE__*/React.createElement("div", {
+  }, isReq ? 'Request Session' : 'Book Session'), /*#__PURE__*/React.createElement("div", {
     className: "lsl-bksummary"
   }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "dumbbell"
-  }), desc.serviceName), isReq ? /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "users"
-  }), desc.players, " players"), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "calendar"
-  }), DOW[desc.dow], "s"), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
-    "data-lucide": "clock"
-  }), LSL.fmtTime(desc.reqTime))) : /*#__PURE__*/React.createElement(React.Fragment, null, desc.players && /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+  }), type.name), desc.players && /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "users"
   }), desc.players, " players"), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "calendar"
   }), LSL.fmtDateLong(slot.date)), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "clock"
-  }), LSL.fmtTime(slot.time)), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+  }), LSL.fmtTime(slot.time), " ", LSL.tzLabel(slot.date, slot.time)), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "map-pin"
-  }), loc.name))), /*#__PURE__*/React.createElement("div", {
+  }), loc.name), LSL.priceLabel(type) && /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("i", {
+    "data-lucide": "tag"
+  }), LSL.priceLabel(type))), type.description && /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body lsl-body--sm",
+    style: {
+      marginTop: 0
+    }
+  }, type.description), /*#__PURE__*/React.createElement("div", {
     className: "lsl-field lsl-field--row"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Parent / Guardian Name ", /*#__PURE__*/React.createElement("span", {
-    className: "req"
-  }, "*")), /*#__PURE__*/React.createElement("input", {
-    className: 'lsl-input' + (errs.parent ? ' is-error' : ''),
-    value: form.parent,
-    onChange: set('parent'),
-    placeholder: "Jane Smith"
-  }), errs.parent && /*#__PURE__*/React.createElement("span", {
-    className: "lsl-err"
-  }, errs.parent)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Athlete Name ", /*#__PURE__*/React.createElement("span", {
-    className: "req"
-  }, "*")), /*#__PURE__*/React.createElement("input", {
-    className: 'lsl-input' + (errs.athlete ? ' is-error' : ''),
-    value: form.athlete,
-    onChange: set('athlete'),
-    placeholder: "Alex Smith"
-  }), errs.athlete && /*#__PURE__*/React.createElement("span", {
-    className: "lsl-err"
-  }, errs.athlete))), /*#__PURE__*/React.createElement("div", {
+  }, Field({
+    k: 'parent',
+    def: 'Parent / Guardian Name',
+    placeholder: 'Jane Smith'
+  }), Field({
+    k: 'athlete',
+    def: 'Athlete Name',
+    placeholder: 'Alex Smith'
+  })), /*#__PURE__*/React.createElement("div", {
     className: "lsl-field lsl-field--row"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Email ", /*#__PURE__*/React.createElement("span", {
-    className: "req"
-  }, "*")), /*#__PURE__*/React.createElement("input", {
-    className: 'lsl-input' + (errs.email ? ' is-error' : ''),
-    type: "email",
-    value: form.email,
-    onChange: set('email'),
-    placeholder: "you@email.com"
-  }), errs.email && /*#__PURE__*/React.createElement("span", {
-    className: "lsl-err"
-  }, errs.email)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Phone ", /*#__PURE__*/React.createElement("span", {
-    className: "req"
-  }, "*")), /*#__PURE__*/React.createElement("input", {
-    className: 'lsl-input' + (errs.phone ? ' is-error' : ''),
-    value: form.phone,
-    onChange: set('phone'),
-    placeholder: "(555) 555-5555"
-  }), errs.phone && /*#__PURE__*/React.createElement("span", {
-    className: "lsl-err"
-  }, errs.phone))), /*#__PURE__*/React.createElement("div", {
+  }, Field({
+    k: 'email',
+    def: 'Email',
+    type: 'email',
+    placeholder: 'you@email.com'
+  }), show('phone') && Field({
+    k: 'phone',
+    def: 'Phone',
+    type: 'tel',
+    placeholder: '(555) 555-5555'
+  })), /*#__PURE__*/React.createElement("div", {
     className: "lsl-field lsl-field--row"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Athlete Age / Grade"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    value: form.age,
-    onChange: set('age'),
-    placeholder: "7th grade"
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Focus Areas / Goals"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    value: form.focus,
-    onChange: set('focus'),
-    placeholder: "Shooting, ball handling"
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, show('age') && Field({
+    k: 'age',
+    def: 'Athlete Age / Grade',
+    placeholder: '7th grade'
+  }), show('focus') && Field({
+    k: 'focus',
+    def: 'Focus Areas / Goals',
+    placeholder: 'Shooting, ball handling'
+  })), show('notes') && /*#__PURE__*/React.createElement("div", {
     className: "lsl-field"
-  }, /*#__PURE__*/React.createElement("label", null, "Additional Notes"), /*#__PURE__*/React.createElement("textarea", {
-    className: "lsl-textarea",
+  }, /*#__PURE__*/React.createElement("label", {
+    htmlFor: "bk-notes"
+  }, label('notes', 'Additional Notes'), " ", req('notes') && /*#__PURE__*/React.createElement("span", {
+    className: "req"
+  }, "*")), /*#__PURE__*/React.createElement("textarea", {
+    id: "bk-notes",
+    className: 'lsl-textarea' + (errs.notes ? ' is-error' : ''),
     value: form.notes,
     onChange: set('notes'),
     placeholder: "Anything Coach Gio should know",
     style: {
       minHeight: 76
     }
-  })), extraCount > 0 && /*#__PURE__*/React.createElement("div", {
+  }), errs.notes && /*#__PURE__*/React.createElement("span", {
+    className: "lsl-err"
+  }, errs.notes)), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    name: "website",
+    value: form.website,
+    onChange: set('website'),
+    tabIndex: "-1",
+    autoComplete: "off",
+    "aria-hidden": "true",
+    style: {
+      position: 'absolute',
+      left: '-9999px'
+    }
+  }), extraCount > 0 && /*#__PURE__*/React.createElement("div", {
     className: "lsl-groupmembers"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-groupmembers__head"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "users"
-  }), "Who else is coming to this session?"), /*#__PURE__*/React.createElement("p", {
+  }), " Who else is coming to this session?"), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
     style: {
       color: 'var(--fg3)',
@@ -724,12 +753,18 @@ function BookingForm({
       flex: 1,
       margin: 0
     }
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Name"), /*#__PURE__*/React.createElement("input", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    htmlFor: 'gm-n' + i
+  }, "Name"), /*#__PURE__*/React.createElement("input", {
+    id: 'gm-n' + i,
     className: "lsl-input",
     value: m.name,
     onChange: setMember(i, 'name'),
     placeholder: 'Player ' + (i + 2) + ' name'
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Email or Phone Number"), /*#__PURE__*/React.createElement("input", {
+  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    htmlFor: 'gm-c' + i
+  }, "Email or Phone Number"), /*#__PURE__*/React.createElement("input", {
+    id: 'gm-c' + i,
     className: "lsl-input",
     value: m.contact,
     onChange: setMember(i, 'contact'),
@@ -741,12 +776,26 @@ function BookingForm({
     }
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": isReq ? 'mail' : 'shield-check'
-  }), isReq ? /*#__PURE__*/React.createElement("span", null, "This sends a ", /*#__PURE__*/React.createElement("strong", null, "request"), " to Coach Gio. You'll get a confirmation email \u2014 no payment is taken now.") : /*#__PURE__*/React.createElement("span", null, "After you submit, you'll be taken to ", /*#__PURE__*/React.createElement("strong", null, "Stripe"), " to pay securely and lock in your spot. Stripe emails your receipt.")), /*#__PURE__*/React.createElement("p", {
+  }), isReq ? /*#__PURE__*/React.createElement("span", null, "This sends a ", /*#__PURE__*/React.createElement("strong", null, "request"), " to Coach Gio. Nothing is booked or charged until it\u2019s approved.") : type.has_pay_link ? /*#__PURE__*/React.createElement("span", null, "We\u2019ll hold this time for ", /*#__PURE__*/React.createElement("strong", null, settings.holdMinutes || 30, " minutes"), " while you pay securely with ", /*#__PURE__*/React.createElement("strong", null, "Stripe"), ". It\u2019s confirmed once payment goes through.") : /*#__PURE__*/React.createElement("span", null, "Coach Gio will email you a secure payment link.")), /*#__PURE__*/React.createElement("p", {
     className: "lsl-bkpolicy--modal"
-  }, LSL_POLICY.map((line, i) => /*#__PURE__*/React.createElement(React.Fragment, {
-    key: i
-  }, line, i < LSL_POLICY.length - 1 && /*#__PURE__*/React.createElement("br", null)))), errs.form && /*#__PURE__*/React.createElement("p", {
-    className: "lsl-err"
+  }, /*#__PURE__*/React.createElement(PolicyText, null)), acks.map(a => /*#__PURE__*/React.createElement("label", {
+    key: a.id,
+    className: "lsl-ack"
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "checkbox",
+    checked: ackd.includes(a.id),
+    onChange: e => setAckd(e.target.checked ? [...ackd, a.id] : ackd.filter(x => x !== a.id)),
+    "aria-invalid": !!errs['ack_' + a.id]
+  }), /*#__PURE__*/React.createElement("span", null, a.text, a.required && /*#__PURE__*/React.createElement("span", {
+    className: "req"
+  }, " *")), errs['ack_' + a.id] && /*#__PURE__*/React.createElement("span", {
+    className: "lsl-err",
+    style: {
+      display: 'block'
+    }
+  }, errs['ack_' + a.id]))), errs.form && /*#__PURE__*/React.createElement("p", {
+    className: "lsl-err",
+    role: "alert"
   }, errs.form), /*#__PURE__*/React.createElement("button", {
     type: "submit",
     className: "lsl-btn lsl-btn--primary",
@@ -756,40 +805,42 @@ function BookingForm({
     }
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": isReq ? 'send' : 'arrow-right'
-  }), busy ? ' Submitting…' : isReq ? ' Submit Request' : ' Reserve & Continue to Payment')) : result.mode === 'request' ? /*#__PURE__*/React.createElement("div", {
-    className: "lsl-bkbody lsl-bkdone"
+  }), busy ? ' Reserving…' : isReq ? ' Submit Request' : type.has_pay_link ? ' Reserve & Continue to Payment' : ' Reserve Session')) : result.status === 'requested' ? /*#__PURE__*/React.createElement("div", {
+    className: "lsl-bkbody lsl-bkdone",
+    role: "status"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-formsuccess__ico"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "check"
   })), /*#__PURE__*/React.createElement("h3", {
     className: "lsl-h3"
-  }, "Request received!"), /*#__PURE__*/React.createElement("p", {
+  }, "Request received"), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
     style: {
       marginTop: 0
     }
-  }, result.serviceName, " \xB7 ", result.players, " players \xB7 ", DOW[result.dow], "s around ", LSL.fmtTime(result.reqTime), ".", /*#__PURE__*/React.createElement("br", null), "Coach Gio will reach out to ", /*#__PURE__*/React.createElement("strong", null, result.email), " to confirm your class."), /*#__PURE__*/React.createElement("div", {
+  }, result.service, " \xB7 ", LSL.fmtDateLong(slot.date), " \xB7 ", LSL.fmtTime(slot.time), ".", /*#__PURE__*/React.createElement("br", null), "This is not confirmed yet \u2014 Coach Gio will follow up at ", /*#__PURE__*/React.createElement("strong", null, form.email), ". No payment has been taken."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-bkdone__row"
   }, /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--primary lsl-btn--sm",
     onClick: onClose
   }, "Done"))) : /*#__PURE__*/React.createElement("div", {
-    className: "lsl-bkbody lsl-bkdone"
+    className: "lsl-bkbody lsl-bkdone",
+    role: "status"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-formsuccess__ico"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "check"
   })), /*#__PURE__*/React.createElement("h3", {
     className: "lsl-h3"
-  }, "Spot reserved \u2014 one last step"), /*#__PURE__*/React.createElement("p", {
+  }, result.next === 'pay' ? 'Spot held — one last step' : 'Spot reserved'), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
     style: {
       marginTop: 0
     }
-  }, result.serviceName, result.players ? ' · ' + result.players + ' players' : '', " \xB7 ", LSL.fmtDateLong(result.date), " \xB7 ", LSL.fmtTime(result.time), " at ", LSL.locById(result.locId).name, ".", /*#__PURE__*/React.createElement("br", null), payLink ? 'Stripe payment opened in a new tab.' : ''), payLink ? /*#__PURE__*/React.createElement("a", {
+  }, result.service, result.players ? ' · ' + result.players + ' players' : '', " \xB7 ", LSL.fmtDateLong(result.date), " \xB7 ", LSL.fmtTime(result.time), " ", LSL.tzLabel(result.date, result.time), " \xB7 ", result.location, "."), result.checkoutUrl ? /*#__PURE__*/React.createElement("a", {
     className: "lsl-btn lsl-btn--primary",
-    href: payLink,
+    href: result.checkoutUrl,
     target: "_blank",
     rel: "noopener",
     style: {
@@ -801,92 +852,131 @@ function BookingForm({
     className: "lsl-bknote"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "info"
-  }), /*#__PURE__*/React.createElement("span", null, "Coach Gio will email a secure Stripe payment link to ", result.email, " shortly.")), /*#__PURE__*/React.createElement("div", {
+  }), /*#__PURE__*/React.createElement("span", null, "Coach Gio will email a secure payment link to ", form.email, ".")), result.hold_expires_at && /*#__PURE__*/React.createElement("p", {
+    className: "lsl-body lsl-body--sm",
+    style: {
+      color: 'var(--fg2)'
+    }
+  }, "We\u2019re holding this time until ", /*#__PURE__*/React.createElement("strong", null, LSL.fmtInstant(result.hold_expires_at)), ". Your booking is confirmed once Stripe confirms payment \u2014 you\u2019ll get a confirmation email."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-bkdone__row"
   }, /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
-    onClick: () => LSL.downloadICS(result)
+    onClick: () => LSL.downloadICS(_objectSpread(_objectSpread({}, result), {}, {
+      athlete: form.athlete
+    }))
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "calendar-plus"
-  }), " Add to calendar")), /*#__PURE__*/React.createElement("p", {
-    className: "lsl-body lsl-body--sm",
-    style: {
-      color: 'var(--fg3)',
-      marginBottom: 0
-    }
-  }, "Your spot is held. It's confirmed once payment is complete."))));
+  }), " Add to calendar")))));
 }
-function TrainingRequestForm({
-  onClose
-}) {
-  const [form, setForm] = useStateBk({
-    parent: '',
-    athlete: '',
-    email: '',
-    phone: '',
-    reqLocation: '',
-    reqTime: '',
-    reqDate: '',
-    age: '',
-    focus: '',
-    notes: ''
-  });
-  const [errs, setErrs] = useStateBk({});
-  const [busy, setBusy] = useStateBk(false);
-  const [done, setDone] = useStateBk(false);
-  useEffectBk(() => {
-    if (window.lucide) window.lucide.createIcons();
-    const onKey = e => {
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [done]);
-  const set = k => e => setForm({
-    ...form,
+function TrainingRequestForm(_ref5) {
+  var onClose = _ref5.onClose;
+  var _useStateBk29 = useStateBk({
+      parent: '',
+      athlete: '',
+      email: '',
+      phone: '',
+      reqLocation: '',
+      reqTime: '',
+      reqDate: '',
+      age: '',
+      focus: '',
+      notes: '',
+      website: ''
+    }),
+    _useStateBk30 = _slicedToArray(_useStateBk29, 2),
+    form = _useStateBk30[0],
+    setForm = _useStateBk30[1];
+  var _useStateBk31 = useStateBk({}),
+    _useStateBk32 = _slicedToArray(_useStateBk31, 2),
+    errs = _useStateBk32[0],
+    setErrs = _useStateBk32[1];
+  var _useStateBk33 = useStateBk(false),
+    _useStateBk34 = _slicedToArray(_useStateBk33, 2),
+    busy = _useStateBk34[0],
+    setBusy = _useStateBk34[1];
+  var _useStateBk35 = useStateBk(false),
+    _useStateBk36 = _slicedToArray(_useStateBk35, 2),
+    done = _useStateBk36[0],
+    setDone = _useStateBk36[1];
+  useModalKeys(onClose, [done]);
+  var set = k => e => setForm(_objectSpread(_objectSpread({}, form), {}, {
     [k]: e.target.value
-  });
+  }));
   function validate() {
-    const e = {};
+    var e = {};
     if (!form.parent.trim()) e.parent = 'Required';
     if (!form.athlete.trim()) e.athlete = 'Required';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) e.email = 'Enter a valid email';
     setErrs(e);
     return Object.keys(e).length === 0;
   }
-  async function submit(e) {
-    e.preventDefault();
-    if (!validate()) return;
-    setBusy(true);
-    const key = W3F_REQTRN;
-    if (key) {
-      const message = ['Training Request — ' + form.athlete, 'Parent/Guardian: ' + form.parent, form.email + (form.phone ? ' · ' + form.phone : ''), form.reqLocation ? 'Requested Location: ' + form.reqLocation : '', form.reqDate ? 'Requested Date: ' + form.reqDate : '', form.reqTime ? 'Requested Time: ' + form.reqTime : '', form.age ? 'Age/Grade: ' + form.age : '', form.focus ? 'Focus Areas: ' + form.focus : '', form.notes ? 'Notes: ' + form.notes : ''].filter(Boolean).join('\n');
-      try {
-        await fetch('https://api.web3forms.com/submit', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json'
-          },
-          body: JSON.stringify({
-            access_key: key,
-            subject: 'Training Request — ' + form.athlete,
-            message,
-            from_name: 'LSL Request Training',
-            replyto: form.email,
-            cc: '2244259490@tmomail.net'
-          })
-        });
-      } catch (_) {/* non-blocking */}
-    }
-    setBusy(false);
-    setDone(true);
+  function submit(_x3) {
+    return _submit2.apply(this, arguments);
   }
+  function _submit2() {
+    _submit2 = _asyncToGenerator(function* (e) {
+      e.preventDefault();
+      if (!validate()) return;
+      setBusy(true);
+      try {
+        var res = yield LSL.createRequest({
+          website: form.website,
+          form: {
+            parent: form.parent,
+            athlete: form.athlete,
+            email: form.email,
+            phone: form.phone,
+            age: form.age,
+            focus: form.focus,
+            notes: form.notes
+          },
+          request: {
+            serviceName: 'Training Request',
+            location: form.reqLocation,
+            time: form.reqTime,
+            date: form.reqDate
+          }
+        });
+        notifyCoach({
+          mode: 'request',
+          id: res.booking.id,
+          form,
+          requestLine: [form.reqLocation, form.reqDate, form.reqTime].filter(Boolean).join(' · ')
+        });
+        setDone(true);
+      } catch (err) {
+        setErrs(_objectSpread(_objectSpread({}, err.fields || {}), {}, {
+          form: err.message
+        }));
+      } finally {
+        setBusy(false);
+      }
+    });
+    return _submit2.apply(this, arguments);
+  }
+  var input = (k, lbl, ph, required, inputType) => /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", {
+    htmlFor: 'rq-' + k
+  }, lbl, " ", required && /*#__PURE__*/React.createElement("span", {
+    className: "req"
+  }, "*")), /*#__PURE__*/React.createElement("input", {
+    id: 'rq-' + k,
+    className: 'lsl-input' + (errs[k] ? ' is-error' : ''),
+    type: inputType || 'text',
+    value: form[k],
+    onChange: set(k),
+    placeholder: ph,
+    "aria-invalid": !!errs[k]
+  }), errs[k] && /*#__PURE__*/React.createElement("span", {
+    className: "lsl-err"
+  }, errs[k]));
   return /*#__PURE__*/React.createElement("div", {
     className: "lsl-lightbox",
     onClick: onClose
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-bkmodal",
+    role: "dialog",
+    "aria-modal": "true",
+    "aria-labelledby": "rq-title",
     onClick: e => e.stopPropagation()
   }, /*#__PURE__*/React.createElement("button", {
     className: "lsl-lightbox__close",
@@ -901,9 +991,11 @@ function TrainingRequestForm({
     "data-lucide": "x"
   })), !done ? /*#__PURE__*/React.createElement("form", {
     className: "lsl-bkbody",
-    onSubmit: submit
+    onSubmit: submit,
+    noValidate: true
   }, /*#__PURE__*/React.createElement("h3", {
     className: "lsl-h3",
+    id: "rq-title",
     style: {
       marginTop: 0,
       marginBottom: 4
@@ -917,75 +1009,20 @@ function TrainingRequestForm({
     }
   }, "Fill this out and Coach Gio will reach out to make it work."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-field lsl-field--row"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Parent / Guardian Name ", /*#__PURE__*/React.createElement("span", {
-    className: "req"
-  }, "*")), /*#__PURE__*/React.createElement("input", {
-    className: 'lsl-input' + (errs.parent ? ' is-error' : ''),
-    value: form.parent,
-    onChange: set('parent'),
-    placeholder: "Jane Smith"
-  }), errs.parent && /*#__PURE__*/React.createElement("span", {
-    className: "lsl-err"
-  }, errs.parent)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Athlete Name ", /*#__PURE__*/React.createElement("span", {
-    className: "req"
-  }, "*")), /*#__PURE__*/React.createElement("input", {
-    className: 'lsl-input' + (errs.athlete ? ' is-error' : ''),
-    value: form.athlete,
-    onChange: set('athlete'),
-    placeholder: "Alex Smith"
-  }), errs.athlete && /*#__PURE__*/React.createElement("span", {
-    className: "lsl-err"
-  }, errs.athlete))), /*#__PURE__*/React.createElement("div", {
+  }, input('parent', 'Parent / Guardian Name', 'Jane Smith', true), input('athlete', 'Athlete Name', 'Alex Smith', true)), /*#__PURE__*/React.createElement("div", {
     className: "lsl-field lsl-field--row"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Email ", /*#__PURE__*/React.createElement("span", {
-    className: "req"
-  }, "*")), /*#__PURE__*/React.createElement("input", {
-    className: 'lsl-input' + (errs.email ? ' is-error' : ''),
-    type: "email",
-    value: form.email,
-    onChange: set('email'),
-    placeholder: "you@email.com"
-  }), errs.email && /*#__PURE__*/React.createElement("span", {
-    className: "lsl-err"
-  }, errs.email)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Phone"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    value: form.phone,
-    onChange: set('phone'),
-    placeholder: "(555) 555-5555"
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, input('email', 'Email', 'you@email.com', true, 'email'), input('phone', 'Phone', '(555) 555-5555', false, 'tel')), /*#__PURE__*/React.createElement("div", {
     className: "lsl-field lsl-field--row"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Requested Location"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    value: form.reqLocation,
-    onChange: set('reqLocation'),
-    placeholder: "Park Ridge, Mundelein\u2026"
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Requested Time"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    value: form.reqTime,
-    onChange: set('reqTime'),
-    placeholder: "e.g. 4:00 PM"
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, input('reqLocation', 'Requested Location', 'Park Ridge, Mundelein…'), input('reqTime', 'Requested Time', 'e.g. 4:00 PM')), /*#__PURE__*/React.createElement("div", {
     className: "lsl-field lsl-field--row"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Requested Date"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    value: form.reqDate,
-    onChange: set('reqDate'),
-    placeholder: "e.g. July 25"
-  })), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("label", null, "Athlete Age / Grade"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    value: form.age,
-    onChange: set('age'),
-    placeholder: "7th grade"
-  }))), /*#__PURE__*/React.createElement("div", {
+  }, input('reqDate', 'Requested Date', 'e.g. July 25'), input('age', 'Athlete Age / Grade', '7th grade')), /*#__PURE__*/React.createElement("div", {
     className: "lsl-field"
-  }, /*#__PURE__*/React.createElement("label", null, "Focus Areas / Goals"), /*#__PURE__*/React.createElement("input", {
-    className: "lsl-input",
-    value: form.focus,
-    onChange: set('focus'),
-    placeholder: "Shooting, ball handling, defense\u2026"
-  })), /*#__PURE__*/React.createElement("div", {
+  }, input('focus', 'Focus Areas / Goals', 'Shooting, ball handling, defense…')), /*#__PURE__*/React.createElement("div", {
     className: "lsl-field"
-  }, /*#__PURE__*/React.createElement("label", null, "Additional Notes"), /*#__PURE__*/React.createElement("textarea", {
+  }, /*#__PURE__*/React.createElement("label", {
+    htmlFor: "rq-notes"
+  }, "Additional Notes"), /*#__PURE__*/React.createElement("textarea", {
+    id: "rq-notes",
     className: "lsl-textarea",
     value: form.notes,
     onChange: set('notes'),
@@ -993,7 +1030,22 @@ function TrainingRequestForm({
     style: {
       minHeight: 76
     }
-  })), /*#__PURE__*/React.createElement("button", {
+  })), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    name: "website",
+    value: form.website,
+    onChange: set('website'),
+    tabIndex: "-1",
+    autoComplete: "off",
+    "aria-hidden": "true",
+    style: {
+      position: 'absolute',
+      left: '-9999px'
+    }
+  }), errs.form && /*#__PURE__*/React.createElement("p", {
+    className: "lsl-err",
+    role: "alert"
+  }, errs.form), /*#__PURE__*/React.createElement("button", {
     type: "submit",
     className: "lsl-btn lsl-btn--primary",
     disabled: busy,
@@ -1003,19 +1055,20 @@ function TrainingRequestForm({
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "send"
   }), busy ? ' Sending…' : ' Request Booking')) : /*#__PURE__*/React.createElement("div", {
-    className: "lsl-bkbody lsl-bkdone"
+    className: "lsl-bkbody lsl-bkdone",
+    role: "status"
   }, /*#__PURE__*/React.createElement("div", {
     className: "lsl-formsuccess__ico"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "check"
   })), /*#__PURE__*/React.createElement("h3", {
     className: "lsl-h3"
-  }, "Request received!"), /*#__PURE__*/React.createElement("p", {
+  }, "Request received"), /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
     style: {
       marginTop: 0
     }
-  }, "Thank you, ", /*#__PURE__*/React.createElement("strong", null, form.athlete), "! Coach Gio will reach out to ", /*#__PURE__*/React.createElement("strong", null, form.email), " to confirm your training session."), /*#__PURE__*/React.createElement("div", {
+  }, "Thank you! This is a request, not a confirmed booking. Coach Gio will reach out to ", /*#__PURE__*/React.createElement("strong", null, form.email), " to set up ", form.athlete, "\u2019s session."), /*#__PURE__*/React.createElement("div", {
     className: "lsl-bkdone__row"
   }, /*#__PURE__*/React.createElement("button", {
     className: "lsl-btn lsl-btn--primary lsl-btn--sm",

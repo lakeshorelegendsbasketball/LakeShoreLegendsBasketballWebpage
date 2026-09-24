@@ -8,24 +8,25 @@
 <link rel="icon" href="assets/monogram-lsl.png">
 <link rel="stylesheet" href="css/colors_and_type.css">
 <link rel="stylesheet" href="css/kit.css">
-<link rel="stylesheet" href="css/extra.css">
+<link rel="stylesheet" href="css/extra.css?v=20260924">
+<link rel="stylesheet" href="css/admin.css?v=20260924">
 <script src="js/dist/react.production.min.js"></script>
 <script src="js/dist/react-dom.production.min.js"></script>
 <script src="js/dist/lucide.min.js"></script>
 </head>
 <body>
 <div id="root"></div>
-<script src="js/dist/booking-store.js"></script>
-<script src="js/dist/booking-admin.js"></script>
+<script>window.LSL_ADMIN = true;</script>
+<script src="js/config.js?v=20260924"></script>
+<script src="js/dist/booking-store.js?v=20260924"></script>
+<script src="js/dist/admin-core.js?v=20260924"></script>
+<script src="js/dist/admin-avail.js?v=20260924"></script>
+<script src="js/dist/admin-types.js?v=20260924"></script>
+<script src="js/dist/admin-locs.js?v=20260924"></script>
+<script src="js/dist/admin-books.js?v=20260924"></script>
+<script src="js/dist/admin-settings.js?v=20260924"></script>
 <script>
-(function () {
-  var CoachAdminPage = window.CoachAdminPage;
-  function AdminApp() {
-    React.useEffect(function () { if (window.lucide) window.lucide.createIcons(); }, []);
-    return React.createElement(CoachAdminPage, null);
-  }
-  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(AdminApp, null));
-})();
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(window.LSLA.App, null));
 </script>
 </body>
 </html>
