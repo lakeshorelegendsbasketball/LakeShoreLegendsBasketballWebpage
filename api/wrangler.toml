@@ -1,0 +1,41 @@
+name = "lsl-booking-api"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lsl-booking"
+database_id = "REPLACE_WITH_ID_FROM_wrangler_d1_create"
+migrations_dir = "migrations"
+
+[triggers]
+# Expire unpaid checkout holds and send reminders.
+crons = ["*/10 * * * *"]
+
+[vars]
+ALLOWED_ORIGINS = "https://www.lakeshorelegendsbasketball.com,https://lakeshorelegendsbasketball.com"
+API_PUBLIC_URL = ""
+# "live" sends to families. Anything else redirects every email to EMAIL_REDIRECT_TO.
+EMAIL_MODE = "redirect"
+EMAIL_FROM = ""
+EMAIL_REDIRECT_TO = ""
+
+# Secrets (set with `npx wrangler secret put NAME`, never committed):
+#   SETUP_TOKEN            one-time token to create the first director account
+#   STRIPE_WEBHOOK_SECRET  whsec_… from the Stripe webhook endpoint
+#   STRIPE_SECRET_KEY      optional restricted key (read Payment Links + Prices) for price checks
+#   RESEND_API_KEY         optional; enables family emails
+
+[env.dev]
+name = "lsl-booking-api-dev"
+[env.dev.vars]
+ALLOWED_ORIGINS = "http://localhost:8080,http://127.0.0.1:8080"
+API_PUBLIC_URL = "http://localhost:8787"
+EMAIL_MODE = "redirect"
+EMAIL_FROM = ""
+EMAIL_REDIRECT_TO = ""
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "lsl-booking-dev"
+database_id = "local-dev"
+migrations_dir = "migrations"

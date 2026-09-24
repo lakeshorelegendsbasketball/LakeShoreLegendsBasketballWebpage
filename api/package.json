@@ -1,0 +1,15 @@
+{
+  "name": "lsl-booking-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --env dev --local --port 8787 --test-scheduled",
+    "migrate:local": "wrangler d1 migrations apply lsl-booking-dev --env dev --local",
+    "migrate:remote": "wrangler d1 migrations apply lsl-booking --remote",
+    "deploy": "wrangler deploy",
+    "test": "node test/run.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
