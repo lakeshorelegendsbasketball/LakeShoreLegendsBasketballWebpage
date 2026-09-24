@@ -1,6 +1,8 @@
 name = "lsl-booking-api"
 main = "src/index.js"
 compatibility_date = "2026-09-01"
+# Coachgiopag@gmail.com's Account — every environment deploys here only.
+account_id = "43627e74618576acff8b7a613339f09e"
 
 [[d1_databases]]
 binding = "DB"
@@ -31,14 +33,14 @@ EMAIL_REDIRECT_TO = ""
 name = "lsl-booking-api-staging"
 [env.staging.vars]
 ALLOWED_ORIGINS = "https://www.lakeshorelegendsbasketball.com,https://lakeshorelegendsbasketball.com,http://localhost:8080"
-API_PUBLIC_URL = ""
+API_PUBLIC_URL = "https://lsl-booking-api-staging.coachgiopag.workers.dev"
 EMAIL_MODE = "redirect"
 EMAIL_FROM = ""
 EMAIL_REDIRECT_TO = ""
 [[env.staging.d1_databases]]
 binding = "DB"
 database_name = "lsl-booking-staging"
-database_id = "REPLACE_WITH_ID_FROM_wrangler_d1_create_staging"
+database_id = "5bb76eca-5ac1-4330-93b2-2169e65cfc01"
 migrations_dir = "migrations"
 [env.staging.triggers]
 crons = ["*/10 * * * *"]

@@ -3,8 +3,8 @@
    (?api=production switches back). */
 (function () {
   var APIS = {
-    production: 'https://lsl-booking-api.REPLACE_ME.workers.dev',
-    staging: 'https://lsl-booking-api-staging.REPLACE_ME.workers.dev',
+    production: 'https://lsl-booking-api.coachgiopag.workers.dev',
+    staging: 'https://lsl-booking-api-staging.coachgiopag.workers.dev',
     local: 'http://localhost:8787',
   };
   var local = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
