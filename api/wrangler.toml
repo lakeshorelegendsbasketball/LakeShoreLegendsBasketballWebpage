@@ -15,8 +15,7 @@ migrations_dir = "migrations"
 crons = ["*/10 * * * *"]
 
 [vars]
-# localhost:8080 is only for pre-launch checks; remove it after launch.
-ALLOWED_ORIGINS = "https://www.lakeshorelegendsbasketball.com,https://lakeshorelegendsbasketball.com,http://localhost:8080"
+ALLOWED_ORIGINS = "https://www.lakeshorelegendsbasketball.com,https://lakeshorelegendsbasketball.com"
 API_PUBLIC_URL = "https://lsl-booking-api.coachgiopag.workers.dev"
 # "live" sends to families. Anything else redirects every email to EMAIL_REDIRECT_TO.
 EMAIL_MODE = "redirect"
