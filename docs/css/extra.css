@@ -803,3 +803,8 @@ a.lsl-btn { line-height: 1; }
   /* Footer logo — center on mobile (override justify-self: start) */
   .lsl-footer__logoside:first-child { justify-self: center; }
 }
+
+/* Booking form: acknowledgments + inline link buttons */
+.lsl-ack { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; margin: 0 0 12px; cursor: pointer; }
+.lsl-ack input { width: 17px; height: 17px; margin-top: 2px; accent-color: var(--legend-orange); flex: none; }
+.lsl-linkbtn { background: none; border: none; padding: 0; color: var(--legend-orange); font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }

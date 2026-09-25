@@ -1,198 +1,112 @@
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
+function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 /* global React */
-/* LakeShore Legends — booking store.
-   Reads/writes localStorage for instant sync and pushes to JSONbin
-   so all devices (coach admin, coach mobile, client browsers) share
-   the same availability data. Exposes window.LSL. */
+/* LakeShore Legends — booking data client.
+   All booking data lives in the booking API (see /api). The browser only
+   caches the public catalog: session types, public location labels, and
+   openings. Exposes window.LSL. */
 (function () {
-  const SEEDV = '6';
-  const K = {
-    types: 'lsl_lessonTypes',
-    locs: 'lsl_locations',
-    slots: 'lsl_slots',
-    books: 'lsl_bookings',
-    pass: 'lsl_adminPass',
-    web3: 'lsl_web3key',
-    ver: 'lsl_seedv',
-    jbKey: 'lsl_jb_key',
-    jbBin: 'lsl_jb_bin',
-    confBuf: 'lsl_conflict_buffer',
-    confAct: 'lsl_conflict_action'
+  var API = window.LSL_API || '';
+  var TZ_DEFAULT = 'America/Chicago';
+  var cache = {
+    types: [],
+    locs: [],
+    slots: [],
+    packages: [],
+    settings: null,
+    today: null
   };
-  const LS = {
-    get(k, def) {
+  var loaded = false,
+    error = null,
+    inflight = null;
+  function request(_x, _x2, _x3, _x4) {
+    return _request.apply(this, arguments);
+  }
+  function _request() {
+    _request = _asyncToGenerator(function* (method, path, body, token) {
+      var res;
       try {
-        const v = localStorage.getItem(k);
-        return v ? JSON.parse(v) : def;
-      } catch (e) {
-        return def;
-      }
-    },
-    set(k, v) {
-      try {
-        localStorage.setItem(k, JSON.stringify(v));
-      } catch (e) {}
-    }
-  };
-  const uid = () => Math.random().toString(36).slice(2, 9);
-  const DEFAULT_TYPES = [{
-    id: 'p1',
-    name: '60 Minute Private Training',
-    size: '1-on-1',
-    group: false,
-    duration: 60,
-    price: null,
-    payLink: 'https://buy.stripe.com/00w9AM0rxcFigGc4M10Jq01'
-  }, {
-    id: 'p2',
-    name: '60 Minute 2-on-1 Training',
-    size: '2-on-1',
-    group: true,
-    duration: 60,
-    price: null,
-    payLink: 'https://buy.stripe.com/28E9AMcaf48Mdu03HX0Jq00'
-  }, {
-    id: 'p3',
-    name: '60 Minute 3-on-1 Training',
-    size: '3-on-1',
-    group: true,
-    duration: 60,
-    price: null,
-    payLink: 'https://buy.stripe.com/8x2dR20rx9t64XuguJ0Jq02'
-  }, {
-    id: 'p4',
-    name: '60 Minute 4+ Player Training',
-    size: '4+ players',
-    group: true,
-    duration: 60,
-    price: null,
-    payLink: 'https://buy.stripe.com/14AcMYdejaxa89GemB0Jq03'
-  }];
-  const DEFAULT_LOCS = [{
-    id: 'pr',
-    name: 'Park Ridge, IL',
-    city: ''
-  }, {
-    id: 'mun',
-    name: 'Mundelein, IL',
-    city: ''
-  }];
-  function sampleSlots() {
-    const out = [];
-    const now = new Date();
-    const plan = [[2, '16:00', 'pr'], [2, '17:00', 'pr'], [4, '15:30', 'mun'], [5, '16:30', 'pr'], [7, '10:00', 'mun'], [9, '17:30', 'pr']];
-    for (const [d, t, loc] of plan) {
-      const dt = new Date(now);
-      dt.setDate(now.getDate() + d);
-      out.push({
-        id: uid(),
-        date: dt.toISOString().slice(0, 10),
-        time: t,
-        locId: loc,
-        status: 'open'
-      });
-    }
-    return out;
-  }
-  function seed() {
-    const fresh = LS.get(K.ver) !== SEEDV;
-    if (fresh || !LS.get(K.types)) LS.set(K.types, DEFAULT_TYPES);
-    if (fresh || !LS.get(K.locs)) LS.set(K.locs, DEFAULT_LOCS);
-    if (!LS.get(K.slots)) LS.set(K.slots, sampleSlots());
-    if (!LS.get(K.books)) LS.set(K.books, []);
-    if (!LS.get(K.pass)) LS.set(K.pass, 'legends');
-    if (!LS.get(K.web3)) LS.set(K.web3, '');
-    LS.set(K.ver, SEEDV);
-  }
-  seed();
-
-  /* ---- JSONbin cloud sync ---- */
-  const JB_BASE = 'https://api.jsonbin.io/v3';
-  const JB_KEY_DEFAULT = '$2a$10$RyTLgQsFbQELsa2bB62F4efI1Hdy7A1mY6P5U4qM5Qg0lV1CEQHyC';
-  const JB_BIN_DEFAULT = '6a2799d5da38895dfe9dfaa8';
-  function getJBKey() {
-    return LS.get(K.jbKey, '') || JB_KEY_DEFAULT;
-  }
-  function getJBBin() {
-    return LS.get(K.jbBin, '') || JB_BIN_DEFAULT;
-  }
-  async function jbFetch(method, path, body) {
-    const key = getJBKey();
-    if (!key) return null;
-    try {
-      const res = await fetch(JB_BASE + path, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': key
-        },
-        ...(body !== undefined ? {
+        res = yield fetch(API + path, _objectSpread({
+          method,
+          headers: _objectSpread({
+            'Content-Type': 'application/json'
+          }, token ? {
+            Authorization: 'Bearer ' + token
+          } : {})
+        }, body !== undefined ? {
           body: JSON.stringify(body)
-        } : {})
-      });
-      if (!res.ok) return null;
-      return await res.json();
-    } catch (e) {
-      return null;
-    }
+        } : {}));
+      } catch (e) {
+        var err = new Error('Could not reach the booking server. Check your connection and try again.');
+        err.network = true;
+        throw err;
+      }
+      var data = null;
+      try {
+        data = yield res.json();
+      } catch (e) {/* empty body */}
+      if (!res.ok) {
+        var _err = new Error(data && data.error || 'Something went wrong (' + res.status + ').');
+        _err.status = res.status;
+        _err.data = data || {};
+        _err.fields = data && data.fields || null;
+        throw _err;
+      }
+      return data;
+    });
+    return _request.apply(this, arguments);
   }
-  function cloudSnapshot() {
-    return {
-      slots: LS.get(K.slots, []),
-      types: LS.get(K.types, []),
-      locs: LS.get(K.locs, []),
-      books: LS.get(K.books, []),
-      pass: LS.get(K.pass, 'legends'),
-      web3Key: LS.get(K.web3, ''),
-      conflictBuffer: LS.get(K.confBuf, 120),
-      conflictAction: LS.get(K.confAct, 'bump')
-    };
-  }
-  async function createBin() {
-    const data = await jbFetch('POST', '/b', cloudSnapshot());
-    if (data && data.metadata && data.metadata.id) {
-      LS.set(K.jbBin, data.metadata.id);
-      return data.metadata.id;
-    }
-    return null;
-  }
-  async function syncFromCloud() {
-    const binId = getJBBin();
-    if (!binId) return false;
-    const data = await jbFetch('GET', '/b/' + binId + '/latest');
-    if (!data || !data.record) return false;
-    const r = data.record;
-    if (Array.isArray(r.slots)) LS.set(K.slots, r.slots);
-    if (Array.isArray(r.types)) LS.set(K.types, r.types);
-    if (Array.isArray(r.locs)) LS.set(K.locs, r.locs);
-    if (Array.isArray(r.books)) LS.set(K.books, r.books);
-    if (r.pass) LS.set(K.pass, r.pass);
-    if (r.web3Key !== undefined) LS.set(K.web3, r.web3Key);
-    if (r.conflictBuffer != null) LS.set(K.confBuf, r.conflictBuffer);
-    if (r.conflictAction) LS.set(K.confAct, r.conflictAction);
-    window.dispatchEvent(new CustomEvent('lsl-synced'));
-    return true;
-  }
-  let pushTimer = null;
-  function pushToCloud() {
-    clearTimeout(pushTimer);
-    pushTimer = setTimeout(async () => {
-      const binId = getJBBin();
-      if (!binId) return;
-      await jbFetch('PUT', '/b/' + binId, cloudSnapshot());
-    }, 800);
+  function load() {
+    if (inflight) return inflight;
+    inflight = request('GET', '/api/public/catalog').then(d => {
+      cache.types = d.types;
+      cache.locs = d.locations;
+      cache.slots = d.slots;
+      cache.packages = d.packages || [];
+      cache.settings = d.settings;
+      cache.today = d.today;
+      loaded = true;
+      error = null;
+    }).catch(e => {
+      error = e;
+    }).finally(() => {
+      inflight = null;
+      window.dispatchEvent(new CustomEvent('lsl-synced'));
+    });
+    return inflight;
   }
 
   /* ---- formatters ---- */
-  const fmtDate = iso => {
-    const [y, m, d] = iso.split('-').map(Number);
+  var pad2 = n => String(n).padStart(2, '0');
+  var fmtDate = iso => {
+    var _iso$split$map = iso.split('-').map(Number),
+      _iso$split$map2 = _slicedToArray(_iso$split$map, 3),
+      y = _iso$split$map2[0],
+      m = _iso$split$map2[1],
+      d = _iso$split$map2[2];
     return new Date(y, m - 1, d).toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric'
     });
   };
-  const fmtDateLong = iso => {
-    const [y, m, d] = iso.split('-').map(Number);
+  var fmtDateLong = iso => {
+    var _iso$split$map3 = iso.split('-').map(Number),
+      _iso$split$map4 = _slicedToArray(_iso$split$map3, 3),
+      y = _iso$split$map4[0],
+      m = _iso$split$map4[1],
+      d = _iso$split$map4[2];
     return new Date(y, m - 1, d).toLocaleDateString('en-US', {
       weekday: 'long',
       month: 'long',
@@ -200,35 +114,83 @@
       year: 'numeric'
     });
   };
-  const fmtTime = t => {
-    let [h, mn] = t.split(':').map(Number);
-    const ap = h >= 12 ? 'PM' : 'AM';
+  var fmtTime = t => {
+    var _t$split$map = t.split(':').map(Number),
+      _t$split$map2 = _slicedToArray(_t$split$map, 2),
+      h = _t$split$map2[0],
+      mn = _t$split$map2[1];
+    var ap = h >= 12 ? 'PM' : 'AM';
     h = h % 12 || 12;
-    return h + ':' + String(mn).padStart(2, '0') + ' ' + ap;
+    return h + ':' + pad2(mn) + ' ' + ap;
   };
-  const priceLabel = ty => ty && ty.price != null && ty.price !== '' ? '$' + ty.price + (ty.unit || '') : '';
-  function endTime(t, mins) {
-    let [h, mn] = t.split(':').map(Number);
-    const tot = h * 60 + mn + mins;
-    return String(Math.floor(tot / 60) % 24).padStart(2, '0') + ':' + String(tot % 60).padStart(2, '0');
+  var fmtMoney = c => c == null ? '' : '$' + (c / 100).toFixed(c % 100 === 0 ? 0 : 2);
+  var priceLabel = ty => ty && ty.price_cents != null ? fmtMoney(ty.price_cents) + (ty.pricing_basis === 'athlete' ? ' / athlete' : '') : '';
+  var tz = () => window.LSL_TZ || cache.settings && cache.settings.timezone || TZ_DEFAULT;
+
+  /* Instant for a wall-clock time in the program time zone (DST-aware). */
+  function offsetMin(instant, zone) {
+    var p = {};
+    for (var x of new Intl.DateTimeFormat('en-US', {
+      timeZone: zone,
+      hourCycle: 'h23',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    }).formatToParts(instant)) p[x.type] = x.value;
+    return Math.round((Date.UTC(+p.year, +p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - instant.getTime()) / 60000);
+  }
+  function localToInstant(date, time, zone) {
+    var _date$split$map = date.split('-').map(Number),
+      _date$split$map2 = _slicedToArray(_date$split$map, 3),
+      y = _date$split$map2[0],
+      m = _date$split$map2[1],
+      d = _date$split$map2[2],
+      _time$split$map = time.split(':').map(Number),
+      _time$split$map2 = _slicedToArray(_time$split$map, 2),
+      hh = _time$split$map2[0],
+      mm = _time$split$map2[1];
+    var guess = Date.UTC(y, m - 1, d, hh, mm);
+    var inst = guess - offsetMin(new Date(guess), zone) * 60000;
+    var o2 = offsetMin(new Date(inst), zone);
+    return new Date(guess - o2 * 60000);
+  }
+  function tzLabel(date, time, zone) {
+    var z = zone || tz();
+    var inst = date && time ? localToInstant(date, time, z) : new Date();
+    var parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: z,
+      timeZoneName: 'short'
+    }).formatToParts(inst);
+    return (parts.find(x => x.type === 'timeZoneName') || {}).value || z;
+  }
+  function fmtInstant(iso, zone) {
+    return new Date(iso).toLocaleTimeString('en-US', {
+      timeZone: zone || tz(),
+      hour: 'numeric',
+      minute: '2-digit',
+      timeZoneName: 'short'
+    });
   }
   function makeICS(bk) {
-    const ty = LSL.typeById(bk.typeId);
-    const loc = LSL.locById(bk.locId);
-    const dur = ty.duration || 60;
-    const dstart = bk.date.replace(/-/g, '') + 'T' + bk.time.replace(':', '') + '00';
-    const dend = bk.date.replace(/-/g, '') + 'T' + endTime(bk.time, dur).replace(':', '') + '00';
-    const stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
-    return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//LakeShore Legends//Booking//EN', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT', 'UID:' + bk.id + '@lakeshorelegends', 'DTSTAMP:' + stamp, 'DTSTART:' + dstart, 'DTEND:' + dend, 'SUMMARY:' + (ty.name || 'Private Lesson') + ' — LakeShore Legends', 'LOCATION:' + (loc.name || ''), 'DESCRIPTION:Athlete: ' + (bk.athlete || '') + ' with Coach Gio Paganis.', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+    var zone = tz();
+    var dur = bk.duration || 60;
+    var start = localToInstant(bk.date, bk.time, zone);
+    var end = new Date(start.getTime() + dur * 60000);
+    var f = d => d.toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+    var esc = s => String(s || '').replace(/[\\;,]/g, c => '\\' + c).replace(/\n/g, '\\n');
+    return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//LakeShore Legends//Booking//EN', 'CALSCALE:GREGORIAN', 'BEGIN:VEVENT', 'UID:' + bk.id + '@lakeshorelegends', 'DTSTAMP:' + f(new Date()), 'DTSTART:' + f(start), 'DTEND:' + f(end), 'SUMMARY:' + esc((bk.service || 'Training') + ' — LakeShore Legends'), 'LOCATION:' + esc(bk.location || ''), 'DESCRIPTION:' + esc('Athlete: ' + (bk.athlete || '') + (bk.coach ? ' with ' + bk.coach : '')), 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
   }
   function downloadICS(bk) {
-    const blob = new Blob([makeICS(bk)], {
+    var blob = new Blob([makeICS(bk)], {
       type: 'text/calendar'
     });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
     a.href = url;
-    a.download = 'lakeshore-lesson.ics';
+    a.download = 'lakeshore-session.ics';
     document.body.appendChild(a);
     a.click();
     setTimeout(() => {
@@ -236,75 +198,42 @@
       URL.revokeObjectURL(url);
     }, 100);
   }
-  const LSL = {
-    uid,
-    getTypes: () => LS.get(K.types, []),
-    setTypes: v => {
-      LS.set(K.types, v);
-      pushToCloud();
+  var LSL = {
+    api: request,
+    load,
+    refresh: load,
+    isLoaded: () => loaded,
+    loadError: () => error,
+    getTypes: () => cache.types,
+    getLocs: () => cache.locs,
+    getSlots: () => cache.slots,
+    getPackages: () => cache.packages,
+    getSettings: () => cache.settings || {
+      timezone: TZ_DEFAULT,
+      policyLines: [],
+      registration: {
+        fields: {},
+        acknowledgments: []
+      }
     },
-    getLocs: () => LS.get(K.locs, []),
-    setLocs: v => {
-      LS.set(K.locs, v);
-      pushToCloud();
-    },
-    getSlots: () => LS.get(K.slots, []),
-    setSlots: v => {
-      LS.set(K.slots, v);
-      pushToCloud();
-    },
-    getBooks: () => LS.get(K.books, []),
-    setBooks: v => {
-      LS.set(K.books, v);
-      pushToCloud();
-    },
-    getPass: () => LS.get(K.pass, 'legends'),
-    setPass: v => {
-      LS.set(K.pass, v);
-      pushToCloud();
-    },
-    getWeb3Key: () => LS.get(K.web3, ''),
-    setWeb3Key: v => {
-      LS.set(K.web3, v);
-      pushToCloud();
-    },
-    getJBKey: () => LS.get(K.jbKey, ''),
-    setJBKey: v => LS.set(K.jbKey, v),
-    getJBBin: () => LS.get(K.jbBin, ''),
-    setJBBin: v => LS.set(K.jbBin, v),
-    getConflictBuffer: () => LS.get(K.confBuf, 120),
-    setConflictBuffer: v => {
-      LS.set(K.confBuf, v);
-      pushToCloud();
-    },
-    getConflictAction: () => LS.get(K.confAct, 'bump'),
-    setConflictAction: v => {
-      LS.set(K.confAct, v);
-      pushToCloud();
-    },
-    locById: id => LSL.getLocs().find(l => l.id === id) || {},
-    typeById: id => LSL.getTypes().find(t => t.id === id) || {},
-    createBin,
-    syncFromCloud,
-    pushToCloud,
+    today: () => cache.today,
+    locById: id => cache.locs.find(l => l.id === id) || {},
+    typeById: id => cache.types.find(t => t.id === id) || {},
+    createBooking: payload => request('POST', '/api/public/bookings', payload),
+    createRequest: payload => request('POST', '/api/public/requests', payload),
+    bookingStatus: id => request('GET', '/api/public/bookings/' + encodeURIComponent(id)),
     fmtDate,
     fmtDateLong,
     fmtTime,
+    fmtMoney,
     priceLabel,
+    tz,
+    tzLabel,
+    fmtInstant,
+    localToInstant,
     makeICS,
     downloadICS
   };
   window.LSL = LSL;
-
-  /* Auto-sync on every page load once cloud is configured */
-  syncFromCloud().then(() => {
-    const today = new Date().toISOString().slice(0, 10);
-    const slots = LS.get(K.slots, []);
-    const cleaned = slots.filter(s => s.status !== 'open' || s.date >= today);
-    if (cleaned.length < slots.length) {
-      LS.set(K.slots, cleaned);
-      pushToCloud();
-      window.dispatchEvent(new CustomEvent('lsl-synced'));
-    }
-  });
+  if (!window.LSL_ADMIN) load();
 })();

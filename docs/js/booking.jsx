@@ -1,71 +1,44 @@
 /* global React, SectionHead, LSL */
 const { useState: useStateBk, useEffect: useEffectBk, useReducer: useReducerBk } = React;
 
+// Web3Forms keys are public by design (they only let this form email the coach).
 const W3F_1ON1   = '57d5ddc7-7fef-4b25-b3c1-6d0ace6f4633';
 const W3F_GROUP  = '26db51db-43e4-4bf9-90d5-fa4c7a647de2';
 const W3F_REQTRN = '0202f9d6-795d-4dd1-ae8e-6b5fe7391d92';
 
-const PAY_1ON1 = 'https://buy.stripe.com/00w9AM0rxcFigGc4M10Jq01';
-const PAY_GROUP = {
-  '2':  'https://buy.stripe.com/28E9AMcaf48Mdu03HX0Jq00',
-  '3':  'https://buy.stripe.com/8x2dR20rx9t64XuguJ0Jq02',
-  '4+': 'https://buy.stripe.com/14AcMYdejaxa89GemB0Jq03',
-};
-
-const LSL_POLICY = [
-  'Cancellations made within 48 hours of a session are subject to a 50% retainer.',
-  'Cancellations made more than 48 hours in advance receive a 100% refund.',
-  'Training session times and availability are subject to change.',
-];
-
 const DOW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const pad2 = (n) => String(n).padStart(2, '0');
 const isoOf = (dt) => dt.getFullYear() + '-' + pad2(dt.getMonth() + 1) + '-' + pad2(dt.getDate());
-const toMins = (t) => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
+
+const policyLines = () => LSL.getSettings().policyLines || [];
+const groupLabel = (t) => (t.max_participants > t.min_participants ? t.min_participants + '+' : String(t.min_participants));
 
 async function notifyCoach(rec) {
-  const isGroup = !!(rec.players);
-  const key = rec.mode === 'request' ? W3F_GROUP : (isGroup ? W3F_GROUP : W3F_1ON1);
-  const fromName = rec.mode === 'request' || isGroup ? 'LSL Small Group Booking Request' : 'LSL New 1-on-1 Booking';
-  const loc = rec.mode !== 'request' ? LSL.locById(rec.locId) : {};
-  let subject, message;
-  if (rec.mode === 'request') {
-    subject = 'New Group Request — ' + rec.athlete;
-    message = [
-      'Group Request: ' + rec.athlete,
-      rec.serviceName + ' · ' + rec.players + ' players',
-      DOW[rec.dow] + 's · ' + LSL.fmtTime(rec.reqTime),
-      'Parent: ' + rec.parent,
-      rec.email + (rec.phone ? ' · ' + rec.phone : ''),
-      rec.age ? 'Age/Grade: ' + rec.age : '',
-      rec.focus ? 'Focus: ' + rec.focus : '',
-      rec.notes ? 'Notes: ' + rec.notes : '',
-    ].filter(Boolean).join('\n');
-  } else {
-    subject = 'New Booking — ' + rec.athlete + ' · ' + LSL.fmtDate(rec.date);
-    const memberLines = (rec.groupMembers || []).map((m, i) =>
-      'Player ' + (i + 2) + ': ' + (m.name || '—') + (m.contact ? ' · ' + m.contact : '')
-    );
-    message = [
-      'New Booking: ' + rec.athlete,
-      rec.serviceName + (rec.players ? ' · ' + rec.players + ' players' : ''),
-      LSL.fmtDate(rec.date) + ' · ' + LSL.fmtTime(rec.time),
-      loc.name || '',
-      'Parent: ' + rec.parent,
-      rec.email + (rec.phone ? ' · ' + rec.phone : ''),
-      rec.age ? 'Age/Grade: ' + rec.age : '',
-      rec.focus ? 'Focus: ' + rec.focus : '',
-      rec.notes ? 'Notes: ' + rec.notes : '',
-      memberLines.length ? '\n--- GROUP MEMBERS ---' : '',
-      ...memberLines,
-    ].filter(Boolean).join('\n');
-  }
+  const isGroup = !!rec.players;
+  const key = rec.mode === 'request' ? W3F_REQTRN : (isGroup ? W3F_GROUP : W3F_1ON1);
+  const fromName = rec.mode === 'request' ? 'LSL Request Training' : (isGroup ? 'LSL Small Group Booking' : 'LSL New 1-on-1 Booking');
+  const f = rec.form;
+  const lines = rec.mode === 'request'
+    ? ['Training Request — ' + f.athlete, rec.requestLine]
+    : ['New Booking: ' + f.athlete, rec.service + (rec.players ? ' · ' + rec.players + ' players' : ''),
+      LSL.fmtDate(rec.date) + ' · ' + LSL.fmtTime(rec.time) + ' ' + LSL.tzLabel(rec.date, rec.time), rec.location,
+      rec.status === 'awaiting_payment' ? 'Status: reserved, waiting for Stripe payment' : 'Status: ' + rec.status];
+  const message = [...lines, 'Parent: ' + f.parent, f.email + (f.phone ? ' · ' + f.phone : ''),
+    f.age ? 'Age/Grade: ' + f.age : '', f.focus ? 'Focus: ' + f.focus : '', f.notes ? 'Notes: ' + f.notes : '',
+    ...(rec.roster || []).filter((m) => !m.primary).map((m, i) => 'Player ' + (i + 2) + ': ' + (m.name || '—') + (m.contact ? ' · ' + m.contact : '')),
+    'Booking ID: ' + rec.id].filter(Boolean).join('\n');
   try {
     await fetch('https://api.web3forms.com/submit', {
       method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ access_key: key, subject, message, from_name: fromName, replyto: rec.email, cc: '2244259490@tmomail.net' }),
+      body: JSON.stringify({ access_key: key, subject: (rec.mode === 'request' ? 'Training Request — ' : 'New Booking — ') + f.athlete, message, from_name: fromName, replyto: f.email, cc: '2244259490@tmomail.net' }),
     });
   } catch (e) { /* non-blocking */ }
+}
+
+function PolicyText({ className }) {
+  const lines = policyLines();
+  if (!lines.length) return null;
+  return <span className={className}>{lines.map((line, i) => <React.Fragment key={i}>{line}{i < lines.length - 1 && <br />}</React.Fragment>)}</span>;
 }
 
 function PrivateBooking() {
@@ -75,9 +48,9 @@ function PrivateBooking() {
   const [offset, setOffset] = useStateBk(0);
   const [date, setDate] = useStateBk(null);
   const [slotId, setSlotId] = useStateBk(null);
-  const [svcType, setSvcType] = useStateBk(null); // 'dated' | 'small'
-  const [players, setPlayers] = useStateBk(null);
-  const [formOpen, setFormOpen] = useStateBk(false);
+  const [svcType, setSvcType] = useStateBk(null); // 'solo' | 'small'
+  const [groupTypeId, setGroupTypeId] = useStateBk(null);
+  const [formDesc, setFormDesc] = useStateBk(null); // snapshot, so the result stays up after the selection resets
   const [reqTrainOpen, setReqTrainOpen] = useStateBk(false);
   const [, forceSync] = useReducerBk((x) => x + 1, 0);
 
@@ -93,45 +66,38 @@ function PrivateBooking() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const todayIso = isoOf(new Date());
+  const todayIso = LSL.today() || isoOf(new Date());
   const locs = LSL.getLocs();
   const allSlots = LSL.getSlots();
+  const types = LSL.getTypes();
+  const loaded = LSL.isLoaded();
+  const loadErr = LSL.loadError();
 
-  // Contingent slot: only visible when its anchor slot is booked
-  const slotVisible = (s) => {
-    if (!s.contingent || s.status === 'booked') return true;
-    if (s.contingentOn) return allSlots.some((o) => o.id === s.contingentOn && o.status === 'booked');
-    // Legacy fallback: any adjacent booked slot within ±65 min
-    return allSlots.some((o) => o.locId === s.locId && o.date === s.date && o.status === 'booked' && Math.abs(toMins(o.time) - toMins(s.time)) <= 65);
-  };
-
-  // Open dates filtered by selected location + contingent visibility
-  const openDates = new Set(
-    allSlots
-      .filter((s) => s.status === 'open' && s.date >= todayIso && (!locFilter || s.locId === locFilter) && slotVisible(s))
-      .map((s) => s.date)
-  );
-
-  // Slots for selected date, filtered by location + contingent visibility
+  const openDates = new Set(allSlots.filter((s) => s.status === 'open' && (!locFilter || s.locId === locFilter)).map((s) => s.date));
   const daySlots = date
-    ? allSlots
-        .filter((s) => s.date === date && (s.status === 'open' || s.status === 'booked') && (!locFilter || s.locId === locFilter) && (s.status === 'booked' || slotVisible(s)))
-        .sort((a, b) => a.time.localeCompare(b.time))
+    ? allSlots.filter((s) => s.date === date && (!locFilter || s.locId === locFilter)).sort((a, b) => a.time.localeCompare(b.time))
     : [];
-
-  // Group by location
   const byLoc = {};
   daySlots.forEach((s) => { if (!byLoc[s.locId]) byLoc[s.locId] = []; byLoc[s.locId].push(s); });
 
-  const pickLoc = (id) => { setLocFilter(id); setDate(null); setSlotId(null); setSvcType(null); setPlayers(null); setOffset(0); };
-  const pickDate = (iso) => { setDate(iso); setSlotId(null); setSvcType(null); setPlayers(null); };
-  const pickSlot = (id) => { setSlotId(id); setSvcType(null); setPlayers(null); };
+  const slot = allSlots.find((s) => s.id === slotId) || null;
+  const offeredHere = (t) => {
+    if (!slot) return false;
+    const loc = LSL.locById(slot.locId);
+    return (!t.eligible_loc_ids || t.eligible_loc_ids.includes(slot.locId)) && (!loc.eligible_type_ids || loc.eligible_type_ids.includes(t.id));
+  };
+  const soloType = types.find((t) => t.max_participants === 1 && offeredHere(t));
+  const groupTypes = types.filter((t) => t.max_participants > 1 && offeredHere(t)).sort((a, b) => a.min_participants - b.min_participants);
+
+  const pickLoc = (id) => { setLocFilter(id); setDate(null); setSlotId(null); setSvcType(null); setGroupTypeId(null); setOffset(0); };
+  const pickDate = (iso) => { setDate(iso); setSlotId(null); setSvcType(null); setGroupTypeId(null); };
+  const pickSlot = (id) => { setSlotId(id); setSvcType(null); setGroupTypeId(null); };
 
   let desc = null;
-  if (slotId && svcType === 'dated') {
-    desc = { mode: 'dated', serviceName: '1-on-1 Private Training Session', typeId: 'p1', payLink: PAY_1ON1, slotId };
-  } else if (slotId && svcType === 'small' && players) {
-    desc = { mode: 'dated', serviceName: 'Small Group Training Session', typeId: 'sg' + players, payLink: PAY_GROUP[players], slotId, players };
+  if (slot && svcType === 'solo' && soloType) desc = { type: soloType, slot, players: null };
+  else if (slot && svcType === 'small' && groupTypeId) {
+    const gt = groupTypes.find((t) => t.id === groupTypeId);
+    if (gt) desc = { type: gt, slot, players: groupLabel(gt) };
   }
 
   const ReqFooter = () => (
@@ -146,6 +112,8 @@ function PrivateBooking() {
     </div>
   );
 
+  const zone = LSL.tzLabel();
+
   return (
     <section className="lsl-section lsl-section--cream" id="book" style={{ paddingTop: '44px' }}>
       <div className="lsl-wrap">
@@ -153,26 +121,30 @@ function PrivateBooking() {
           title="Book a Session With Coach Gio"
           sub="Check out our availability and book the date and time that works for you." />
 
+        {window.LSL_API_NAME === 'staging' && <p className="lsl-bknote" style={{ maxWidth: 560, margin: '0 auto 16px' }}><i data-lucide="flask-conical"></i><span><strong>Test mode:</strong> bookings here go to the test server and use Stripe test payments.</span></p>}
+        {!loaded && !loadErr &&<p className="lsl-body lsl-body--sm" style={{ textAlign: 'center', color: 'var(--fg3)' }} role="status">Loading availability…</p>}
+        {loadErr && (
+          <div className="lsl-bknote" role="alert" style={{ maxWidth: 560, margin: '0 auto 20px' }}>
+            <i data-lucide="alert-triangle"></i>
+            <span>We couldn&rsquo;t load open times right now. <button className="lsl-linkbtn" onClick={() => LSL.refresh()}>Try again</button> or use Request Training below.</span>
+          </div>
+        )}
+
         <div className="lsl-sched">
-          {/* COLUMN 1 — location filter + calendar */}
           <div className="lsl-sched__col">
             <div className="lsl-sched__head" style={{ textAlign: 'center' }}>Select a Date</div>
             {locs.length > 0 && (
               <div className="lsl-locdrop" ref={dropRef}>
-                <button className="lsl-locdrop__trigger" onClick={() => setDropOpen(!dropOpen)}>
+                <button className="lsl-locdrop__trigger" onClick={() => setDropOpen(!dropOpen)} aria-expanded={dropOpen}>
                   <i data-lucide="map-pin"></i>
                   <span>{locFilter ? (LSL.locById(locFilter) || {}).name : 'All Locations'}</span>
                   <i data-lucide={dropOpen ? 'chevron-up' : 'chevron-down'} className="lsl-locdrop__chev"></i>
                 </button>
                 {dropOpen && (
                   <div className="lsl-locdrop__menu">
-                    <button className={'lsl-locdrop__opt' + (!locFilter ? ' is-sel' : '')}
-                      onClick={() => { pickLoc(null); setDropOpen(false); }}>
-                      All Locations
-                    </button>
+                    <button className={'lsl-locdrop__opt' + (!locFilter ? ' is-sel' : '')} onClick={() => { pickLoc(null); setDropOpen(false); }}>All Locations</button>
                     {locs.map((loc) => (
-                      <button key={loc.id} className={'lsl-locdrop__opt' + (locFilter === loc.id ? ' is-sel' : '')}
-                        onClick={() => { pickLoc(loc.id); setDropOpen(false); }}>
+                      <button key={loc.id} className={'lsl-locdrop__opt' + (locFilter === loc.id ? ' is-sel' : '')} onClick={() => { pickLoc(loc.id); setDropOpen(false); }}>
                         <i data-lucide="map-pin"></i>{loc.name}
                       </button>
                     ))}
@@ -183,35 +155,31 @@ function PrivateBooking() {
             <Calendar offset={offset} onOffset={setOffset} openDates={openDates} selected={date} onPick={pickDate} todayIso={todayIso} />
           </div>
 
-          {/* COLUMN 2 — times grouped by location */}
           <div className="lsl-sched__col lsl-sched__col--border">
-            <div className="lsl-sched__head">Available Times</div>
+            <div className="lsl-sched__head">Available Times <span style={{ fontWeight: 400, color: 'var(--fg3)', textTransform: 'none', letterSpacing: 0 }}>({zone})</span></div>
             {!date
               ? <div className="lsl-sched__ph">Pick a highlighted date to see open times.</div>
               : daySlots.length === 0
                 ? <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)' }}>No open times on this day.</p>
-                : Object.keys(byLoc).map((lid) => {
-                    const loc = LSL.locById(lid);
-                    return (
-                      <div key={lid} style={{ marginBottom: 16 }}>
-                        <div className="lsl-times__loc">{loc ? loc.name : lid}</div>
-                        <div className="lsl-times__row">
-                          {byLoc[lid].map((s) => (
-                            <button key={s.id}
-                              className={'lsl-time' + (s.status === 'booked' ? ' is-booked' : '') + (slotId === s.id ? ' is-sel' : '')}
-                              disabled={s.status === 'booked'}
-                              onClick={() => s.status === 'open' && pickSlot(s.id)}>
-                              {LSL.fmtTime(s.time)}
-                            </button>
-                          ))}
-                        </div>
+                : Object.keys(byLoc).map((lid) => (
+                    <div key={lid} style={{ marginBottom: 16 }}>
+                      <div className="lsl-times__loc">{LSL.locById(lid).name || lid}</div>
+                      <div className="lsl-times__row">
+                        {byLoc[lid].map((s) => (
+                          <button key={s.id}
+                            className={'lsl-time' + (s.status !== 'open' ? ' is-booked' : '') + (slotId === s.id ? ' is-sel' : '')}
+                            disabled={s.status !== 'open'} aria-pressed={slotId === s.id}
+                            aria-label={LSL.fmtTime(s.time) + (s.status !== 'open' ? ', booked' : '')}
+                            onClick={() => s.status === 'open' && pickSlot(s.id)}>
+                            {LSL.fmtTime(s.time)}
+                          </button>
+                        ))}
                       </div>
-                    );
-                  })
+                    </div>
+                  ))
             }
           </div>
 
-          {/* COLUMN 3 — type of session */}
           <div className="lsl-sched__col lsl-sched__col--border">
             <div className="lsl-sched__head">Type of Session</div>
             {!slotId ? (
@@ -222,38 +190,40 @@ function PrivateBooking() {
             ) : (
               <div>
                 <div className="lsl-svclist">
-                  <button className={'lsl-svc' + (svcType === 'dated' ? ' is-sel' : '')}
-                    onClick={() => { setSvcType('dated'); setPlayers(null); }}>
-                    <span className="lsl-svc__ico"><i data-lucide="user"></i></span>
-                    <span className="lsl-svc__body">
-                      <span className="lsl-svc__name">1-on-1 Private Training</span>
-                      <span className="lsl-svc__meta">One athlete · 60 min</span>
-                    </span>
-                    <i data-lucide="chevron-right" className="lsl-svc__chev"></i>
-                  </button>
-                  <button className={'lsl-svc' + (svcType === 'small' ? ' is-sel' : '')}
-                    onClick={() => { setSvcType('small'); setPlayers(null); }}>
-                    <span className="lsl-svc__ico"><i data-lucide="users"></i></span>
-                    <span className="lsl-svc__body">
-                      <span className="lsl-svc__name">Small Group Training</span>
-                      <span className="lsl-svc__meta">Bring your own group</span>
-                    </span>
-                    <i data-lucide="chevron-right" className="lsl-svc__chev"></i>
-                  </button>
+                  {soloType && (
+                    <button className={'lsl-svc' + (svcType === 'solo' ? ' is-sel' : '')} onClick={() => { setSvcType('solo'); setGroupTypeId(null); }}>
+                      <span className="lsl-svc__ico"><i data-lucide="user"></i></span>
+                      <span className="lsl-svc__body">
+                        <span className="lsl-svc__name">1-on-1 Private Training</span>
+                        <span className="lsl-svc__meta">One athlete · {soloType.duration} min{LSL.priceLabel(soloType) ? ' · ' + LSL.priceLabel(soloType) : ''}</span>
+                      </span>
+                      <i data-lucide="chevron-right" className="lsl-svc__chev"></i>
+                    </button>
+                  )}
+                  {groupTypes.length > 0 && (
+                    <button className={'lsl-svc' + (svcType === 'small' ? ' is-sel' : '')} onClick={() => { setSvcType('small'); setGroupTypeId(null); }}>
+                      <span className="lsl-svc__ico"><i data-lucide="users"></i></span>
+                      <span className="lsl-svc__body">
+                        <span className="lsl-svc__name">Small Group Training</span>
+                        <span className="lsl-svc__meta">Bring your own group</span>
+                      </span>
+                      <i data-lucide="chevron-right" className="lsl-svc__chev"></i>
+                    </button>
+                  )}
                 </div>
                 {svcType === 'small' && (
                   <div className="lsl-svcsub">
-                    <div className="lsl-svcsub__q">How many players in your group?</div>
-                    <div className="lsl-svcsub__opts">
-                      {['2', '3', '4+'].map((n) => (
-                        <button key={n} className={'lsl-countchip' + (players === n ? ' is-sel' : '')} onClick={() => setPlayers(n)}>{n}</button>
+                    <div className="lsl-svcsub__q" id="lsl-players-q">How many players in your group?</div>
+                    <div className="lsl-svcsub__opts" role="group" aria-labelledby="lsl-players-q">
+                      {groupTypes.map((t) => (
+                        <button key={t.id} className={'lsl-countchip' + (groupTypeId === t.id ? ' is-sel' : '')} aria-pressed={groupTypeId === t.id} onClick={() => setGroupTypeId(t.id)}>{groupLabel(t)}</button>
                       ))}
                     </div>
                   </div>
                 )}
                 {desc && (
-                  <button className="lsl-btn lsl-btn--primary lsl-times__req" onClick={() => setFormOpen(true)}>
-                    <i data-lucide="calendar-check"></i> Book Session
+                  <button className="lsl-btn lsl-btn--primary lsl-times__req" onClick={() => setFormDesc(desc)}>
+                    <i data-lucide="calendar-check"></i> {desc.type.booking_mode === 'request' ? 'Request Session' : 'Book Session'}
                   </button>
                 )}
                 <ReqFooter />
@@ -264,12 +234,12 @@ function PrivateBooking() {
 
         <p className="lsl-bookpolicy">
           <i data-lucide="info"></i>
-          <span>{LSL_POLICY.map((line, i) => <React.Fragment key={i}>{line}{i < LSL_POLICY.length - 1 && <br />}</React.Fragment>)}</span>
+          <PolicyText />
         </p>
       </div>
-      {formOpen && desc && (
-        <BookingForm desc={desc} onClose={() => setFormOpen(false)}
-          onBooked={() => { setSlotId(null); setDate(null); setSvcType(null); setPlayers(null); }} />
+      {formDesc && (
+        <BookingForm desc={formDesc} onClose={() => setFormDesc(null)}
+          onBooked={() => { setSlotId(null); setDate(null); setSvcType(null); setGroupTypeId(null); LSL.refresh(); }} />
       )}
       {reqTrainOpen && <TrainingRequestForm onClose={() => setReqTrainOpen(false)} />}
     </section>
@@ -278,8 +248,8 @@ function PrivateBooking() {
 
 function Calendar({ offset, onOffset, openDates, selected, onPick, todayIso }) {
   useEffectBk(() => { if (window.lucide) window.lucide.createIcons(); });
-  const today = new Date();
-  const base = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+  const [ty, tm] = todayIso.split('-').map(Number);
+  const base = new Date(ty, tm - 1 + offset, 1);
   const y = base.getFullYear(), m = base.getMonth();
   const firstDow = new Date(y, m, 1).getDay();
   const days = new Date(y, m + 1, 0).getDate();
@@ -293,7 +263,7 @@ function Calendar({ offset, onOffset, openDates, selected, onPick, todayIso }) {
     <div className="lsl-cal">
       <div className="lsl-cal__nav">
         <button onClick={() => onOffset(Math.max(0, offset - 1))} disabled={offset <= 0} aria-label="Previous month"><i data-lucide="chevron-left"></i></button>
-        <span className="lsl-cal__month">{monthName}</span>
+        <span className="lsl-cal__month" aria-live="polite">{monthName}</span>
         <button onClick={() => onOffset(offset + 1)} aria-label="Next month"><i data-lucide="chevron-right"></i></button>
       </div>
       <div className="lsl-cal__dows">{dows.map((d) => <span key={d}>{d}</span>)}</div>
@@ -301,11 +271,9 @@ function Calendar({ offset, onOffset, openDates, selected, onPick, todayIso }) {
         {cells.map((d, i) => {
           if (d === null) return <span key={'b' + i} className="lsl-cal__cell is-empty"></span>;
           const iso = y + '-' + pad2(m + 1) + '-' + pad2(d);
-          const hasOpen = openDates.has(iso);
-          const isPast = iso < todayIso;
-          const can = hasOpen && !isPast;
+          const can = openDates.has(iso) && iso >= todayIso;
           return (
-            <button key={iso} disabled={!can}
+            <button key={iso} disabled={!can} aria-label={LSL.fmtDateLong(iso) + (can ? ', has open times' : '')} aria-pressed={selected === iso}
               className={'lsl-cal__cell' + (can ? ' is-open' : '') + (selected === iso ? ' is-sel' : '')}
               onClick={() => can && onPick(iso)}>
               {d}
@@ -318,39 +286,44 @@ function Calendar({ offset, onOffset, openDates, selected, onPick, todayIso }) {
   );
 }
 
-function BookingForm({ desc, onClose, onBooked }) {
-  const [form, setForm] = useStateBk({ parent: '', athlete: '', age: '', email: '', phone: '', focus: '', notes: '' });
-  const [errs, setErrs] = useStateBk({});
-  const [busy, setBusy] = useStateBk(false);
-  const [result, setResult] = useStateBk(null);
-
-  const extraCount = desc.players ? (desc.players === '4+' ? 3 : parseInt(desc.players) - 1) : 0;
-  const [groupMembers, setGroupMembers] = useStateBk(() =>
-    Array.from({ length: extraCount }, () => ({ name: '', contact: '' }))
-  );
-
-  useEffectBk(() => { if (window.lucide) window.lucide.createIcons(); }, [result]);
+function useModalKeys(onClose, deps) {
   useEffectBk(() => {
+    if (window.lucide) window.lucide.createIcons();
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, deps);
+}
 
-  const isReq = desc.mode === 'request';
-  const payLink = desc.payLink || null;
-  const slot = isReq ? {} : (LSL.getSlots().find((s) => s.id === desc.slotId) || {});
-  const loc = isReq ? {} : LSL.locById(slot.locId);
+function BookingForm({ desc, onClose, onBooked }) {
+  const settings = LSL.getSettings();
+  const fields = (settings.registration && settings.registration.fields) || {};
+  const acks = (settings.registration && settings.registration.acknowledgments) || [];
+  const [form, setForm] = useStateBk({ parent: '', athlete: '', age: '', email: '', phone: '', focus: '', notes: '', website: '' });
+  const [ackd, setAckd] = useStateBk([]);
+  const [errs, setErrs] = useStateBk({});
+  const [busy, setBusy] = useStateBk(false);
+  const [result, setResult] = useStateBk(null);
+  const { type, slot } = desc;
+  const isReq = type.booking_mode === 'request';
+  const extraCount = Math.max(0, (type.min_participants || 1) - 1);
+  const [groupMembers, setGroupMembers] = useStateBk(() => Array.from({ length: extraCount }, () => ({ name: '', contact: '' })));
+  useModalKeys(onClose, [result]);
+
+  const loc = LSL.locById(slot.locId);
+  const show = (k) => !fields[k] || fields[k].show !== false;
+  const req = (k) => ['parent', 'athlete', 'email'].includes(k) || !!(fields[k] && fields[k].required);
+  const label = (k, def) => (fields[k] && fields[k].label) || def;
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
-  const setMember = (i, k) => (e) => {
-    setGroupMembers(groupMembers.map((m, idx) => idx === i ? { ...m, [k]: e.target.value } : m));
-  };
+  const setMember = (i, k) => (e) => setGroupMembers(groupMembers.map((m, idx) => idx === i ? { ...m, [k]: e.target.value } : m));
 
   function validate() {
     const e = {};
     if (!form.parent.trim()) e.parent = 'Required';
     if (!form.athlete.trim()) e.athlete = 'Required';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) e.email = 'Enter a valid email';
-    if (!form.phone.trim()) e.phone = 'Required';
+    ['phone', 'age', 'focus', 'notes'].forEach((k) => { if (show(k) && req(k) && !String(form[k]).trim()) e[k] = 'Required'; });
+    acks.forEach((a) => { if (a.required && !ackd.includes(a.id)) e['ack_' + a.id] = 'Please confirm'; });
     setErrs(e);
     return Object.keys(e).length === 0;
   }
@@ -359,122 +332,67 @@ function BookingForm({ desc, onClose, onBooked }) {
     e.preventDefault();
     if (!validate()) return;
     setBusy(true);
-    if (!isReq && payLink) window.open(payLink, '_blank');
-    const members = groupMembers.filter((m) => m.name.trim() || m.contact.trim());
-    let rec;
-    if (isReq) {
-      rec = { id: LSL.uid(), mode: 'request', serviceName: desc.serviceName, players: desc.players, dow: desc.dow, reqTime: desc.reqTime,
-        parent: form.parent, athlete: form.athlete, age: form.age, email: form.email, phone: form.phone,
-        focus: form.focus, notes: form.notes, groupMembers: members, created: new Date().toISOString(), status: 'requested' };
-      LSL.setBooks([...LSL.getBooks(), rec]);
-    } else {
-      const slots = LSL.getSlots();
-      const sIdx = slots.findIndex((s) => s.id === desc.slotId);
-      if (sIdx < 0 || slots[sIdx].status !== 'open') { setBusy(false); setErrs({ form: 'Sorry — that opening was just taken. Please pick another time.' }); return; }
-      rec = { id: LSL.uid(), mode: 'dated', typeId: desc.typeId, serviceName: desc.serviceName, slotId: desc.slotId,
-        date: slots[sIdx].date, time: slots[sIdx].time, locId: slots[sIdx].locId,
-        players: desc.players || null, groupMembers: members,
-        parent: form.parent, athlete: form.athlete, age: form.age, email: form.email, phone: form.phone,
-        focus: form.focus, notes: form.notes, created: new Date().toISOString(), status: 'awaiting_payment' };
-      slots[sIdx] = { ...slots[sIdx], status: 'booked', bookingId: rec.id };
-
-      // Resolve cross-location conflicts, cascading to B2B children of any moved slot
-      const buffer = LSL.getConflictBuffer();
-      const action = LSL.getConflictAction();
-      const bookedMins = toMins(rec.time);
-
-      // Pass 1: direct cross-location conflicts
-      const changes = {};
-      slots.forEach((s, i) => {
-        if (i === sIdx || s.status !== 'open' || s.locId === rec.locId || s.date !== rec.date) return;
-        if (Math.abs(toMins(s.time) - bookedMins) >= buffer) return;
-        if (action === 'delete') { changes[s.id] = { action: 'delete' }; return; }
-        const newMins = toMins(s.time) >= bookedMins ? bookedMins + buffer : bookedMins - buffer;
-        if (newMins < 0 || newMins >= 1440) { changes[s.id] = { action: 'delete' }; return; }
-        changes[s.id] = { action: 'bump', newMins, delta: newMins - toMins(s.time) };
-      });
-
-      // Pass 2: cascade to B2B slots linked to any changed slot
-      slots.forEach((s) => {
-        if (!s.contingentOn || !changes[s.contingentOn]) return;
-        const pc = changes[s.contingentOn];
-        if (pc.action === 'delete') { changes[s.id] = { action: 'delete' }; return; }
-        const newMins = toMins(s.time) + pc.delta;
-        if (newMins < 0 || newMins >= 1440) { changes[s.id] = { action: 'delete' }; return; }
-        changes[s.id] = { action: 'bump', newMins, delta: pc.delta };
-      });
-
-      const resolved = slots.map((s) => {
-        if (!changes[s.id]) return s;
-        if (changes[s.id].action === 'delete') return null;
-        const nm = changes[s.id].newMins;
-        return { ...s, time: pad2(Math.floor(nm / 60)) + ':' + pad2(nm % 60) };
-      }).filter(Boolean);
-
-      LSL.setSlots(resolved);
-      LSL.setBooks([...LSL.getBooks(), rec]);
-    }
-    await notifyCoach(rec);
-    setBusy(false);
-    setResult(rec);
-    if (onBooked) onBooked();
+    try {
+      const members = groupMembers.filter((m) => m.name.trim() || m.contact.trim());
+      const res = await LSL.createBooking({ slotId: slot.id, typeId: type.id, players: desc.players, form, roster: members, acks: ackd, website: form.website });
+      const rec = { ...res.booking, mode: 'dated', players: desc.players, form, roster: [{ primary: true }, ...members], checkoutUrl: res.checkoutUrl, next: res.next, duration: type.duration };
+      notifyCoach(rec);
+      setResult(rec);
+      if (onBooked) onBooked();
+    } catch (err) {
+      setErrs({ ...(err.fields || {}), form: err.message });
+      if (err.status === 409) LSL.refresh();
+    } finally { setBusy(false); }
   }
+
+  const Field = ({ k, def, type: inputType, placeholder }) => (
+    <div><label htmlFor={'bk-' + k}>{label(k, def)} {req(k) && <span className="req">*</span>}</label>
+      <input id={'bk-' + k} className={'lsl-input' + (errs[k] ? ' is-error' : '')} type={inputType || 'text'} value={form[k]} onChange={set(k)} placeholder={placeholder} aria-invalid={!!errs[k]} />
+      {errs[k] && <span className="lsl-err">{errs[k]}</span>}</div>
+  );
 
   return (
     <div className="lsl-lightbox" onClick={onClose}>
-      <div className="lsl-bkmodal" onClick={(e) => e.stopPropagation()}>
+      <div className="lsl-bkmodal" role="dialog" aria-modal="true" aria-labelledby="bk-title" onClick={(e) => e.stopPropagation()}>
         <button className="lsl-lightbox__close" onClick={onClose} aria-label="Close" style={{ position: 'absolute', top: 16, right: 16 }}>
           <i data-lucide="x"></i>
         </button>
 
         {!result ? (
-          <form className="lsl-bkbody" onSubmit={submit}>
-            <h3 className="lsl-h3" style={{ marginTop: 0, marginBottom: 4 }}>Book Session</h3>
+          <form className="lsl-bkbody" onSubmit={submit} noValidate>
+            <h3 className="lsl-h3" id="bk-title" style={{ marginTop: 0, marginBottom: 4 }}>{isReq ? 'Request Session' : 'Book Session'}</h3>
             <div className="lsl-bksummary">
-              <span><i data-lucide="dumbbell"></i>{desc.serviceName}</span>
-              {isReq ? <>
-                <span><i data-lucide="users"></i>{desc.players} players</span>
-                <span><i data-lucide="calendar"></i>{DOW[desc.dow]}s</span>
-                <span><i data-lucide="clock"></i>{LSL.fmtTime(desc.reqTime)}</span>
-              </> : <>
-                {desc.players && <span><i data-lucide="users"></i>{desc.players} players</span>}
-                <span><i data-lucide="calendar"></i>{LSL.fmtDateLong(slot.date)}</span>
-                <span><i data-lucide="clock"></i>{LSL.fmtTime(slot.time)}</span>
-                <span><i data-lucide="map-pin"></i>{loc.name}</span>
-              </>}
+              <span><i data-lucide="dumbbell"></i>{type.name}</span>
+              {desc.players && <span><i data-lucide="users"></i>{desc.players} players</span>}
+              <span><i data-lucide="calendar"></i>{LSL.fmtDateLong(slot.date)}</span>
+              <span><i data-lucide="clock"></i>{LSL.fmtTime(slot.time)} {LSL.tzLabel(slot.date, slot.time)}</span>
+              <span><i data-lucide="map-pin"></i>{loc.name}</span>
+              {LSL.priceLabel(type) && <span><i data-lucide="tag"></i>{LSL.priceLabel(type)}</span>}
+            </div>
+            {type.description && <p className="lsl-body lsl-body--sm" style={{ marginTop: 0 }}>{type.description}</p>}
+            <div className="lsl-field lsl-field--row">
+              {Field({ k: 'parent', def: 'Parent / Guardian Name', placeholder: 'Jane Smith' })}
+              {Field({ k: 'athlete', def: 'Athlete Name', placeholder: 'Alex Smith' })}
             </div>
             <div className="lsl-field lsl-field--row">
-              <div><label>Parent / Guardian Name <span className="req">*</span></label>
-                <input className={'lsl-input' + (errs.parent ? ' is-error' : '')} value={form.parent} onChange={set('parent')} placeholder="Jane Smith" />
-                {errs.parent && <span className="lsl-err">{errs.parent}</span>}</div>
-              <div><label>Athlete Name <span className="req">*</span></label>
-                <input className={'lsl-input' + (errs.athlete ? ' is-error' : '')} value={form.athlete} onChange={set('athlete')} placeholder="Alex Smith" />
-                {errs.athlete && <span className="lsl-err">{errs.athlete}</span>}</div>
+              {Field({ k: 'email', def: 'Email', type: 'email', placeholder: 'you@email.com' })}
+              {show('phone') && Field({ k: 'phone', def: 'Phone', type: 'tel', placeholder: '(555) 555-5555' })}
             </div>
             <div className="lsl-field lsl-field--row">
-              <div><label>Email <span className="req">*</span></label>
-                <input className={'lsl-input' + (errs.email ? ' is-error' : '')} type="email" value={form.email} onChange={set('email')} placeholder="you@email.com" />
-                {errs.email && <span className="lsl-err">{errs.email}</span>}</div>
-              <div><label>Phone <span className="req">*</span></label>
-                <input className={'lsl-input' + (errs.phone ? ' is-error' : '')} value={form.phone} onChange={set('phone')} placeholder="(555) 555-5555" />
-                {errs.phone && <span className="lsl-err">{errs.phone}</span>}</div>
+              {show('age') && Field({ k: 'age', def: 'Athlete Age / Grade', placeholder: '7th grade' })}
+              {show('focus') && Field({ k: 'focus', def: 'Focus Areas / Goals', placeholder: 'Shooting, ball handling' })}
             </div>
-            <div className="lsl-field lsl-field--row">
-              <div><label>Athlete Age / Grade</label>
-                <input className="lsl-input" value={form.age} onChange={set('age')} placeholder="7th grade" /></div>
-              <div><label>Focus Areas / Goals</label>
-                <input className="lsl-input" value={form.focus} onChange={set('focus')} placeholder="Shooting, ball handling" /></div>
-            </div>
-            <div className="lsl-field">
-              <label>Additional Notes</label>
-              <textarea className="lsl-textarea" value={form.notes} onChange={set('notes')} placeholder="Anything Coach Gio should know" style={{ minHeight: 76 }}></textarea>
-            </div>
+            {show('notes') && (
+              <div className="lsl-field">
+                <label htmlFor="bk-notes">{label('notes', 'Additional Notes')} {req('notes') && <span className="req">*</span>}</label>
+                <textarea id="bk-notes" className={'lsl-textarea' + (errs.notes ? ' is-error' : '')} value={form.notes} onChange={set('notes')} placeholder="Anything Coach Gio should know" style={{ minHeight: 76 }}></textarea>
+                {errs.notes && <span className="lsl-err">{errs.notes}</span>}
+              </div>
+            )}
+            <input type="text" name="website" value={form.website} onChange={set('website')} tabIndex="-1" autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }} />
             {extraCount > 0 && (
               <div className="lsl-groupmembers">
-                <div className="lsl-groupmembers__head">
-                  <i data-lucide="users"></i>
-                  Who else is coming to this session?
-                </div>
+                <div className="lsl-groupmembers__head"><i data-lucide="users"></i> Who else is coming to this session?</div>
                 <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)', marginTop: 0, marginBottom: 14 }}>
                   Add your group members below — a name and a way to reach them is all we need.
                 </p>
@@ -482,14 +400,8 @@ function BookingForm({ desc, onClose, onBooked }) {
                   <div key={i} className="lsl-groupmembers__row">
                     <span className="lsl-groupmembers__num">{i + 2}</span>
                     <div className="lsl-field lsl-field--row" style={{ flex: 1, margin: 0 }}>
-                      <div>
-                        <label>Name</label>
-                        <input className="lsl-input" value={m.name} onChange={setMember(i, 'name')} placeholder={'Player ' + (i + 2) + ' name'} />
-                      </div>
-                      <div>
-                        <label>Email or Phone Number</label>
-                        <input className="lsl-input" value={m.contact} onChange={setMember(i, 'contact')} placeholder="If you have it" />
-                      </div>
+                      <div><label htmlFor={'gm-n' + i}>Name</label><input id={'gm-n' + i} className="lsl-input" value={m.name} onChange={setMember(i, 'name')} placeholder={'Player ' + (i + 2) + ' name'} /></div>
+                      <div><label htmlFor={'gm-c' + i}>Email or Phone Number</label><input id={'gm-c' + i} className="lsl-input" value={m.contact} onChange={setMember(i, 'contact')} placeholder="If you have it" /></div>
                     </div>
                   </div>
                 ))}
@@ -498,43 +410,61 @@ function BookingForm({ desc, onClose, onBooked }) {
             <div className="lsl-bknote" style={{ marginBottom: 14 }}>
               <i data-lucide={isReq ? 'mail' : 'shield-check'}></i>
               {isReq
-                ? <span>This sends a <strong>request</strong> to Coach Gio. You'll get a confirmation email — no payment is taken now.</span>
-                : <span>After you submit, you'll be taken to <strong>Stripe</strong> to pay securely and lock in your spot. Stripe emails your receipt.</span>}
+                ? <span>This sends a <strong>request</strong> to Coach Gio. Nothing is booked or charged until it&rsquo;s approved.</span>
+                : type.has_pay_link
+                  ? <span>We&rsquo;ll hold this time for <strong>{settings.holdMinutes || 10} minutes</strong> while you pay securely with <strong>Stripe</strong>. It&rsquo;s confirmed once payment goes through.</span>
+                  : <span>Coach Gio will email you a secure payment link.</span>}
             </div>
-            <p className="lsl-bkpolicy--modal">{LSL_POLICY.map((line, i) => <React.Fragment key={i}>{line}{i < LSL_POLICY.length - 1 && <br />}</React.Fragment>)}</p>
-            {errs.form && <p className="lsl-err">{errs.form}</p>}
+            <div className="lsl-bknote" style={{ marginBottom: 14 }}>
+              <i data-lucide="map-pin"></i>
+              <span>Sessions are in the <strong>{loc.name}</strong> area. After booking, reach out to Coach Gio to organize the exact location.</span>
+            </div>
+            <p className="lsl-bkpolicy--modal"><PolicyText /></p>
+            {acks.map((a) => (
+              <label key={a.id} className="lsl-ack">
+                <input type="checkbox" checked={ackd.includes(a.id)} onChange={(e) => setAckd(e.target.checked ? [...ackd, a.id] : ackd.filter((x) => x !== a.id))} aria-invalid={!!errs['ack_' + a.id]} />
+                <span>{a.text}{a.required && <span className="req"> *</span>}</span>
+                {errs['ack_' + a.id] && <span className="lsl-err" style={{ display: 'block' }}>{errs['ack_' + a.id]}</span>}
+              </label>
+            ))}
+            {errs.form && <p className="lsl-err" role="alert">{errs.form}</p>}
             <button type="submit" className="lsl-btn lsl-btn--primary" disabled={busy} style={{ width: '100%' }}>
               <i data-lucide={isReq ? 'send' : 'arrow-right'}></i>
-              {busy ? ' Submitting…' : (isReq ? ' Submit Request' : ' Reserve & Continue to Payment')}
+              {busy ? ' Reserving…' : (isReq ? ' Submit Request' : (type.has_pay_link ? ' Reserve & Continue to Payment' : ' Reserve Session'))}
             </button>
           </form>
-        ) : result.mode === 'request' ? (
-          <div className="lsl-bkbody lsl-bkdone">
+        ) : result.status === 'requested' ? (
+          <div className="lsl-bkbody lsl-bkdone" role="status">
             <div className="lsl-formsuccess__ico"><i data-lucide="check"></i></div>
-            <h3 className="lsl-h3">Request received!</h3>
+            <h3 className="lsl-h3">Request received</h3>
             <p className="lsl-body lsl-body--sm" style={{ marginTop: 0 }}>
-              {result.serviceName} · {result.players} players · {DOW[result.dow]}s around {LSL.fmtTime(result.reqTime)}.<br />
-              Coach Gio will reach out to <strong>{result.email}</strong> to confirm your class.
+              {result.service} · {LSL.fmtDateLong(slot.date)} · {LSL.fmtTime(slot.time)}.<br />
+              This is not confirmed yet — Coach Gio will follow up at <strong>{form.email}</strong>. No payment has been taken.
             </p>
-            <div className="lsl-bkdone__row">
-              <button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={onClose}>Done</button>
-            </div>
+            <div className="lsl-bkdone__row"><button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={onClose}>Done</button></div>
           </div>
         ) : (
-          <div className="lsl-bkbody lsl-bkdone">
+          <div className="lsl-bkbody lsl-bkdone" role="status">
             <div className="lsl-formsuccess__ico"><i data-lucide="check"></i></div>
-            <h3 className="lsl-h3">Spot reserved — one last step</h3>
+            <h3 className="lsl-h3">{result.next === 'pay' ? 'Spot held — one last step' : 'Spot reserved'}</h3>
             <p className="lsl-body lsl-body--sm" style={{ marginTop: 0 }}>
-              {result.serviceName}{result.players ? ' · ' + result.players + ' players' : ''} · {LSL.fmtDateLong(result.date)} · {LSL.fmtTime(result.time)} at {LSL.locById(result.locId).name}.<br />
-              {payLink ? 'Stripe payment opened in a new tab.' : ''}
+              {result.service}{result.players ? ' · ' + result.players + ' players' : ''} · {LSL.fmtDateLong(result.date)} · {LSL.fmtTime(result.time)} {LSL.tzLabel(result.date, result.time)} · {result.location}.
             </p>
-            {payLink
-              ? <a className="lsl-btn lsl-btn--primary" href={payLink} target="_blank" rel="noopener" style={{ marginBottom: 12 }}><i data-lucide="credit-card"></i> Complete Payment Now</a>
-              : <div className="lsl-bknote"><i data-lucide="info"></i><span>Coach Gio will email a secure Stripe payment link to {result.email} shortly.</span></div>}
-            <div className="lsl-bkdone__row">
-              <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => LSL.downloadICS(result)}><i data-lucide="calendar-plus"></i> Add to calendar</button>
+            {result.checkoutUrl
+              ? <a className="lsl-btn lsl-btn--primary" href={result.checkoutUrl} target="_blank" rel="noopener" style={{ marginBottom: 12 }}><i data-lucide="credit-card"></i> Complete Payment Now</a>
+              : <div className="lsl-bknote"><i data-lucide="info"></i><span>Coach Gio will email a secure payment link to {form.email}.</span></div>}
+            {result.hold_expires_at && (
+              <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)' }}>
+                We&rsquo;re holding this time until <strong>{LSL.fmtInstant(result.hold_expires_at)}</strong>. Your booking is confirmed once Stripe confirms payment — you&rsquo;ll get a confirmation email.
+              </p>
+            )}
+            <div className="lsl-bknote" style={{ marginBottom: 12 }}>
+              <i data-lucide="map-pin"></i>
+              <span><strong>Next:</strong> reach out to Coach Gio to organize the exact location — reply to your confirmation email or use the <a href="contact.html">contact page</a>.</span>
             </div>
-            <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg3)', marginBottom: 0 }}>Your spot is held. It's confirmed once payment is complete.</p>
+            <div className="lsl-bkdone__row">
+              <button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => LSL.downloadICS({ ...result, athlete: form.athlete })}><i data-lucide="calendar-plus"></i> Add to calendar</button>
+            </div>
           </div>
         )}
       </div>
@@ -543,17 +473,11 @@ function BookingForm({ desc, onClose, onBooked }) {
 }
 
 function TrainingRequestForm({ onClose }) {
-  const [form, setForm] = useStateBk({ parent: '', athlete: '', email: '', phone: '', reqLocation: '', reqTime: '', reqDate: '', age: '', focus: '', notes: '' });
+  const [form, setForm] = useStateBk({ parent: '', athlete: '', email: '', phone: '', reqLocation: '', reqTime: '', reqDate: '', age: '', focus: '', notes: '', website: '' });
   const [errs, setErrs] = useStateBk({});
   const [busy, setBusy] = useStateBk(false);
   const [done, setDone] = useStateBk(false);
-
-  useEffectBk(() => {
-    if (window.lucide) window.lucide.createIcons();
-    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [done]);
+  useModalKeys(onClose, [done]);
 
   const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
 
@@ -570,91 +494,60 @@ function TrainingRequestForm({ onClose }) {
     e.preventDefault();
     if (!validate()) return;
     setBusy(true);
-    const key = W3F_REQTRN;
-    if (key) {
-      const message = [
-        'Training Request — ' + form.athlete,
-        'Parent/Guardian: ' + form.parent,
-        form.email + (form.phone ? ' · ' + form.phone : ''),
-        form.reqLocation ? 'Requested Location: ' + form.reqLocation : '',
-        form.reqDate ? 'Requested Date: ' + form.reqDate : '',
-        form.reqTime ? 'Requested Time: ' + form.reqTime : '',
-        form.age ? 'Age/Grade: ' + form.age : '',
-        form.focus ? 'Focus Areas: ' + form.focus : '',
-        form.notes ? 'Notes: ' + form.notes : '',
-      ].filter(Boolean).join('\n');
-      try {
-        await fetch('https://api.web3forms.com/submit', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ access_key: key, subject: 'Training Request — ' + form.athlete, message, from_name: 'LSL Request Training', replyto: form.email, cc: '2244259490@tmomail.net' }),
-        });
-      } catch (_) { /* non-blocking */ }
-    }
-    setBusy(false);
-    setDone(true);
+    try {
+      const res = await LSL.createRequest({
+        website: form.website,
+        form: { parent: form.parent, athlete: form.athlete, email: form.email, phone: form.phone, age: form.age, focus: form.focus, notes: form.notes },
+        request: { serviceName: 'Training Request', location: form.reqLocation, time: form.reqTime, date: form.reqDate },
+      });
+      notifyCoach({ mode: 'request', id: res.booking.id, form, requestLine: [form.reqLocation, form.reqDate, form.reqTime].filter(Boolean).join(' · ') });
+      setDone(true);
+    } catch (err) {
+      setErrs({ ...(err.fields || {}), form: err.message });
+    } finally { setBusy(false); }
   }
+
+  const input = (k, lbl, ph, required, inputType) => (
+    <div><label htmlFor={'rq-' + k}>{lbl} {required && <span className="req">*</span>}</label>
+      <input id={'rq-' + k} className={'lsl-input' + (errs[k] ? ' is-error' : '')} type={inputType || 'text'} value={form[k]} onChange={set(k)} placeholder={ph} aria-invalid={!!errs[k]} />
+      {errs[k] && <span className="lsl-err">{errs[k]}</span>}</div>
+  );
 
   return (
     <div className="lsl-lightbox" onClick={onClose}>
-      <div className="lsl-bkmodal" onClick={(e) => e.stopPropagation()}>
+      <div className="lsl-bkmodal" role="dialog" aria-modal="true" aria-labelledby="rq-title" onClick={(e) => e.stopPropagation()}>
         <button className="lsl-lightbox__close" onClick={onClose} aria-label="Close" style={{ position: 'absolute', top: 16, right: 16 }}>
           <i data-lucide="x"></i>
         </button>
         {!done ? (
-          <form className="lsl-bkbody" onSubmit={submit}>
-            <h3 className="lsl-h3" style={{ marginTop: 0, marginBottom: 4 }}>Request Training</h3>
+          <form className="lsl-bkbody" onSubmit={submit} noValidate>
+            <h3 className="lsl-h3" id="rq-title" style={{ marginTop: 0, marginBottom: 4 }}>Request Training</h3>
             <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)', marginTop: 0, marginBottom: 16 }}>
               Fill this out and Coach Gio will reach out to make it work.
             </p>
-            <div className="lsl-field lsl-field--row">
-              <div><label>Parent / Guardian Name <span className="req">*</span></label>
-                <input className={'lsl-input' + (errs.parent ? ' is-error' : '')} value={form.parent} onChange={set('parent')} placeholder="Jane Smith" />
-                {errs.parent && <span className="lsl-err">{errs.parent}</span>}</div>
-              <div><label>Athlete Name <span className="req">*</span></label>
-                <input className={'lsl-input' + (errs.athlete ? ' is-error' : '')} value={form.athlete} onChange={set('athlete')} placeholder="Alex Smith" />
-                {errs.athlete && <span className="lsl-err">{errs.athlete}</span>}</div>
-            </div>
-            <div className="lsl-field lsl-field--row">
-              <div><label>Email <span className="req">*</span></label>
-                <input className={'lsl-input' + (errs.email ? ' is-error' : '')} type="email" value={form.email} onChange={set('email')} placeholder="you@email.com" />
-                {errs.email && <span className="lsl-err">{errs.email}</span>}</div>
-              <div><label>Phone</label>
-                <input className="lsl-input" value={form.phone} onChange={set('phone')} placeholder="(555) 555-5555" /></div>
-            </div>
-            <div className="lsl-field lsl-field--row">
-              <div><label>Requested Location</label>
-                <input className="lsl-input" value={form.reqLocation} onChange={set('reqLocation')} placeholder="Park Ridge, Mundelein…" /></div>
-              <div><label>Requested Time</label>
-                <input className="lsl-input" value={form.reqTime} onChange={set('reqTime')} placeholder="e.g. 4:00 PM" /></div>
-            </div>
-            <div className="lsl-field lsl-field--row">
-              <div><label>Requested Date</label>
-                <input className="lsl-input" value={form.reqDate} onChange={set('reqDate')} placeholder="e.g. July 25" /></div>
-              <div><label>Athlete Age / Grade</label>
-                <input className="lsl-input" value={form.age} onChange={set('age')} placeholder="7th grade" /></div>
-            </div>
+            <div className="lsl-field lsl-field--row">{input('parent', 'Parent / Guardian Name', 'Jane Smith', true)}{input('athlete', 'Athlete Name', 'Alex Smith', true)}</div>
+            <div className="lsl-field lsl-field--row">{input('email', 'Email', 'you@email.com', true, 'email')}{input('phone', 'Phone', '(555) 555-5555', false, 'tel')}</div>
+            <div className="lsl-field lsl-field--row">{input('reqLocation', 'Requested Location', 'Park Ridge, Mundelein…')}{input('reqTime', 'Requested Time', 'e.g. 4:00 PM')}</div>
+            <div className="lsl-field lsl-field--row">{input('reqDate', 'Requested Date', 'e.g. July 25')}{input('age', 'Athlete Age / Grade', '7th grade')}</div>
+            <div className="lsl-field">{input('focus', 'Focus Areas / Goals', 'Shooting, ball handling, defense…')}</div>
             <div className="lsl-field">
-              <label>Focus Areas / Goals</label>
-              <input className="lsl-input" value={form.focus} onChange={set('focus')} placeholder="Shooting, ball handling, defense…" />
+              <label htmlFor="rq-notes">Additional Notes</label>
+              <textarea id="rq-notes" className="lsl-textarea" value={form.notes} onChange={set('notes')} placeholder="Anything Coach Gio should know" style={{ minHeight: 76 }}></textarea>
             </div>
-            <div className="lsl-field">
-              <label>Additional Notes</label>
-              <textarea className="lsl-textarea" value={form.notes} onChange={set('notes')} placeholder="Anything Coach Gio should know" style={{ minHeight: 76 }}></textarea>
-            </div>
+            <input type="text" name="website" value={form.website} onChange={set('website')} tabIndex="-1" autoComplete="off" aria-hidden="true" style={{ position: 'absolute', left: '-9999px' }} />
+            {errs.form && <p className="lsl-err" role="alert">{errs.form}</p>}
             <button type="submit" className="lsl-btn lsl-btn--primary" disabled={busy} style={{ width: '100%' }}>
               <i data-lucide="send"></i>{busy ? ' Sending…' : ' Request Booking'}
             </button>
           </form>
         ) : (
-          <div className="lsl-bkbody lsl-bkdone">
+          <div className="lsl-bkbody lsl-bkdone" role="status">
             <div className="lsl-formsuccess__ico"><i data-lucide="check"></i></div>
-            <h3 className="lsl-h3">Request received!</h3>
+            <h3 className="lsl-h3">Request received</h3>
             <p className="lsl-body lsl-body--sm" style={{ marginTop: 0 }}>
-              Thank you, <strong>{form.athlete}</strong>! Coach Gio will reach out to <strong>{form.email}</strong> to confirm your training session.
+              Thank you! This is a request, not a confirmed booking. Coach Gio will reach out to <strong>{form.email}</strong> to set up {form.athlete}&rsquo;s session.
             </p>
-            <div className="lsl-bkdone__row">
-              <button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={onClose}>Done</button>
-            </div>
+            <div className="lsl-bkdone__row"><button className="lsl-btn lsl-btn--primary lsl-btn--sm" onClick={onClose}>Done</button></div>
           </div>
         )}
       </div>
