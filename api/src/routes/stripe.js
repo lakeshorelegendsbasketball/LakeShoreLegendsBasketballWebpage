@@ -10,7 +10,15 @@ import { coachAlert } from '../lib/notify.js';
 
 export async function stripeWebhook(env, req) {
   const raw = await req.text();
-  const event = await verifyStripeSignature(raw, req.headers.get('Stripe-Signature'), env.STRIPE_WEBHOOK_SECRET);
+  let event;
+  try {
+    event = await verifyStripeSignature(raw, req.headers.get('Stripe-Signature'), env.STRIPE_WEBHOOK_SECRET);
+  } catch (e) {
+    // Reason only — never log the secret or the payload.
+    const sig = req.headers.get('Stripe-Signature') || '';
+    console.warn('stripe webhook rejected:', e.message, '| header parts:', sig.split(',').map((p) => p.split('=')[0]).join(','), '| secret prefix ok:', String(env.STRIPE_WEBHOOK_SECRET || '').startsWith('whsec_'), '| secret length:', String(env.STRIPE_WEBHOOK_SECRET || '').length);
+    throw e;
+  }
   const db = env.DB;
   const ins = await run(db, 'INSERT OR IGNORE INTO stripe_events (id, type, received_at) VALUES (?,?,?)', event.id, event.type, nowIso());
   if (!ins.meta.changes) return json({ received: true, duplicate: true });
