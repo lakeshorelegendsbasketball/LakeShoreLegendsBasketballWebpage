@@ -7,7 +7,7 @@ account_id = "43627e74618576acff8b7a613339f09e"
 [[d1_databases]]
 binding = "DB"
 database_name = "lsl-booking"
-database_id = "REPLACE_WITH_ID_FROM_wrangler_d1_create"
+database_id = "95179e95-4f7f-4088-9b5c-49de84ac1505"
 migrations_dir = "migrations"
 
 [triggers]
@@ -15,8 +15,9 @@ migrations_dir = "migrations"
 crons = ["*/10 * * * *"]
 
 [vars]
-ALLOWED_ORIGINS = "https://www.lakeshorelegendsbasketball.com,https://lakeshorelegendsbasketball.com"
-API_PUBLIC_URL = ""
+# localhost:8080 is only for pre-launch checks; remove it after launch.
+ALLOWED_ORIGINS = "https://www.lakeshorelegendsbasketball.com,https://lakeshorelegendsbasketball.com,http://localhost:8080"
+API_PUBLIC_URL = "https://lsl-booking-api.coachgiopag.workers.dev"
 # "live" sends to families. Anything else redirects every email to EMAIL_REDIRECT_TO.
 EMAIL_MODE = "redirect"
 EMAIL_FROM = ""
