@@ -162,6 +162,8 @@ async function refundEvent(env, db, charge) {
       SELECT ?,?,?,?,?,?,?,?,?,?,? WHERE NOT EXISTS (SELECT 1 FROM payments WHERE kind = 'refund' AND stripe_payment_intent = ? AND amount_cents = ?)`,
       uid(), pay.booking_id, 'stripe', 'refund', refunded, charge.currency, 'card', 'succeeded', pi, 'Cumulative refunded amount reported by Stripe', t, pi, refunded),
     stmt(db, 'UPDATE bookings SET payment_status = ?, updated_at = ? WHERE id = ?', status, t, pay.booking_id),
+    // A full refund settles the "refund to issue" reminder left by the cancel dialog.
+    ...(status === 'refunded' ? [stmt(db, "UPDATE bookings SET attention = NULL WHERE id = ? AND attention LIKE 'Refund to issue in Stripe%'", pay.booking_id)] : []),
     bookingEvent(db, pay.booking_id, 'stripe', 'refund', { amount_refunded: refunded, status }),
   ]);
   return status;
