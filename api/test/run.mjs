@@ -269,6 +269,12 @@ async function main() {
   r = await post('/api/admin/bookings/lgb1/attendance', { attendance: 'present' });
   ok(r.data.status === 'completed', 'attendance on a past session → completed');
 
+  section('Delete booking');
+  r = await call('DELETE', '/api/admin/bookings/lgb1', {});
+  ok(r.status === 400, 'delete requires typing DELETE');
+  r = await call('DELETE', '/api/admin/bookings/lgb1', { confirm: 'DELETE' });
+  ok(r.status === 200 && (await get('/api/admin/bookings/lgb1')).status === 404, 'booking deleted after confirmation');
+
   section('Requests: approve / offer / decline');
   r = await post('/api/public/requests', { form: family(50), request: { serviceName: 'Small Group', players: '6', day: 'Mondays', time: '4:00 PM', location: 'Park Ridge' } }, null);
   ok(r.status === 201 && r.data.booking.status === 'requested', 'training request stored');

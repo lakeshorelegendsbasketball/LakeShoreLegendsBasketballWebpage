@@ -924,7 +924,30 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       text: 'Email "' + n.kind.replace(/_/g, ' ') + '" → ' + (n.to_addr || 'no address') + ': ' + n.status + (n.detail ? ' — ' + n.detail : '')
     }))].sort((x, y) => x.at.localeCompare(y.at)).map((e, i) => /*#__PURE__*/React.createElement("li", {
       key: i
-    }, /*#__PURE__*/React.createElement("time", null, A.stamp(e.at)), /*#__PURE__*/React.createElement("span", null, e.text))))), sub === 'cancel' && /*#__PURE__*/React.createElement(CancelDialog, {
+    }, /*#__PURE__*/React.createElement("time", null, A.stamp(e.at)), /*#__PURE__*/React.createElement("span", null, e.text))))), app.isDirector && /*#__PURE__*/React.createElement("div", {
+      className: "lsl-a-row",
+      style: {
+        marginTop: 16,
+        paddingTop: 12,
+        borderTop: '1px dashed var(--line-soft)'
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "lsl-a-spacer"
+    }), /*#__PURE__*/React.createElement("button", {
+      className: "lsl-admin__del lsl-admin__del--text",
+      onClick: () => setSub('delete')
+    }, /*#__PURE__*/React.createElement(Icon, {
+      name: "trash-2"
+    }), " Delete booking\u2026")), sub === 'delete' && /*#__PURE__*/React.createElement(DeleteBookingDialog, {
+      b: b,
+      hasPayments: d.payments.length > 0,
+      onClose: () => setSub(null),
+      onDeleted: () => {
+        setSub(null);
+        onClose();
+        app.changed();
+      }
+    }), sub === 'cancel' && /*#__PURE__*/React.createElement(CancelDialog, {
       b: b,
       onClose: () => setSub(null),
       onDone: app.changed
@@ -1210,24 +1233,17 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
     }, "Update")));
   }
 
-  /* ---------------- Cancel ---------------- */
-  function CancelDialog(_ref18) {
+  /* ---------------- Delete (two confirmations) ---------------- */
+  function DeleteBookingDialog(_ref18) {
     var b = _ref18.b,
+      hasPayments = _ref18.hasPayments,
       onClose = _ref18.onClose,
-      onDone = _ref18.onDone;
-    var app = A.useApp();
+      onDeleted = _ref18.onDeleted;
     var toast = A.useToast();
-    var q = A.useFetch('/api/admin/bookings/' + b.id + '/cancel');
-    var _useState25 = useState({
-        reopen: true,
-        notify: false,
-        payment_outcome: 'unchanged',
-        reason: '',
-        override_policy: false
-      }),
+    var _useState25 = useState(1),
       _useState26 = _slicedToArray(_useState25, 2),
-      v = _useState26[0],
-      setV = _useState26[1];
+      step = _useState26[0],
+      setStep = _useState26[1];
     var _useState27 = useState(false),
       _useState28 = _slicedToArray(_useState27, 2),
       busy = _useState28[0],
@@ -1236,11 +1252,115 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       _useState30 = _slicedToArray(_useState29, 2),
       err = _useState30[0],
       setErr = _useState30[1];
+    var holdsTime = b.slot_id && ['awaiting_payment', 'confirmed', 'completed'].includes(b.status);
+    var del = /*#__PURE__*/function () {
+      var _ref19 = _asyncToGenerator(function* () {
+        setBusy(true);
+        setErr('');
+        try {
+          yield A.api('DELETE', '/api/admin/bookings/' + b.id, {
+            confirm: 'DELETE'
+          });
+          toast('Booking deleted');
+          onDeleted();
+        } catch (e) {
+          setErr(e.message);
+        } finally {
+          setBusy(false);
+        }
+      });
+      return function del() {
+        return _ref19.apply(this, arguments);
+      };
+    }();
+    var what = b.form.athlete + ' — ' + (b.snapshot.service_name || 'booking') + (b.date ? ' · ' + LSL.fmtDate(b.date) + ' ' + LSL.fmtTime(b.time) : '');
+    if (step === 1) {
+      return /*#__PURE__*/React.createElement(Dialog, {
+        title: "Delete this booking?",
+        onClose: onClose,
+        footer: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+          className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
+          onClick: onClose,
+          "data-autofocus": true
+        }, "Keep booking"), /*#__PURE__*/React.createElement("button", {
+          className: "lsl-btn lsl-btn--danger lsl-btn--sm",
+          onClick: () => setStep(2)
+        }, "Continue"))
+      }, /*#__PURE__*/React.createElement("p", {
+        className: "lsl-body lsl-body--sm",
+        style: {
+          marginTop: 0
+        }
+      }, /*#__PURE__*/React.createElement("strong", null, what)), /*#__PURE__*/React.createElement(A.Banner, {
+        tone: "warn"
+      }, "This permanently removes the booking and its history from the dashboard. It can't be undone."), /*#__PURE__*/React.createElement("ul", {
+        className: "lsl-a-list"
+      }, holdsTime && /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(Icon, {
+        name: "calendar"
+      }), " Its time slot is reopened for other families."), hasPayments && /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(Icon, {
+        name: "receipt"
+      }), " Payment records are kept for your bookkeeping. Nothing is refunded."), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(Icon, {
+        name: "mail-x"
+      }), " The family is not notified."), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement(Icon, {
+        name: "archive"
+      }), " A copy is saved in the internal audit log.")), /*#__PURE__*/React.createElement("p", {
+        className: "lsl-a-muted lsl-a-small"
+      }, "If the session just isn't happening, ", /*#__PURE__*/React.createElement("strong", null, "Cancel"), " is usually better \u2014 it keeps the record."));
+    }
+    return /*#__PURE__*/React.createElement(Dialog, {
+      title: "Are you absolutely sure?",
+      onClose: onClose,
+      busy: busy,
+      footer: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("button", {
+        className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
+        onClick: onClose,
+        "data-autofocus": true
+      }, "No, keep it"), /*#__PURE__*/React.createElement("button", {
+        className: "lsl-btn lsl-btn--danger lsl-btn--sm",
+        onClick: del,
+        disabled: busy
+      }, busy ? 'Deleting…' : 'Yes, delete forever'))
+    }, /*#__PURE__*/React.createElement("p", {
+      className: "lsl-body lsl-body--sm",
+      style: {
+        marginTop: 0
+      }
+    }, /*#__PURE__*/React.createElement("strong", null, what), " will be permanently deleted. This can't be undone."), err && /*#__PURE__*/React.createElement(A.Banner, {
+      tone: "danger"
+    }, err));
+  }
+
+  /* ---------------- Cancel ---------------- */
+  function CancelDialog(_ref20) {
+    var b = _ref20.b,
+      onClose = _ref20.onClose,
+      onDone = _ref20.onDone;
+    var app = A.useApp();
+    var toast = A.useToast();
+    var q = A.useFetch('/api/admin/bookings/' + b.id + '/cancel');
+    var _useState31 = useState({
+        reopen: true,
+        notify: false,
+        payment_outcome: 'unchanged',
+        reason: '',
+        override_policy: false
+      }),
+      _useState32 = _slicedToArray(_useState31, 2),
+      v = _useState32[0],
+      setV = _useState32[1];
+    var _useState33 = useState(false),
+      _useState34 = _slicedToArray(_useState33, 2),
+      busy = _useState34[0],
+      setBusy = _useState34[1];
+    var _useState35 = useState(''),
+      _useState36 = _slicedToArray(_useState35, 2),
+      err = _useState36[0],
+      setErr = _useState36[1];
     var info = q.data;
     var emailOk = app.integrations ? app.integrations.email.configured : null;
     var paid = ['paid', 'partially_refunded'].includes(b.payment_status);
     var submit = /*#__PURE__*/function () {
-      var _ref19 = _asyncToGenerator(function* () {
+      var _ref21 = _asyncToGenerator(function* () {
         setBusy(true);
         setErr('');
         try {
@@ -1255,7 +1375,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         }
       });
       return function submit() {
-        return _ref19.apply(this, arguments);
+        return _ref21.apply(this, arguments);
       };
     }();
     return /*#__PURE__*/React.createElement(Dialog, {
@@ -1421,10 +1541,10 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
   }
 
   /* ---------------- Slot picker for reschedule / approve ---------------- */
-  function SlotPicker(_ref20) {
-    var value = _ref20.value,
-      _onChange = _ref20.onChange,
-      excludeId = _ref20.excludeId;
+  function SlotPicker(_ref22) {
+    var value = _ref22.value,
+      _onChange = _ref22.onChange,
+      excludeId = _ref22.excludeId;
     var app = A.useApp();
     var to = (() => {
       var _app$today$split$map = app.today.split('-').map(Number),
@@ -1435,14 +1555,14 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       return new Date(Date.UTC(y, m - 1, d + 45)).toISOString().slice(0, 10);
     })();
     var q = A.useFetch('/api/admin/schedule?from=' + app.today + '&to=' + to);
-    var _useState31 = useState({
+    var _useState37 = useState({
         date: '',
         time: '',
         loc_id: (app.locations.find(l => l.active) || {}).id || ''
       }),
-      _useState32 = _slicedToArray(_useState31, 2),
-      custom = _useState32[0],
-      setCustom = _useState32[1];
+      _useState38 = _slicedToArray(_useState37, 2),
+      custom = _useState38[0],
+      setCustom = _useState38[1];
     var open = q.data ? q.data.slots.filter(s => s.status === 'open' && s.id !== excludeId && !s.conflicts.some(c => c.severity === 'hard')) : [];
     var mode = value && value.slot_id ? 'slot' : value && value.date ? 'custom' : value && value.mode || 'slot';
     return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Seg, {
@@ -1533,40 +1653,40 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
     time: t.time,
     loc_id: t.loc_id
   } : {};
-  function RescheduleDialog(_ref21) {
-    var b = _ref21.b,
-      onClose = _ref21.onClose,
-      onDone = _ref21.onDone;
+  function RescheduleDialog(_ref23) {
+    var b = _ref23.b,
+      onClose = _ref23.onClose,
+      onDone = _ref23.onDone;
     var app = A.useApp();
     var toast = A.useToast();
-    var _useState33 = useState(null),
-      _useState34 = _slicedToArray(_useState33, 2),
-      t = _useState34[0],
-      setT = _useState34[1];
-    var _useState35 = useState(true),
-      _useState36 = _slicedToArray(_useState35, 2),
-      notify = _useState36[0],
-      setNotify = _useState36[1];
-    var _useState37 = useState(true),
-      _useState38 = _slicedToArray(_useState37, 2),
-      reopen = _useState38[0],
-      setReopen = _useState38[1];
-    var _useState39 = useState(''),
+    var _useState39 = useState(null),
       _useState40 = _slicedToArray(_useState39, 2),
-      reason = _useState40[0],
-      setReason = _useState40[1];
-    var _useState41 = useState(false),
+      t = _useState40[0],
+      setT = _useState40[1];
+    var _useState41 = useState(true),
       _useState42 = _slicedToArray(_useState41, 2),
-      busy = _useState42[0],
-      setBusy = _useState42[1];
-    var _useState43 = useState(''),
+      notify = _useState42[0],
+      setNotify = _useState42[1];
+    var _useState43 = useState(true),
       _useState44 = _slicedToArray(_useState43, 2),
-      err = _useState44[0],
-      setErr = _useState44[1];
+      reopen = _useState44[0],
+      setReopen = _useState44[1];
+    var _useState45 = useState(''),
+      _useState46 = _slicedToArray(_useState45, 2),
+      reason = _useState46[0],
+      setReason = _useState46[1];
+    var _useState47 = useState(false),
+      _useState48 = _slicedToArray(_useState47, 2),
+      busy = _useState48[0],
+      setBusy = _useState48[1];
+    var _useState49 = useState(''),
+      _useState50 = _slicedToArray(_useState49, 2),
+      err = _useState50[0],
+      setErr = _useState50[1];
     var hrs = b.date ? (LSL.localToInstant(b.date, b.time, app.settings.timezone) - Date.now()) / 3600000 : null;
     var late = hrs != null && hrs < app.settings.cancellation.rescheduleHours;
     var submit = /*#__PURE__*/function () {
-      var _ref22 = _asyncToGenerator(function* () {
+      var _ref24 = _asyncToGenerator(function* () {
         setBusy(true);
         setErr('');
         try {
@@ -1585,7 +1705,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         }
       });
       return function submit() {
-        return _ref22.apply(this, arguments);
+        return _ref24.apply(this, arguments);
       };
     }();
     return /*#__PURE__*/React.createElement(Dialog, {
@@ -1641,47 +1761,47 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       tone: "danger"
     }, err));
   }
-  function ApproveDialog(_ref23) {
-    var b = _ref23.b,
-      onClose = _ref23.onClose,
-      onDone = _ref23.onDone;
+  function ApproveDialog(_ref25) {
+    var b = _ref25.b,
+      onClose = _ref25.onClose,
+      onDone = _ref25.onDone;
     var app = A.useApp();
     var toast = A.useToast();
     var r0 = b.request || {};
-    var _useState45 = useState(r0.slot_id ? {
+    var _useState51 = useState(r0.slot_id ? {
         mode: 'slot',
         slot_id: r0.slot_id
       } : null),
-      _useState46 = _slicedToArray(_useState45, 2),
-      t = _useState46[0],
-      setT = _useState46[1];
-    var _useState47 = useState(b.type_id || (app.types.find(x => x.active) || {}).id),
-      _useState48 = _slicedToArray(_useState47, 2),
-      type = _useState48[0],
-      setType = _useState48[1];
-    var _useState49 = useState(true),
-      _useState50 = _slicedToArray(_useState49, 2),
-      requirePay = _useState50[0],
-      setRequirePay = _useState50[1];
-    var _useState51 = useState(true),
       _useState52 = _slicedToArray(_useState51, 2),
-      notify = _useState52[0],
-      setNotify = _useState52[1];
-    var _useState53 = useState(false),
+      t = _useState52[0],
+      setT = _useState52[1];
+    var _useState53 = useState(b.type_id || (app.types.find(x => x.active) || {}).id),
       _useState54 = _slicedToArray(_useState53, 2),
-      busy = _useState54[0],
-      setBusy = _useState54[1];
-    var _useState55 = useState(''),
+      type = _useState54[0],
+      setType = _useState54[1];
+    var _useState55 = useState(true),
       _useState56 = _slicedToArray(_useState55, 2),
-      err = _useState56[0],
-      setErr = _useState56[1];
-    var _useState57 = useState(null),
+      requirePay = _useState56[0],
+      setRequirePay = _useState56[1];
+    var _useState57 = useState(true),
       _useState58 = _slicedToArray(_useState57, 2),
-      link = _useState58[0],
-      setLink = _useState58[1];
+      notify = _useState58[0],
+      setNotify = _useState58[1];
+    var _useState59 = useState(false),
+      _useState60 = _slicedToArray(_useState59, 2),
+      busy = _useState60[0],
+      setBusy = _useState60[1];
+    var _useState61 = useState(''),
+      _useState62 = _slicedToArray(_useState61, 2),
+      err = _useState62[0],
+      setErr = _useState62[1];
+    var _useState63 = useState(null),
+      _useState64 = _slicedToArray(_useState63, 2),
+      link = _useState64[0],
+      setLink = _useState64[1];
     var ty = app.typeById(type);
     var submit = /*#__PURE__*/function () {
-      var _ref24 = _asyncToGenerator(function* () {
+      var _ref26 = _asyncToGenerator(function* () {
         setBusy(true);
         setErr('');
         try {
@@ -1700,7 +1820,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         }
       });
       return function submit() {
-        return _ref24.apply(this, arguments);
+        return _ref26.apply(this, arguments);
       };
     }();
     if (link) {
@@ -1778,35 +1898,35 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       tone: "danger"
     }, err));
   }
-  function OfferDialog(_ref25) {
-    var b = _ref25.b,
-      onClose = _ref25.onClose,
-      onDone = _ref25.onDone;
+  function OfferDialog(_ref27) {
+    var b = _ref27.b,
+      onClose = _ref27.onClose,
+      onDone = _ref27.onDone;
     var app = A.useApp();
     var toast = A.useToast();
     var loc0 = (app.locations.find(l => l.active) || {}).id;
-    var _useState59 = useState([{
+    var _useState65 = useState([{
         date: '',
         time: '',
         loc_id: loc0
       }]),
-      _useState60 = _slicedToArray(_useState59, 2),
-      opts = _useState60[0],
-      setOpts = _useState60[1];
-    var _useState61 = useState(''),
-      _useState62 = _slicedToArray(_useState61, 2),
-      message = _useState62[0],
-      setMessage = _useState62[1];
-    var _useState63 = useState(false),
-      _useState64 = _slicedToArray(_useState63, 2),
-      busy = _useState64[0],
-      setBusy = _useState64[1];
-    var _useState65 = useState(''),
       _useState66 = _slicedToArray(_useState65, 2),
-      err = _useState66[0],
-      setErr = _useState66[1];
+      opts = _useState66[0],
+      setOpts = _useState66[1];
+    var _useState67 = useState(''),
+      _useState68 = _slicedToArray(_useState67, 2),
+      message = _useState68[0],
+      setMessage = _useState68[1];
+    var _useState69 = useState(false),
+      _useState70 = _slicedToArray(_useState69, 2),
+      busy = _useState70[0],
+      setBusy = _useState70[1];
+    var _useState71 = useState(''),
+      _useState72 = _slicedToArray(_useState71, 2),
+      err = _useState72[0],
+      setErr = _useState72[1];
     var submit = /*#__PURE__*/function () {
-      var _ref26 = _asyncToGenerator(function* () {
+      var _ref28 = _asyncToGenerator(function* () {
         setBusy(true);
         setErr('');
         try {
@@ -1824,7 +1944,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         }
       });
       return function submit() {
-        return _ref26.apply(this, arguments);
+        return _ref28.apply(this, arguments);
       };
     }();
     var upd = (i, k, v) => setOpts(opts.map((o, j) => j === i ? _objectSpread(_objectSpread({}, o), {}, {
@@ -1901,25 +2021,25 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       tone: "danger"
     }, err));
   }
-  function DeclineDialog(_ref27) {
-    var b = _ref27.b,
-      onClose = _ref27.onClose,
-      onDone = _ref27.onDone;
+  function DeclineDialog(_ref29) {
+    var b = _ref29.b,
+      onClose = _ref29.onClose,
+      onDone = _ref29.onDone;
     var toast = A.useToast();
-    var _useState67 = useState(''),
-      _useState68 = _slicedToArray(_useState67, 2),
-      reason = _useState68[0],
-      setReason = _useState68[1];
-    var _useState69 = useState(true),
-      _useState70 = _slicedToArray(_useState69, 2),
-      notify = _useState70[0],
-      setNotify = _useState70[1];
-    var _useState71 = useState(false),
-      _useState72 = _slicedToArray(_useState71, 2),
-      busy = _useState72[0],
-      setBusy = _useState72[1];
+    var _useState73 = useState(''),
+      _useState74 = _slicedToArray(_useState73, 2),
+      reason = _useState74[0],
+      setReason = _useState74[1];
+    var _useState75 = useState(true),
+      _useState76 = _slicedToArray(_useState75, 2),
+      notify = _useState76[0],
+      setNotify = _useState76[1];
+    var _useState77 = useState(false),
+      _useState78 = _slicedToArray(_useState77, 2),
+      busy = _useState78[0],
+      setBusy = _useState78[1];
     var submit = /*#__PURE__*/function () {
-      var _ref28 = _asyncToGenerator(function* () {
+      var _ref30 = _asyncToGenerator(function* () {
         setBusy(true);
         try {
           var r = yield A.api('POST', '/api/admin/bookings/' + b.id + '/decline', {
@@ -1936,7 +2056,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         }
       });
       return function submit() {
-        return _ref28.apply(this, arguments);
+        return _ref30.apply(this, arguments);
       };
     }();
     return /*#__PURE__*/React.createElement(Dialog, {
@@ -1969,36 +2089,36 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
   }
 
   /* ---------------- Family drawer ---------------- */
-  function FamilyDrawer(_ref29) {
-    var id = _ref29.id,
-      onClose = _ref29.onClose;
+  function FamilyDrawer(_ref31) {
+    var id = _ref31.id,
+      onClose = _ref31.onClose;
     var app = A.useApp();
     var toast = A.useToast();
     var q = A.useFetch('/api/admin/families/' + id, [app.version]);
-    var _useState73 = useState(null),
-      _useState74 = _slicedToArray(_useState73, 2),
-      fam = _useState74[0],
-      setFam = _useState74[1];
+    var _useState79 = useState(null),
+      _useState80 = _slicedToArray(_useState79, 2),
+      fam = _useState80[0],
+      setFam = _useState80[1];
     var _A$useAction7 = A.useAction(),
       _A$useAction8 = _slicedToArray(_A$useAction7, 2),
       busy = _A$useAction8[0],
       run = _A$useAction8[1];
-    var _useState75 = useState({
+    var _useState81 = useState({
         package_id: '',
         amount: '',
         method: 'venmo'
       }),
-      _useState76 = _slicedToArray(_useState75, 2),
-      grant = _useState76[0],
-      setGrant = _useState76[1];
-    var _useState77 = useState(''),
-      _useState78 = _slicedToArray(_useState77, 2),
-      mergeQ = _useState78[0],
-      setMergeQ = _useState78[1];
-    var _useState79 = useState([]),
-      _useState80 = _slicedToArray(_useState79, 2),
-      mergeHits = _useState80[0],
-      setMergeHits = _useState80[1];
+      _useState82 = _slicedToArray(_useState81, 2),
+      grant = _useState82[0],
+      setGrant = _useState82[1];
+    var _useState83 = useState(''),
+      _useState84 = _slicedToArray(_useState83, 2),
+      mergeQ = _useState84[0],
+      setMergeQ = _useState84[1];
+    var _useState85 = useState([]),
+      _useState86 = _slicedToArray(_useState85, 2),
+      mergeHits = _useState86[0],
+      setMergeHits = _useState86[1];
     var pk = A.useFetch(app.isDirector ? '/api/admin/packages' : null);
     var d = q.data;
     useEffect(() => {
@@ -2024,7 +2144,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
     }, {});
     var saveFam = () => run(() => A.api('PATCH', '/api/admin/families/' + id, fam), 'Family saved').then(app.changed);
     var searchMerge = /*#__PURE__*/function () {
-      var _ref30 = _asyncToGenerator(function* (s) {
+      var _ref32 = _asyncToGenerator(function* (s) {
         setMergeQ(s);
         if (s.trim().length < 2) {
           setMergeHits([]);
@@ -2036,7 +2156,7 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         } catch (e) {/* ignore */}
       });
       return function searchMerge(_x2) {
-        return _ref30.apply(this, arguments);
+        return _ref32.apply(this, arguments);
       };
     }();
     return /*#__PURE__*/React.createElement(Dialog, {
@@ -2197,10 +2317,10 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       onChange: e => setGrant(_objectSpread(_objectSpread({}, grant), {}, {
         method: e.target.value
       }))
-    }, METHODS.map(_ref31 => {
-      var _ref32 = _slicedToArray(_ref31, 2),
-        k = _ref32[0],
-        l = _ref32[1];
+    }, METHODS.map(_ref33 => {
+      var _ref34 = _slicedToArray(_ref33, 2),
+        k = _ref34[0],
+        l = _ref34[1];
       return /*#__PURE__*/React.createElement("option", {
         key: k,
         value: k
@@ -2245,20 +2365,20 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       }
     }, "Merge into this family")))))));
   }
-  function AthleteRow(_ref33) {
-    var a = _ref33.a,
-      others = _ref33.others,
-      bookings = _ref33.bookings;
+  function AthleteRow(_ref35) {
+    var a = _ref35.a,
+      others = _ref35.others,
+      bookings = _ref35.bookings;
     var app = A.useApp();
-    var _useState81 = useState({
+    var _useState87 = useState({
         name: a.name,
         grade: a.grade || '',
         goals: a.goals || '',
         notes_private: a.notes_private || ''
       }),
-      _useState82 = _slicedToArray(_useState81, 2),
-      v = _useState82[0],
-      setV = _useState82[1];
+      _useState88 = _slicedToArray(_useState87, 2),
+      v = _useState88[0],
+      setV = _useState88[1];
     var _A$useAction9 = A.useAction(),
       _A$useAction0 = _slicedToArray(_A$useAction9, 2),
       busy = _A$useAction0[0],

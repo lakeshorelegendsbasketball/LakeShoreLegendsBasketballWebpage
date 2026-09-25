@@ -50,6 +50,7 @@ const ADMIN = [
   ['GET', /^\/api\/admin\/bookings$/, (e, r, u) => bk.listBookings(e, r, u)],
   ['GET', /^\/api\/admin\/bookings\/(\w+)$/, (e, r, u, m) => bk.getBooking(e, r, u, m[1])],
   ['PATCH', /^\/api\/admin\/bookings\/(\w+)$/, (e, r, u, m) => bk.patchBooking(e, r, u, m[1])],
+  ['DELETE', /^\/api\/admin\/bookings\/(\w+)$/, (e, r, u, m) => bk.deleteBooking(e, r, u, m[1])],
   ['POST', /^\/api\/admin\/bookings\/(\w+)\/attendance$/, (e, r, u, m) => bk.recordAttendance(e, r, u, m[1])],
   ['POST', /^\/api\/admin\/bookings\/(\w+)\/payments$/, (e, r, u, m) => bk.recordPayment(e, r, u, m[1])],
   ['POST', /^\/api\/admin\/bookings\/(\w+)\/complimentary$/, (e, r, u, m) => bk.setComplimentary(e, r, u, m[1])],

@@ -380,6 +380,32 @@ export async function declineRequest(env, req, user, id) {
   return json({ ok: true, notice });
 }
 
+/** Permanent removal (director only). The client asks twice; the server also
+    requires the typed word DELETE. The opening is released, payment records are
+    kept for bookkeeping, and a full copy goes to the audit log. */
+export async function deleteBooking(env, req, user, id) {
+  const db = env.DB;
+  requireDirector(user);
+  const settings = await getSettings(db);
+  const bk = await loadBooking(db, user, id);
+  const b = await readJson(req);
+  assert(b.confirm === 'DELETE', 400, 'Type DELETE to confirm.');
+  const credit = await first(db, 'SELECT id FROM credit_ledger WHERE idem_key = ?', 'redeem:' + id);
+  assert(!credit, 409, 'A package credit is applied to this booking. Cancel it with "Restore the package credit" first, then delete.');
+  if (bk.slot_id) {
+    const slot = await first(db, 'SELECT * FROM slots WHERE id = ?', bk.slot_id);
+    if (slot && slot.booking_id === id) await releaseSlot(db, settings, bk.slot_id, { reopen: b.reopen !== false });
+  }
+  const events = await all(db, 'SELECT * FROM booking_events WHERE booking_id = ?', id);
+  await audit(db, user.id, 'delete_booking', 'booking', id, { booking: bk, events });
+  await db.batch([
+    stmt(db, 'DELETE FROM booking_events WHERE booking_id = ?', id),
+    stmt(db, 'DELETE FROM notifications WHERE booking_id = ?', id),
+    stmt(db, 'DELETE FROM bookings WHERE id = ?', id),
+  ]);
+  return json({ ok: true });
+}
+
 /* ---- Package credits ---- */
 export async function familyPackages(db, familyId) {
   const rows = await all(db, 'SELECT fp.*, (SELECT COALESCE(SUM(delta),0) FROM credit_ledger l WHERE l.family_package_id = fp.id) AS balance FROM family_packages fp WHERE fp.family_id = ? ORDER BY fp.created_at DESC', familyId);

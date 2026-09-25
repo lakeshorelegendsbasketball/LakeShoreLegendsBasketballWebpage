@@ -332,6 +332,13 @@
           </ul>
         </Expand>
 
+        {app.isDirector && (
+          <div className="lsl-a-row" style={{ marginTop: 16, paddingTop: 12, borderTop: '1px dashed var(--line-soft)' }}>
+            <span className="lsl-a-spacer" />
+            <button className="lsl-admin__del lsl-admin__del--text" onClick={() => setSub('delete')}><Icon name="trash-2" /> Delete booking…</button>
+          </div>
+        )}
+        {sub === 'delete' && <DeleteBookingDialog b={b} hasPayments={d.payments.length > 0} onClose={() => setSub(null)} onDeleted={() => { setSub(null); onClose(); app.changed(); }} />}
         {sub === 'cancel' && <CancelDialog b={b} onClose={() => setSub(null)} onDone={app.changed} />}
         {sub === 'reschedule' && <RescheduleDialog b={b} onClose={() => setSub(null)} onDone={app.changed} />}
         {sub === 'approve' && <ApproveDialog b={b} onClose={() => setSub(null)} onDone={app.changed} />}
@@ -439,6 +446,44 @@
             onClick={() => run(() => A.api('PATCH', '/api/admin/bookings/' + b.id, { payment_status: to, payment_reason: reason }), 'Payment status updated').then(onChanged)}>Update</button>
         </div>
       </Expand>
+    );
+  }
+
+  /* ---------------- Delete (two confirmations) ---------------- */
+  function DeleteBookingDialog({ b, hasPayments, onClose, onDeleted }) {
+    const toast = A.useToast();
+    const [step, setStep] = useState(1);
+    const [busy, setBusy] = useState(false);
+    const [err, setErr] = useState('');
+    const holdsTime = b.slot_id && ['awaiting_payment', 'confirmed', 'completed'].includes(b.status);
+    const del = async () => {
+      setBusy(true); setErr('');
+      try { await A.api('DELETE', '/api/admin/bookings/' + b.id, { confirm: 'DELETE' }); toast('Booking deleted'); onDeleted(); }
+      catch (e) { setErr(e.message); } finally { setBusy(false); }
+    };
+    const what = b.form.athlete + ' — ' + (b.snapshot.service_name || 'booking') + (b.date ? ' · ' + LSL.fmtDate(b.date) + ' ' + LSL.fmtTime(b.time) : '');
+    if (step === 1) {
+      return (
+        <Dialog title="Delete this booking?" onClose={onClose}
+          footer={<><button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={onClose} data-autofocus>Keep booking</button><button className="lsl-btn lsl-btn--danger lsl-btn--sm" onClick={() => setStep(2)}>Continue</button></>}>
+          <p className="lsl-body lsl-body--sm" style={{ marginTop: 0 }}><strong>{what}</strong></p>
+          <A.Banner tone="warn">This permanently removes the booking and its history from the dashboard. It can't be undone.</A.Banner>
+          <ul className="lsl-a-list">
+            {holdsTime && <li><Icon name="calendar" /> Its time slot is reopened for other families.</li>}
+            {hasPayments && <li><Icon name="receipt" /> Payment records are kept for your bookkeeping. Nothing is refunded.</li>}
+            <li><Icon name="mail-x" /> The family is not notified.</li>
+            <li><Icon name="archive" /> A copy is saved in the internal audit log.</li>
+          </ul>
+          <p className="lsl-a-muted lsl-a-small">If the session just isn't happening, <strong>Cancel</strong> is usually better — it keeps the record.</p>
+        </Dialog>
+      );
+    }
+    return (
+      <Dialog title="Are you absolutely sure?" onClose={onClose} busy={busy}
+        footer={<><button className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={onClose} data-autofocus>No, keep it</button><button className="lsl-btn lsl-btn--danger lsl-btn--sm" onClick={del} disabled={busy}>{busy ? 'Deleting…' : 'Yes, delete forever'}</button></>}>
+        <p className="lsl-body lsl-body--sm" style={{ marginTop: 0 }}><strong>{what}</strong> will be permanently deleted. This can't be undone.</p>
+        {err && <A.Banner tone="danger">{err}</A.Banner>}
+      </Dialog>
     );
   }
 
