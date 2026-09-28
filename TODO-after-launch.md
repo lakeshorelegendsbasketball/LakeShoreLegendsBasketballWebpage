@@ -23,11 +23,9 @@ Until this is done, the dashboard records confirmations and reminders as "not se
 - [ ] After a family pays, the booking turns **Confirmed + Paid** on its own and they land back on your training page. If it stays "Awaiting payment", ask Claude to check the server log.
 - [ ] For a group session, the booking shows "1 of N athletes paid" until every family has paid with the shared link (tick **Paid** by hand for cash or Venmo).
 
-## 4. Later (optional)
-- [ ] In a week or two, deactivate the four **old** Payment Links in Stripe (the ones ending …Jq00–Jq03). The new ones end …Jq04–Jq07.
-
 ## Done
 - [x] Stripe post-payment page: new live Payment Links send families back to training.html (9/28).
 - [x] Group sessions priced per athlete; each family pays its own share (9/28).
 - [x] Old JSONbin data deleted / key no longer works.
 - [x] Old bookings imported (marked Paid).
+- [x] Old Payment Links (…Jq00–Jq03) deactivated in Stripe (9/28).
