@@ -55,7 +55,7 @@ function resetDb() {
   const tables = ['auth_sessions', 'audit_log', 'booking_events', 'notifications', 'payments', 'stripe_events', 'credit_ledger', 'family_packages', 'packages',
     'bookings', 'athletes', 'families', 'slots', 'availability_series', 'blocks', 'settings', 'users', 'session_types', 'locations'];
   sql(tables.map((t) => `DELETE FROM ${t}`).join('; '));
-  execSync('npx wrangler d1 execute lsl-booking-dev --env dev --local --file migrations/0002_seed_defaults.sql', { cwd: new URL('..', import.meta.url), stdio: 'ignore' });
+  for (const f of ['0002_seed_defaults.sql', '0003_group_per_athlete.sql']) execSync('npx wrangler d1 execute lsl-booking-dev --env dev --local --file migrations/' + f, { cwd: new URL('..', import.meta.url), stdio: 'ignore' });
 }
 
 async function main() {
@@ -268,6 +268,22 @@ async function main() {
   ok(bkd.data.payments[0].recorded_by && bkd.data.events.some((e) => e.type === 'offline_payment'), 'offline payment has audit trail');
   r = await post('/api/admin/bookings/lgb1/attendance', { attendance: 'present' });
   ok(r.data.status === 'completed', 'attendance on a past session → completed');
+
+  section('Group session: each family pays for its own athlete');
+  r = await post('/api/admin/slots', { date: D(10), time: '11:00', loc_id: 'pr' });
+  cat = await get('/api/public/catalog', null);
+  const gs = cat.data.slots.find((s) => s.date === D(10) && s.time === '11:00');
+  const gb = await post('/api/public/bookings', { slotId: gs.id, typeId: 'p2', players: '2', form: family(70), roster: [{ name: 'Friend Kid' }], acks: ['policy'] }, null);
+  ok(gb.status === 201 && gb.data.shareUrl && gb.data.shareUrl.includes('client_reference_id=' + gb.data.booking.id), 'group booking returns a share link tied to the booking', gb.data);
+  r = await webhook(session('cs_grp1', gb.data.booking.id, { amount_total: 5999 }));
+  bkd = await get('/api/admin/bookings/' + gb.data.booking.id);
+  ok(bkd.data.booking.status === 'confirmed' && bkd.data.booking.payment_status === 'pending' && /1 of 2 athletes paid/.test(bkd.data.booking.attention), 'first family pays → confirmed, 1 of 2 paid', bkd.data.booking);
+  await webhook(session('cs_grp1', gb.data.booking.id, { amount_total: 5999 }));
+  bkd = await get('/api/admin/bookings/' + gb.data.booking.id);
+  ok(bkd.data.booking.payment_status === 'pending', 'same payment redelivered does not count twice');
+  await webhook(session('cs_grp2', gb.data.booking.id, { amount_total: 5999 }));
+  bkd = await get('/api/admin/bookings/' + gb.data.booking.id);
+  ok(bkd.data.booking.payment_status === 'paid' && !bkd.data.booking.attention && bkd.data.booking.roster.every((m) => m.paid), 'second family pays → Paid, all athletes ticked');
 
   section('Delete booking');
   r = await call('DELETE', '/api/admin/bookings/lgb1', {});

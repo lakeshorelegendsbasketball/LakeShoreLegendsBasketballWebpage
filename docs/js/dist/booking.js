@@ -588,6 +588,8 @@ function BookingForm(_ref3) {
             primary: true
           }, ...members],
           checkoutUrl: res.checkoutUrl,
+          shareUrl: res.shareUrl,
+          athletes: res.athletes,
           next: res.next,
           duration: type.duration
         });
@@ -863,11 +865,44 @@ function BookingForm(_ref3) {
     }
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "credit-card"
-  }), " Complete Payment Now") : /*#__PURE__*/React.createElement("div", {
+  }), " ", result.shareUrl ? 'Pay for My Athlete' : 'Complete Payment Now') : /*#__PURE__*/React.createElement("div", {
     className: "lsl-bknote"
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "info"
-  }), /*#__PURE__*/React.createElement("span", null, "Coach Gio will email a secure payment link to ", form.email, ".")), result.hold_expires_at && /*#__PURE__*/React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("span", null, "Coach Gio will email a secure payment link to ", form.email, ".")), result.shareUrl && /*#__PURE__*/React.createElement("div", {
+    className: "lsl-bknote",
+    style: {
+      marginBottom: 12,
+      display: 'block'
+    }
+  }, /*#__PURE__*/React.createElement("span", null, "Each family pays for its own athlete. ", /*#__PURE__*/React.createElement("strong", null, "Send this link to the other ", result.athletes - 1, " ", result.athletes - 1 === 1 ? 'family' : 'families'), " in your group \u2014 their payments are added to this booking automatically:"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      display: 'flex',
+      gap: 8,
+      marginTop: 8,
+      flexWrap: 'wrap',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("input", {
+    className: "lsl-input",
+    readOnly: true,
+    value: result.shareUrl,
+    onFocus: e => e.target.select(),
+    "aria-label": "Payment link for the other families",
+    style: {
+      flex: 1,
+      minWidth: 180,
+      fontSize: 13
+    }
+  }), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    className: "lsl-btn lsl-btn--ghost lsl-btn--sm",
+    onClick: () => {
+      try {
+        navigator.clipboard.writeText(result.shareUrl);
+      } catch (e) {/* select-and-copy fallback */}
+    }
+  }, "Copy link"))), result.hold_expires_at && /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
     style: {
       color: 'var(--fg2)'

@@ -26,6 +26,6 @@ For each: open it → **Edit** → **After payment** → **Don't show confirmati
 (The link address itself doesn't change, so nothing in the dashboard needs updating.)
 
 ## Also still open
-- [ ] Add openings in the dashboard (**Availability** → Recurring / Bulk add).
+- [ ] Add openings in the dashboard (**Availability** → Recurring / Bulk add) — planned for **Oct 6**. Until then the booking page shows no dates; families can still use **Request Training**.
 - [x] Delete the old bin or regenerate the key at **jsonbin.io** (the old key is still in GitHub history).
 - [ ] Watch the first real booking turn **Confirmed + Paid** on its own.

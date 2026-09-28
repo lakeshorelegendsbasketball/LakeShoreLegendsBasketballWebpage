@@ -850,7 +850,35 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
         payer_mode: v
       })),
       options: [['one', 'One person pays for the group'], ['each', 'Each athlete pays']]
-    })), /*#__PURE__*/React.createElement("div", {
+    })), edit.payer_mode === 'each' && (() => {
+      var athletes = Math.max(parseInt(b.players, 10) || 1, edit.roster.length, 1);
+      var paid = edit.roster.filter(m => m.paid).length;
+      var share = b.snapshot.pay_link ? b.snapshot.pay_link + (b.snapshot.pay_link.includes('?') ? '&' : '?') + 'client_reference_id=' + b.id : null;
+      return /*#__PURE__*/React.createElement("div", {
+        className: "lsl-a-familyvis",
+        style: {
+          marginBottom: 10
+        }
+      }, /*#__PURE__*/React.createElement("p", {
+        className: "lsl-a-small",
+        style: {
+          margin: '0 0 8px'
+        }
+      }, /*#__PURE__*/React.createElement("strong", null, paid, " of ", athletes, " athletes paid."), " Stripe payments made with the link below are counted here automatically; tick \"Paid\" for cash or Venmo."), share && /*#__PURE__*/React.createElement("div", {
+        className: "lsl-a-row"
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "lsl-a-mono",
+        style: {
+          flex: 1,
+          minWidth: 0
+        }
+      }, share), /*#__PURE__*/React.createElement("button", {
+        className: "lsl-btn lsl-btn--ghost lsl-btn--xs",
+        onClick: () => A.copy(share, toast)
+      }, /*#__PURE__*/React.createElement(Icon, {
+        name: "copy"
+      }), " Copy link for other families")));
+    })(), /*#__PURE__*/React.createElement("div", {
       className: "lsl-a-roster"
     }, edit.roster.map((m, i) => /*#__PURE__*/React.createElement("div", {
       key: i,
@@ -882,10 +910,11 @@ function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
       checked: !!m.paid,
       onChange: e => setEdit(_objectSpread(_objectSpread({}, edit), {}, {
         roster: edit.roster.map((x, j) => j === i ? _objectSpread(_objectSpread({}, x), {}, {
-          paid: e.target.checked
+          paid: e.target.checked,
+          paid_via: e.target.checked ? x.paid_via : undefined
         }) : x)
       }))
-    }), " Paid") : /*#__PURE__*/React.createElement("span", null), !m.primary ? /*#__PURE__*/React.createElement("button", {
+    }), " ", m.paid && m.paid_via === 'stripe' ? 'Paid (Stripe)' : 'Paid') : /*#__PURE__*/React.createElement("span", null), !m.primary ? /*#__PURE__*/React.createElement("button", {
       className: "lsl-admin__del",
       "aria-label": "Remove participant",
       onClick: () => setEdit(_objectSpread(_objectSpread({}, edit), {}, {

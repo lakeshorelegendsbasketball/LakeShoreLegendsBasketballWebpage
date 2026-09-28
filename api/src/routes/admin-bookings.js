@@ -60,7 +60,19 @@ export async function patchBooking(env, req, user, id) {
     sets.push('form = ?'); args.push(JSON.stringify(form));
   }
   if (b.private_notes !== undefined) { sets.push('private_notes = ?'); args.push(clean(b.private_notes, 5000)); changed.push('private_notes'); }
-  if (b.roster !== undefined) { sets.push('roster = ?'); args.push(JSON.stringify((b.roster || []).slice(0, 30).map((m) => ({ name: clean(m.name, 200), contact: clean(m.contact, 200), primary: !!m.primary, paid: !!m.paid })))); changed.push('roster'); }
+  if (b.roster !== undefined) {
+    const roster = (b.roster || []).slice(0, 30).map((m) => ({ name: clean(m.name, 200), contact: clean(m.contact, 200), primary: !!m.primary, paid: !!m.paid,
+      ...(m.paid && m.paid_via === 'stripe' ? { paid_via: 'stripe' } : m.paid ? { paid_via: 'manual' } : {}) }));
+    sets.push('roster = ?'); args.push(JSON.stringify(roster)); changed.push('roster');
+    // When each family pays for its own athlete, the ticked boxes drive the payment status.
+    const mode = b.payer_mode || bk.payer_mode;
+    if (mode === 'each' && ['unknown', 'unpaid', 'pending', 'paid'].includes(bk.payment_status) && b.payment_status === undefined) {
+      const athletes = Math.max(parseInt(b.players ?? bk.players, 10) || 1, roster.length, 1);
+      const paidCount = roster.filter((m) => m.paid).length;
+      sets.push('payment_status = ?'); args.push(paidCount >= athletes ? 'paid' : paidCount > 0 ? 'pending' : 'unpaid');
+      sets.push('attention = ?'); args.push(paidCount > 0 && paidCount < athletes ? `${paidCount} of ${athletes} athletes paid.` : (/athletes paid\.$/.test(bk.attention || '') ? null : bk.attention));
+    }
+  }
   if (b.payer_mode !== undefined) { assert(['one', 'each'].includes(b.payer_mode), 400, 'Invalid payer mode.'); sets.push('payer_mode = ?'); args.push(b.payer_mode); changed.push('payer_mode'); }
   if (b.players !== undefined) { sets.push('players = ?'); args.push(clean(b.players, 10)); changed.push('players'); }
   if (b.clear_attention) { sets.push('attention = NULL'); changed.push('attention_cleared'); }
@@ -330,9 +342,9 @@ export async function approveRequest(env, req, user, id) {
   const t = nowIso();
   await db.batch([
     stmt(db, `UPDATE bookings SET kind = 'dated', status = ?, type_id = ?, snapshot = ?, slot_id = ?, date = ?, time = ?, duration = ?, loc_id = ?, coach_id = ?,
-      checkout_ref = COALESCE(checkout_ref, ?), payment_status = CASE WHEN payment_status = 'unknown' THEN 'unpaid' ELSE payment_status END, updated_at = ? WHERE id = ?`,
+      checkout_ref = COALESCE(checkout_ref, ?), payment_status = CASE WHEN payment_status = 'unknown' THEN 'unpaid' ELSE payment_status END, payer_mode = ?, updated_at = ? WHERE id = ?`,
       requirePay ? 'awaiting_payment' : 'confirmed', type.id, JSON.stringify(snapshot), target.id, target.date, target.time, target.duration, target.loc_id, target.coach_id || null,
-      type.pay_link ? id : null, t, id),
+      type.pay_link ? id : null, type.pricing_basis === 'athlete' && (parseInt(bk.players, 10) || 1) > 1 ? 'each' : bk.payer_mode, t, id),
     bookingEvent(db, id, user.id, 'approved', { slot: target.id, date: target.date, time: target.time, require_payment: requirePay }),
   ]);
   const fresh = await first(db, 'SELECT * FROM bookings WHERE id = ?', id);

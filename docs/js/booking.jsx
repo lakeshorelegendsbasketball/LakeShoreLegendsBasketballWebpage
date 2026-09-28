@@ -335,7 +335,7 @@ function BookingForm({ desc, onClose, onBooked }) {
     try {
       const members = groupMembers.filter((m) => m.name.trim() || m.contact.trim());
       const res = await LSL.createBooking({ slotId: slot.id, typeId: type.id, players: desc.players, form, roster: members, acks: ackd, website: form.website });
-      const rec = { ...res.booking, mode: 'dated', players: desc.players, form, roster: [{ primary: true }, ...members], checkoutUrl: res.checkoutUrl, next: res.next, duration: type.duration };
+      const rec = { ...res.booking, mode: 'dated', players: desc.players, form, roster: [{ primary: true }, ...members], checkoutUrl: res.checkoutUrl, shareUrl: res.shareUrl, athletes: res.athletes, next: res.next, duration: type.duration };
       notifyCoach(rec);
       setResult(rec);
       if (onBooked) onBooked();
@@ -451,8 +451,17 @@ function BookingForm({ desc, onClose, onBooked }) {
               {result.service}{result.players ? ' · ' + result.players + ' players' : ''} · {LSL.fmtDateLong(result.date)} · {LSL.fmtTime(result.time)} {LSL.tzLabel(result.date, result.time)} · {result.location}.
             </p>
             {result.checkoutUrl
-              ? <a className="lsl-btn lsl-btn--primary" href={result.checkoutUrl} target="_blank" rel="noopener" style={{ marginBottom: 12 }}><i data-lucide="credit-card"></i> Complete Payment Now</a>
+              ? <a className="lsl-btn lsl-btn--primary" href={result.checkoutUrl} target="_blank" rel="noopener" style={{ marginBottom: 12 }}><i data-lucide="credit-card"></i> {result.shareUrl ? 'Pay for My Athlete' : 'Complete Payment Now'}</a>
               : <div className="lsl-bknote"><i data-lucide="info"></i><span>Coach Gio will email a secure payment link to {form.email}.</span></div>}
+            {result.shareUrl && (
+              <div className="lsl-bknote" style={{ marginBottom: 12, display: 'block' }}>
+                <span>Each family pays for its own athlete. <strong>Send this link to the other {result.athletes - 1} {result.athletes - 1 === 1 ? 'family' : 'families'}</strong> in your group — their payments are added to this booking automatically:</span>
+                <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <input className="lsl-input" readOnly value={result.shareUrl} onFocus={(e) => e.target.select()} aria-label="Payment link for the other families" style={{ flex: 1, minWidth: 180, fontSize: 13 }} />
+                  <button type="button" className="lsl-btn lsl-btn--ghost lsl-btn--sm" onClick={() => { try { navigator.clipboard.writeText(result.shareUrl); } catch (e) { /* select-and-copy fallback */ } }}>Copy link</button>
+                </div>
+              </div>
+            )}
             {result.hold_expires_at && (
               <p className="lsl-body lsl-body--sm" style={{ color: 'var(--fg2)' }}>
                 We&rsquo;re holding this time until <strong>{LSL.fmtInstant(result.hold_expires_at)}</strong>. Your booking is confirmed once Stripe confirms payment — you&rsquo;ll get a confirmation email.

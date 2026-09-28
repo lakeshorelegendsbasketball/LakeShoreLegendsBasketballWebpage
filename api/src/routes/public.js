@@ -135,6 +135,8 @@ export async function createBooking(env, req, ctx) {
     snapshot, slot_id: slot.id, date: slot.date, time: slot.time, duration: slot.duration || type.duration, loc_id: slot.loc_id,
     coach_id: slot.coach_id || null, players: body.players ? String(body.players) : null, roster, form,
     hold_expires_at: holdUntil, checkout_ref: type.pay_link ? id : null,
+    // Per-athlete pricing for a group: the booker pays for one athlete; the others pay separately.
+    payer_mode: type.pricing_basis === 'athlete' && players > 1 ? 'each' : 'one',
   };
   let bk = await claimSlot(env, db, settings, { slot, booking, slotStatus: payToConfirm ? 'held' : 'booked', familyStmts: stmts, actor: 'family' });
   if (!payToConfirm && type.pay_link) bk = await confirmBooking(env, db, settings, id, 'system', 'confirm_then_pay');
@@ -144,6 +146,8 @@ export async function createBooking(env, req, ctx) {
   return json({
     booking: summary(bk),
     checkoutUrl: type.pay_link ? checkoutUrl(type.pay_link, id, form.email) : null,
+    shareUrl: type.pay_link && booking.payer_mode === 'each' ? checkoutUrl(type.pay_link, id) : null,
+    athletes: players,
     next: payToConfirm ? 'pay' : (type.pay_link ? 'pay_optional' : 'coach_will_invoice'),
   }, 201);
 }

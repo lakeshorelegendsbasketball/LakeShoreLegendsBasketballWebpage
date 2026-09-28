@@ -309,12 +309,23 @@
             <div className="lsl-a-row" style={{ marginBottom: 10 }}>
               <Seg label="Who pays" value={edit.payer_mode} onChange={(v) => setEdit({ ...edit, payer_mode: v })} options={[['one', 'One person pays for the group'], ['each', 'Each athlete pays']]} />
             </div>
+            {edit.payer_mode === 'each' && (() => {
+              const athletes = Math.max(parseInt(b.players, 10) || 1, edit.roster.length, 1);
+              const paid = edit.roster.filter((m) => m.paid).length;
+              const share = b.snapshot.pay_link ? b.snapshot.pay_link + (b.snapshot.pay_link.includes('?') ? '&' : '?') + 'client_reference_id=' + b.id : null;
+              return (
+                <div className="lsl-a-familyvis" style={{ marginBottom: 10 }}>
+                  <p className="lsl-a-small" style={{ margin: '0 0 8px' }}><strong>{paid} of {athletes} athletes paid.</strong> Stripe payments made with the link below are counted here automatically; tick "Paid" for cash or Venmo.</p>
+                  {share && <div className="lsl-a-row"><span className="lsl-a-mono" style={{ flex: 1, minWidth: 0 }}>{share}</span><button className="lsl-btn lsl-btn--ghost lsl-btn--xs" onClick={() => A.copy(share, toast)}><Icon name="copy" /> Copy link for other families</button></div>}
+                </div>
+              );
+            })()}
             <div className="lsl-a-roster">
               {edit.roster.map((m, i) => (
                 <div key={i} className="lsl-a-roster__row">
                   <input className="lsl-input" aria-label={'Participant ' + (i + 1) + ' name'} value={m.name || ''} onChange={(e) => setEdit({ ...edit, roster: edit.roster.map((x, j) => j === i ? { ...x, name: e.target.value } : x) })} placeholder="Name" />
                   <input className="lsl-input" aria-label={'Participant ' + (i + 1) + ' contact'} value={m.contact || ''} onChange={(e) => setEdit({ ...edit, roster: edit.roster.map((x, j) => j === i ? { ...x, contact: e.target.value } : x) })} placeholder="Email or phone" />
-                  {edit.payer_mode === 'each' ? <label className="lsl-a-check"><input type="checkbox" checked={!!m.paid} onChange={(e) => setEdit({ ...edit, roster: edit.roster.map((x, j) => j === i ? { ...x, paid: e.target.checked } : x) })} /> Paid</label> : <span />}
+                  {edit.payer_mode === 'each' ? <label className="lsl-a-check"><input type="checkbox" checked={!!m.paid} onChange={(e) => setEdit({ ...edit, roster: edit.roster.map((x, j) => j === i ? { ...x, paid: e.target.checked, paid_via: e.target.checked ? x.paid_via : undefined } : x) })} /> {m.paid && m.paid_via === 'stripe' ? 'Paid (Stripe)' : 'Paid'}</label> : <span />}
                   {!m.primary ? <button className="lsl-admin__del" aria-label="Remove participant" onClick={() => setEdit({ ...edit, roster: edit.roster.filter((_, j) => j !== i) })}><Icon name="trash-2" /></button> : <Badge tone="muted">Booker</Badge>}
                 </div>
               ))}

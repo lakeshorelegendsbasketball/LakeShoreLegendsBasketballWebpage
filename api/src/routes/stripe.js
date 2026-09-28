@@ -97,10 +97,22 @@ async function checkoutEvent(env, db, type, s) {
     return 'payment_pending';
   }
 
-  await db.batch([
-    stmt(db, "UPDATE bookings SET payment_status = 'paid', attention = ?, updated_at = ? WHERE id = ?", notes.length ? notes.join(' ') : null, t, bk.id),
-    bookingEvent(db, bk.id, 'stripe', 'payment_succeeded', { session: s.id, amount: s.amount_total }),
-  ]);
+  if (bk.payer_mode === 'each') {
+    // Each family pays for its own athlete: count verified payments on this booking.
+    const { n } = await first(db, "SELECT COUNT(*) AS n FROM payments WHERE booking_id = ? AND kind = 'charge' AND status = 'succeeded'", bk.id);
+    const { roster, athletes, paidCount } = applyStripePayments(bk, n);
+    const done = paidCount >= athletes;
+    await db.batch([
+      stmt(db, 'UPDATE bookings SET payment_status = ?, roster = ?, attention = ?, updated_at = ? WHERE id = ?',
+        done ? 'paid' : 'pending', JSON.stringify(roster), done ? null : `${paidCount} of ${athletes} athletes paid.`, t, bk.id),
+      bookingEvent(db, bk.id, 'stripe', 'payment_succeeded', { session: s.id, amount: s.amount_total, athletes_paid: paidCount, athletes }),
+    ]);
+  } else {
+    await db.batch([
+      stmt(db, "UPDATE bookings SET payment_status = 'paid', attention = ?, updated_at = ? WHERE id = ?", notes.length ? notes.join(' ') : null, t, bk.id),
+      bookingEvent(db, bk.id, 'stripe', 'payment_succeeded', { session: s.id, amount: s.amount_total }),
+    ]);
+  }
   const cur = await first(db, 'SELECT * FROM bookings WHERE id = ?', bk.id);
   if (cur.status === 'awaiting_payment') {
     await confirmBooking(env, db, settings, bk.id, 'stripe', 'payment_verified');
@@ -125,6 +137,20 @@ async function checkoutEvent(env, db, type, s) {
     return 'paid_after_cancel';
   }
   return 'paid';
+}
+
+/** Mark roster spots paid so Stripe-paid spots equal the n verified Stripe
+    payments (spots ticked by hand stay as they are). */
+function applyStripePayments(bk, n) {
+  const roster = parseJson(bk.roster, []).map((m) => ({ ...m }));
+  const athletes = Math.max(parseInt(bk.players, 10) || 1, roster.length, 1);
+  while (roster.length < athletes) roster.push({ name: '', contact: '' });
+  let viaStripe = roster.filter((m) => m.paid && m.paid_via === 'stripe').length;
+  for (const m of roster) {
+    if (viaStripe >= n) break;
+    if (!m.paid) { m.paid = true; m.paid_via = 'stripe'; viaStripe++; }
+  }
+  return { roster, athletes, paidCount: roster.filter((m) => m.paid).length };
 }
 
 async function packageCheckout(env, db, type, s) {
