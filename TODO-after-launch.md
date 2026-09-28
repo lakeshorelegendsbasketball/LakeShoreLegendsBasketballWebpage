@@ -12,14 +12,14 @@ Until this is done, confirmations and reminders show as "not sent" in the dashbo
 - [ ] After the test emails look right, ask Claude to switch emails to **live** so families receive them.
 - [ ] Dashboard → **Settings → Notifications**: fill in **Reply-to email** and **Coach alert email**, then Save.
 
-## 2. Stripe post-payment page (≈5 minutes)
+## 2. Stripe post-payment page — DONE 2026-09-28 (new links created in the dashboard with redirect; old links still active, can deactivate later)
 Sends families back to your site after they pay instead of Stripe's generic "Thanks" page.
 
 Stripe (live mode, **not** Sandbox) → **Payment Links** → for **each** of the 4 links:
-- [ ] 60 Minute Private Training
-- [ ] 60 Minute 2-on-1 Training
-- [ ] 60 Minute 3-on-1 Training
-- [ ] 60 Minute 4+ Player Training
+- [x] 60 Minute Private Training
+- [x] 60 Minute 2-on-1 Training
+- [x] 60 Minute 3-on-1 Training
+- [x] 60 Minute 4+ Player Training
 
 For each: open it → **Edit** → **After payment** → **Don't show confirmation page** → redirect to
 `https://www.lakeshorelegendsbasketball.com/training.html` → **Update link**.
@@ -27,5 +27,5 @@ For each: open it → **Edit** → **After payment** → **Don't show confirmati
 
 ## Also still open
 - [ ] Add openings in the dashboard (**Availability** → Recurring / Bulk add).
-- [ ] Delete the old bin or regenerate the key at **jsonbin.io** (the old key is still in GitHub history).
+- [x] Delete the old bin or regenerate the key at **jsonbin.io** (the old key is still in GitHub history).
 - [ ] Watch the first real booking turn **Confirmed + Paid** on its own.
