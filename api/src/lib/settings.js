@@ -128,8 +128,8 @@ export const DEFAULT_SETTINGS = {
     creditRestoreHours: 48,       // package credits restored when canceled at least this far ahead
     rescheduleHours: 24,
     policyLines: [
-      'Cancellations made within 48 hours of a session are subject to a 50% retainer.',
       'Cancellations made more than 48 hours in advance receive a 100% refund.',
+      'Cancellations made within 48 hours of a session are subject to a 50% retainer.',
       'Training session times and availability are subject to change.',
     ],
   },
