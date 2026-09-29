@@ -9,7 +9,7 @@ Until then the booking page shows no dates; families can still use **Request Tra
 
 ## 2. Family emails — LIVE (9/29)
 Resend verified; DNS now on Cloudflare; emails send from bookings@lakeshorelegendsbasketball.com to families.
-- [ ] In the dashboard, go to **Settings → Notifications**, fill in **Reply-to email** (where family replies go) and **Coach alert email**, and click **Save**.
+- [x] Reply-to and coach alert emails set in Settings → Notifications (test email landed in the inbox).
 
 ## 3. First real booking
 - [ ] After a family pays, the booking turns **Confirmed + Paid** on its own and they land back on your training page. If it stays "Awaiting payment", ask Claude to check the server log.
