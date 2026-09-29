@@ -15,10 +15,6 @@ Resend verified; DNS now on Cloudflare; emails send from bookings@lakeshorelegen
 - [ ] After a family pays, the booking turns **Confirmed + Paid** on its own and they land back on your training page. If it stays "Awaiting payment", ask Claude to check the server log.
 - [ ] For a group session, the booking shows "1 of N athletes paid" until every family has paid with the shared link (tick **Paid** by hand for cash or Venmo).
 
-## Housekeeping
-- [ ] Cloudflare → Domain Registration → Manage Domains → lakeshorelegendsbasketball.com: confirm **auto-renew** is on.
-- [ ] GoDaddy: cancel any paid add-ons still tied to this domain (e.g. Domain Protection) so they don't renew.
-
 ## Done
 - [x] Stripe post-payment page: new live Payment Links send families back to training.html (9/28).
 - [x] Group sessions priced per athlete; each family pays its own share (9/28).
@@ -28,3 +24,4 @@ Resend verified; DNS now on Cloudflare; emails send from bookings@lakeshorelegen
 - [x] DNS moved to Cloudflare (9/29).
 - [x] Domain registration transferred GoDaddy → Cloudflare; expires Jan 9, 2028 (9/29).
 - [x] Family emails live via Resend (9/29).
+- [x] Housekeeping: Cloudflare auto-renew on; GoDaddy add-ons cancelled (9/29).
