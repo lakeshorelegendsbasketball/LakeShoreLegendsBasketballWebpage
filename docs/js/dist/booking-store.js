@@ -235,5 +235,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     downloadICS
   };
   window.LSL = LSL;
-  if (!window.LSL_ADMIN) load();
+  // The build-time page snapshot (scripts/prerender.mjs) must not bake openings into the HTML.
+  window.LSL_PRERENDER = /HeadlessEdg|HeadlessChrome|LSL-Prerender/i.test(navigator.userAgent || '');
+  if (!window.LSL_ADMIN && !window.LSL_PRERENDER) load();
 })();

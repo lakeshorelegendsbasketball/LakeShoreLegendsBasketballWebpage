@@ -3,9 +3,12 @@ function CountUpAlumni({ value }) {
   const m = String(value).match(/^(\d+)(.*)$/);
   const target = m ? parseInt(m[1], 10) : 0;
   const suffix = m ? m[2] : '';
-  const [n, setN] = React.useState(0);
+  // Crawlers and the build-time snapshot never scroll, so they get the final number.
+  const isBot = typeof navigator !== 'undefined' && /bot|crawl|spider|slurp|headless|lighthouse|prerender/i.test(navigator.userAgent);
+  const [n, setN] = React.useState(isBot ? target : 0);
   const ref = React.useRef(null);
   React.useEffect(() => {
+    if (isBot) return undefined;
     let raf, started = false;
     const run = () => {
       started = true;

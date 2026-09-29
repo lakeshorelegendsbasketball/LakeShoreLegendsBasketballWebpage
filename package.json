@@ -2,8 +2,9 @@
   "name": "lakeshore-legends-site",
   "private": true,
   "scripts": {
-    "build": "babel docs/js/booking-store.jsx docs/js/booking.jsx docs/js/admin-core.jsx docs/js/admin-avail.jsx docs/js/admin-books.jsx docs/js/admin-types.jsx docs/js/admin-locs.jsx docs/js/admin-settings.jsx --out-dir docs/js/dist --config-file ./docs/.babelrc",
-    "serve": "npx --yes http-server docs -p 8080 -c-1 --silent"
+    "build": "babel docs/js/home.jsx docs/js/alumni.jsx docs/js/booking-store.jsx docs/js/booking.jsx docs/js/admin-core.jsx docs/js/admin-avail.jsx docs/js/admin-books.jsx docs/js/admin-types.jsx docs/js/admin-locs.jsx docs/js/admin-settings.jsx --out-dir docs/js/dist --config-file ./docs/.babelrc",
+    "serve": "npx --yes http-server docs -p 8080 -c-1 --silent",
+    "prerender": "node scripts/prerender.mjs"
   },
   "devDependencies": {
     "@babel/cli": "^7.29.7",

@@ -808,3 +808,13 @@ a.lsl-btn { line-height: 1; }
 .lsl-ack { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; margin: 0 0 12px; cursor: pointer; }
 .lsl-ack input { width: 17px; height: 17px; margin-top: 2px; accent-color: var(--legend-orange); flex: none; }
 .lsl-linkbtn { background: none; border: none; padding: 0; color: var(--legend-orange); font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+
+/* Training FAQ */
+.lsl-faq { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.lsl-faq__item { background: #fff; border: 1px solid var(--line-soft); border-radius: var(--r-md); padding: 0 18px; }
+.lsl-faq__q { cursor: pointer; list-style: none; padding: 16px 28px 16px 0; font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--legend-navy); position: relative; }
+.lsl-faq__q::-webkit-details-marker { display: none; }
+.lsl-faq__q::after { content: '+'; position: absolute; right: 0; top: 12px; font-size: 22px; color: var(--legend-orange); }
+.lsl-faq__item[open] .lsl-faq__q::after { content: '–'; }
+.lsl-faq__q:focus-visible { outline: 3px solid rgba(227,88,2,.45); outline-offset: 2px; border-radius: 6px; }
+.lsl-faq__a { margin: 0 0 16px; font-size: 15.5px; line-height: 1.6; color: var(--fg2); }

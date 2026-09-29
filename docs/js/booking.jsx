@@ -122,7 +122,7 @@ function PrivateBooking() {
           sub="Check out our availability and book the date and time that works for you." />
 
         {window.LSL_API_NAME === 'staging' && <p className="lsl-bknote" style={{ maxWidth: 560, margin: '0 auto 16px' }}><i data-lucide="flask-conical"></i><span><strong>Test mode:</strong> bookings here go to the test server and use Stripe test payments.</span></p>}
-        {!loaded && !loadErr &&<p className="lsl-body lsl-body--sm" style={{ textAlign: 'center', color: 'var(--fg3)' }} role="status">Loading availability…</p>}
+        {!loaded && !loadErr && !window.LSL_PRERENDER && <p className="lsl-body lsl-body--sm" style={{ textAlign: 'center', color: 'var(--fg3)' }} role="status">Loading availability…</p>}
         {loadErr && (
           <div className="lsl-bknote" role="alert" style={{ maxWidth: 560, margin: '0 auto 20px' }}>
             <i data-lucide="alert-triangle"></i>
@@ -564,4 +564,25 @@ function TrainingRequestForm({ onClose }) {
   );
 }
 
-Object.assign(window, { PrivateBooking, BookingForm, Calendar, TrainingRequestForm });
+/* Visible FAQ; the same list (js/faq.js) becomes FAQPage structured data at build time. */
+function TrainingFAQ() {
+  const items = window.LSL_FAQ || [];
+  if (!items.length) return null;
+  return (
+    <section className="lsl-section" id="faq" style={{ paddingTop: 40 }}>
+      <div className="lsl-wrap" style={{ maxWidth: 860 }}>
+        <SectionHead center eyebrow="Questions" title="Training FAQ" sub="Quick answers about booking, pricing, locations, and policies." />
+        <div className="lsl-faq">
+          {items.map((f, i) => (
+            <details key={i} className="lsl-faq__item" open={i === 0}>
+              <summary className="lsl-faq__q">{f.q}</summary>
+              <p className="lsl-faq__a">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+Object.assign(window, { PrivateBooking, BookingForm, Calendar, TrainingRequestForm, TrainingFAQ });

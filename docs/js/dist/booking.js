@@ -226,7 +226,7 @@ function PrivateBooking() {
     }
   }, /*#__PURE__*/React.createElement("i", {
     "data-lucide": "flask-conical"
-  }), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("strong", null, "Test mode:"), " bookings here go to the test server and use Stripe test payments.")), !loaded && !loadErr && /*#__PURE__*/React.createElement("p", {
+  }), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("strong", null, "Test mode:"), " bookings here go to the test server and use Stripe test payments.")), !loaded && !loadErr && !window.LSL_PRERENDER && /*#__PURE__*/React.createElement("p", {
     className: "lsl-body lsl-body--sm",
     style: {
       textAlign: 'center',
@@ -1134,9 +1134,43 @@ function TrainingRequestForm(_ref5) {
     onClick: onClose
   }, "Done")))));
 }
+
+/* Visible FAQ; the same list (js/faq.js) becomes FAQPage structured data at build time. */
+function TrainingFAQ() {
+  var items = window.LSL_FAQ || [];
+  if (!items.length) return null;
+  return /*#__PURE__*/React.createElement("section", {
+    className: "lsl-section",
+    id: "faq",
+    style: {
+      paddingTop: 40
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "lsl-wrap",
+    style: {
+      maxWidth: 860
+    }
+  }, /*#__PURE__*/React.createElement(SectionHead, {
+    center: true,
+    eyebrow: "Questions",
+    title: "Training FAQ",
+    sub: "Quick answers about booking, pricing, locations, and policies."
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "lsl-faq"
+  }, items.map((f, i) => /*#__PURE__*/React.createElement("details", {
+    key: i,
+    className: "lsl-faq__item",
+    open: i === 0
+  }, /*#__PURE__*/React.createElement("summary", {
+    className: "lsl-faq__q"
+  }, f.q), /*#__PURE__*/React.createElement("p", {
+    className: "lsl-faq__a"
+  }, f.a))))));
+}
 Object.assign(window, {
   PrivateBooking,
   BookingForm,
   Calendar,
-  TrainingRequestForm
+  TrainingRequestForm,
+  TrainingFAQ
 });

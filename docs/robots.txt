@@ -1,0 +1,6 @@
+# Search engines and AI assistants are welcome to read the public pages.
+User-agent: *
+Allow: /
+Disallow: /coach-admin.html
+
+Sitemap: https://www.lakeshorelegendsbasketball.com/sitemap.xml

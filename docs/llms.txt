@@ -1,0 +1,61 @@
+# LakeShore Legends Basketball
+
+> LakeShore Legends Basketball is a training-first youth basketball program based in Park Ridge, Illinois, led by owner and head trainer Coach Gio Paganis. It offers private 1-on-1 and small group basketball skills training, camps, and player development in the Park Ridge and Mundelein, IL areas (Chicago north and northwest suburbs).
+
+## Key facts
+- Founder / head trainer: Gio Paganis ("Coach Gio") — from Park Ridge, IL; Purdue M.S.; over a decade coaching and training athletes; head Junior Varsity basketball coach at Mundelein High School; director of the Jr. Mustangs Feeder Basketball program; shooting specialist.
+- Philosophy: training first — skill mastery, basketball IQ, and long-term development over playing excessive games.
+- Program results: 24 travel teams coached; 250+ athletes trained; 25+ college recruitment offers; 7+ college basketball commitments.
+- Locations: Park Ridge, IL and Mundelein, IL areas. The exact gym or court is arranged with Coach Gio after booking.
+- Ages: all ages and skill levels for private/small group training; camps typically rising 3rd–8th grade.
+
+## Training and prices (60-minute sessions, booked and paid online)
+- Private 1-on-1 Basketball Training: $79.99 per session
+- 2-on-1 Small Group Basketball Training: $59.99 per athlete
+- 3-on-1 Small Group Basketball Training: $49.99 per athlete
+- 4+ Player Small Group Basketball Training: $39.99 per athlete
+
+## Booking
+- Book online: https://www.lakeshorelegendsbasketball.com/training.html — choose an open date and time, then pay securely with Stripe. The time is held for 10 minutes during checkout; a confirmation email follows payment.
+- Book at least 24 hours in advance. No suitable time? Use "Request Training" on the same page.
+- Cancellation: more than 48 hours ahead — 100% refund; within 48 hours — 50% retainer.
+
+## Frequently asked questions
+### Where are LakeShore Legends training sessions held?
+Sessions are held in the Park Ridge, IL and Mundelein, IL areas. After you book, reach out to Coach Gio to set the exact gym or court.
+
+### How do I book a basketball training session?
+Pick an open date and time on the Training page, choose 1-on-1 or small group training, and pay securely with Stripe. Your time is held for 10 minutes while you pay, and you receive a confirmation email once payment goes through.
+
+### How much does private basketball training cost?
+A 60-minute private 1-on-1 session is $79.99. Small group sessions are priced per athlete: $59.99 each for 2-on-1, $49.99 each for 3-on-1, and $39.99 each for groups of 4 or more.
+
+### How does payment work for small group sessions?
+Each family pays for its own athlete. The parent who books pays for their athlete and receives a payment link to share with the other families in the group.
+
+### What is the cancellation policy?
+Cancellations made more than 48 hours in advance receive a 100% refund. Cancellations made within 48 hours of a session are subject to a 50% retainer.
+
+### How far in advance do I need to book?
+Sessions must be booked at least 24 hours ahead. If you do not see a time that works, use Request Training and Coach Gio will try to make it work.
+
+### Who runs the training?
+Training is led by Coach Gio Paganis, owner of LakeShore Legends Basketball. He is from Park Ridge, Illinois, holds a Purdue M.S., and has coached and trained athletes for over a decade. He is the head Junior Varsity coach at Mundelein High School and a shooting specialist.
+
+### What ages and skill levels do you train?
+Private and small group training is open to all ages and skill levels. Camps are grouped by grade, typically rising 3rd through 8th grade.
+
+## Pages
+- [Home](https://www.lakeshorelegendsbasketball.com/): program overview and philosophy
+- [Training & booking](https://www.lakeshorelegendsbasketball.com/training.html): services, prices, live availability, FAQ
+- [About & coaching staff](https://www.lakeshorelegendsbasketball.com/about.html): Coach Gio Paganis
+- [Alumni](https://www.lakeshorelegendsbasketball.com/alumni.html): former players and college commitments
+- [Gallery](https://www.lakeshorelegendsbasketball.com/gallery.html)
+- [Contact](https://www.lakeshorelegendsbasketball.com/contact.html)
+- [Codes of conduct](https://www.lakeshorelegendsbasketball.com/codes.html)
+
+## Contact
+- Email: coachgiopag@gmail.com
+- Phone: (224) 425-9490
+- Instagram: https://www.instagram.com/lakeshorelegends/ (program), https://www.instagram.com/coachgiopag/ (Coach Gio)
+- X: https://x.com/LSLegendsHoops (program), https://x.com/CoachGioPag (Coach Gio)
