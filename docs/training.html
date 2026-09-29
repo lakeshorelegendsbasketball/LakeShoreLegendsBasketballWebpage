@@ -36,7 +36,8 @@
         sub: 'Intentional skill development, structured teaching, and purposeful repetition — at every level. Book a session and reserve your spot in under a minute.'
       }),
       React.createElement(Programs, null),
-      React.createElement(PrivateBooking, null),
+      // If the booking script failed to load, keep the rest of the page up.
+      PrivateBooking ? React.createElement(PrivateBooking, null) : null,
       React.createElement(SkillsFocus, null),
       React.createElement(CTA, {
         title: "Don't See A Date That Works?",

@@ -18,7 +18,7 @@ crons = ["*/10 * * * *"]
 ALLOWED_ORIGINS = "https://www.lakeshorelegendsbasketball.com,https://lakeshorelegendsbasketball.com"
 API_PUBLIC_URL = "https://lsl-booking-api.coachgiopag.workers.dev"
 # "live" sends to families. Anything else redirects every email to EMAIL_REDIRECT_TO.
-EMAIL_MODE = "redirect"
+EMAIL_MODE = "live"
 EMAIL_FROM = "bookings@lakeshorelegendsbasketball.com"
 EMAIL_REDIRECT_TO = "lakeshorelegendsbasketball@gmail.com"
 
