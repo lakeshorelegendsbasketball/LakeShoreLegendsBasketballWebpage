@@ -3,7 +3,7 @@
 ## 1. Add openings (planned for Oct 6)
 Until then the booking page shows no dates; families can still use **Request Training**.
 
-- [ ] Open https://www.lakeshorelegendsbasketball.com/coach-admin.html and check there's **no orange "Test server" badge** next to your name.
+- [x] Open https://www.lakeshorelegendsbasketball.com/coach-admin.html and check there's **no orange "Test server" badge** next to your name.
 - [ ] Go to **Availability** and add openings. **Recurring** fills several weeks at once; **Bulk add** fills one day with back-to-back sessions.
 - [ ] Open the booking page (training.html) and confirm the dates show up.
 
