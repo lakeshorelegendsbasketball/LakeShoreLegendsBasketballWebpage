@@ -15,6 +15,10 @@ Resend verified; DNS now on Cloudflare; emails send from bookings@lakeshorelegen
 - [ ] After a family pays, the booking turns **Confirmed + Paid** on its own and they land back on your training page. If it stays "Awaiting payment", ask Claude to check the server log.
 - [ ] For a group session, the booking shows "1 of N athletes paid" until every family has paid with the shared link (tick **Paid** by hand for cash or Venmo).
 
+## 4. Search & AI visibility
+- [ ] Google Business Profile: waiting on Google's verification. Once verified, add photos, and ask a few families for reviews. Send Claude the profile's Maps link so it can be added to the site's structured data.
+- [ ] (Optional) Bing Webmaster Tools: import from Google Search Console and submit the sitemap — helps ChatGPT search.
+
 ## Done
 - [x] Stripe post-payment page: new live Payment Links send families back to training.html (9/28).
 - [x] Group sessions priced per athlete; each family pays its own share (9/28).
@@ -25,3 +29,6 @@ Resend verified; DNS now on Cloudflare; emails send from bookings@lakeshorelegen
 - [x] Domain registration transferred GoDaddy → Cloudflare; expires Jan 9, 2028 (9/29).
 - [x] Family emails live via Resend (9/29).
 - [x] Housekeeping: Cloudflare auto-renew on; GoDaddy add-ons cancelled (9/29).
+- [x] SEO/GEO: crawlable page text, titles, structured data, training FAQ, sitemap, robots.txt, llms.txt (9/29).
+- [x] Google Search Console verified; Instagram link fixed to @coachgiopag (9/30).
+- [x] Google Business Profile created as a service-area business (9/30).
