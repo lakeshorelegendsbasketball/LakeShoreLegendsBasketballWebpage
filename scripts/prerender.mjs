@@ -22,7 +22,7 @@ const TODAY = new Date().toISOString().slice(0, 10);
 const OG_IMAGE = SITE + '/uploads/gio-highfive-23.jpg';
 
 const ORG = 'LakeShore Legends Basketball';
-const IG_ORG = 'https://www.instagram.com/lakeshorelegends/';
+const LINKEDIN_GIO = 'https://www.linkedin.com/in/gio-paganis/';
 const X_ORG = 'https://x.com/LSLegendsHoops';
 const IG_GIO = 'https://www.instagram.com/coachgiopag/';
 const X_GIO = 'https://x.com/CoachGioPag';
@@ -71,7 +71,7 @@ const orgNode = {
     { '@type': 'AdministrativeArea', name: 'Chicago North and Northwest Suburbs' },
   ],
   founder: { '@id': SITE + '/#gio' }, employee: { '@id': SITE + '/#gio' },
-  sameAs: [IG_ORG, X_ORG],
+  sameAs: [IG_GIO, X_ORG],
 };
 const personNode = {
   '@type': 'Person', '@id': SITE + '/#gio', name: 'Gio Paganis', alternateName: 'Coach Gio',
@@ -79,7 +79,7 @@ const personNode = {
   alumniOf: { '@type': 'CollegeOrUniversity', name: 'Purdue University' },
   homeLocation: { '@type': 'City', name: 'Park Ridge', containedInPlace: { '@type': 'State', name: 'Illinois' } },
   knowsAbout: ['Basketball skills training', 'Shooting development', 'Youth basketball coaching', 'AAU basketball'],
-  url: SITE + '/about.html', sameAs: [IG_GIO, X_GIO],
+  url: SITE + '/about.html', sameAs: [IG_GIO, X_GIO, LINKEDIN_GIO],
 };
 const siteNode = { '@type': 'WebSite', '@id': SITE + '/#website', url: SITE + '/', name: ORG, publisher: { '@id': SITE + '/#org' }, inLanguage: 'en-US' };
 
@@ -156,9 +156,10 @@ function serve() {
 }
 
 function findBrowser() {
+  // Chrome first: Edge 154 stopped writing --dump-dom output to stdout (2026-09-30).
   const candidates = [process.env.CHROME_PATH,
-    'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe',
-    'C:/Program Files/Google/Chrome/Application/chrome.exe', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '/usr/bin/google-chrome'];
+    'C:/Program Files/Google/Chrome/Application/chrome.exe', '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '/usr/bin/google-chrome',
+    'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', 'C:/Program Files/Microsoft/Edge/Application/msedge.exe'];
   const hit = candidates.find((c) => c && fs.existsSync(c));
   if (!hit) throw new Error('No Edge/Chrome found. Set CHROME_PATH.');
   return hit;
@@ -258,7 +259,7 @@ ${faq.map((f) => `### ${f.q}\n${f.a}`).join('\n\n')}
 ## Contact
 - Email: coachgiopag@gmail.com
 - Phone: (224) 425-9490
-- Instagram: ${IG_ORG} (program), ${IG_GIO} (Coach Gio)
+- Instagram: ${IG_GIO} (@coachgiopag — program and Coach Gio)
 - X: ${X_ORG} (program), ${X_GIO} (Coach Gio)
 `;
 }

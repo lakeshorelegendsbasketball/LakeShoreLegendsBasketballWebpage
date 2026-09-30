@@ -1,9 +1,15 @@
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
 /* global React */
 /* Shared site chrome: Header (multi-page nav), Footer, Crest, SectionHead.
    Each page is its own HTML file; nav uses real <a href> links. */
-const RxShell = React;
-const NAV = [{
+var RxShell = React;
+var NAV = [{
   label: 'Home',
   href: 'home.html'
 }, {
@@ -28,10 +34,11 @@ const NAV = [{
 }];
 
 /* Six-point Chicago-flag star — brand motif (never a 5-point ★). */
-function Star6({
-  size = 14,
-  className = 'lsl-star6'
-}) {
+function Star6(_ref) {
+  var _ref$size = _ref.size,
+    size = _ref$size === void 0 ? 14 : _ref$size,
+    _ref$className = _ref.className,
+    className = _ref$className === void 0 ? 'lsl-star6' : _ref$className;
   return /*#__PURE__*/React.createElement("svg", {
     className: className,
     width: size,
@@ -45,11 +52,11 @@ function Star6({
 }
 
 /* Inline brand glyphs (Lucide dropped brand icons). 24x24 viewBox. */
-function SocialGlyph({
-  name,
-  size = 20
-}) {
-  const paths = {
+function SocialGlyph(_ref2) {
+  var name = _ref2.name,
+    _ref2$size = _ref2.size,
+    size = _ref2$size === void 0 ? 20 : _ref2$size;
+  var paths = {
     instagram: /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("rect", {
       x: "2.5",
       y: "2.5",
@@ -111,9 +118,9 @@ function SocialGlyph({
     "aria-hidden": "true"
   }, paths[name]);
 }
-function Crest({
-  size = 46
-}) {
+function Crest(_ref3) {
+  var _ref3$size = _ref3.size,
+    size = _ref3$size === void 0 ? 46 : _ref3$size;
   return /*#__PURE__*/React.createElement("img", {
     src: "assets/badge-crest.png",
     alt: "Lake Shore Legends",
@@ -124,18 +131,23 @@ function Crest({
     }
   });
 }
-function Header({
-  page
-}) {
-  const [scrolled, setScrolled] = RxShell.useState(false);
-  const [open, setOpen] = RxShell.useState(false);
+function Header(_ref4) {
+  var page = _ref4.page;
+  var _RxShell$useState = RxShell.useState(false),
+    _RxShell$useState2 = _slicedToArray(_RxShell$useState, 2),
+    scrolled = _RxShell$useState2[0],
+    setScrolled = _RxShell$useState2[1];
+  var _RxShell$useState3 = RxShell.useState(false),
+    _RxShell$useState4 = _slicedToArray(_RxShell$useState3, 2),
+    open = _RxShell$useState4[0],
+    setOpen = _RxShell$useState4[1];
   RxShell.useEffect(() => {
-    const sc = document.querySelector('.lsl-scroll');
-    const onScroll = () => setScrolled((sc?.scrollTop || window.scrollY) > 20);
-    sc?.addEventListener('scroll', onScroll);
+    var sc = document.querySelector('.lsl-scroll');
+    var onScroll = () => setScrolled(((sc === null || sc === void 0 ? void 0 : sc.scrollTop) || window.scrollY) > 20);
+    sc === null || sc === void 0 || sc.addEventListener('scroll', onScroll);
     window.addEventListener('scroll', onScroll);
     return () => {
-      sc?.removeEventListener('scroll', onScroll);
+      sc === null || sc === void 0 || sc.removeEventListener('scroll', onScroll);
       window.removeEventListener('scroll', onScroll);
     };
   }, []);
@@ -176,16 +188,15 @@ function Header({
     rel: 'noopener'
   } : {}), n.label))));
 }
-function SectionHead({
-  eyebrow,
-  title,
-  sub,
-  light,
-  center,
-  wide,
-  full,
-  smTitle
-}) {
+function SectionHead(_ref5) {
+  var eyebrow = _ref5.eyebrow,
+    title = _ref5.title,
+    sub = _ref5.sub,
+    light = _ref5.light,
+    center = _ref5.center,
+    wide = _ref5.wide,
+    full = _ref5.full,
+    smTitle = _ref5.smTitle;
   return /*#__PURE__*/React.createElement("div", {
     className: 'lsl-secthead' + (center ? ' lsl-secthead--center' : '') + (full ? ' lsl-secthead--full' : wide ? ' lsl-secthead--wide' : '')
   }, eyebrow && /*#__PURE__*/React.createElement("span", {
@@ -199,12 +210,11 @@ function SectionHead({
     className: 'lsl-body' + (light ? ' lsl-body--light' : '')
   }, sub));
 }
-function PageHero({
-  eyebrow,
-  title,
-  sub,
-  accent
-}) {
+function PageHero(_ref6) {
+  var eyebrow = _ref6.eyebrow,
+    title = _ref6.title,
+    sub = _ref6.sub,
+    accent = _ref6.accent;
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-pagehero"
   }, /*#__PURE__*/React.createElement("div", {
@@ -230,12 +240,15 @@ function PageHero({
     key: i
   }, s, i < a.length - 1 && /*#__PURE__*/React.createElement("br", null))))));
 }
-function CTA({
-  title = 'Turn Your Athlete Into a Legend',
-  sub = 'Get in touch to learn about training, camps, and the Jr. Mustangs feeder program.',
-  btn = 'Connect With Us',
-  href = 'contact.html'
-}) {
+function CTA(_ref7) {
+  var _ref7$title = _ref7.title,
+    title = _ref7$title === void 0 ? 'Turn Your Athlete Into a Legend' : _ref7$title,
+    _ref7$sub = _ref7.sub,
+    sub = _ref7$sub === void 0 ? 'Get in touch to learn about training, camps, and the Jr. Mustangs feeder program.' : _ref7$sub,
+    _ref7$btn = _ref7.btn,
+    btn = _ref7$btn === void 0 ? 'Connect With Us' : _ref7$btn,
+    _ref7$href = _ref7.href,
+    href = _ref7$href === void 0 ? 'contact.html' : _ref7$href;
   return /*#__PURE__*/React.createElement("section", {
     className: "lsl-cta"
   }, /*#__PURE__*/React.createElement("div", {
@@ -255,7 +268,7 @@ function CTA({
   }, btn)));
 }
 function Footer() {
-  const cols = [['Quick Links', [['Meet Our Coaches', 'about.html'], ['Training Programs', 'training.html'], ['Alumni Success Stories', 'alumni.html'], ['Jr. Mustangs Feeder', 'https://mundyball.com/feeder-home']]], ['Follow Us', [['Twitter / X', 'https://x.com/LSLegendsHoops'], ['Instagram (LakeShore Legends)', 'https://www.instagram.com/lakeshorelegends/'], ['Instagram (CoachGioPag)', 'https://www.instagram.com/coachgiopag/'], ['LinkedIn', 'https://www.linkedin.com/in/gio-paganis/']]], ['Resources', [['Contact Us', 'contact.html'], ['Code of Conduct', 'codes.html'], ['Forms', '#'], ['FAQs', 'contact.html']]]];
+  var cols = [['Quick Links', [['Meet Our Coaches', 'about.html'], ['Training Programs', 'training.html'], ['Alumni Success Stories', 'alumni.html'], ['Jr. Mustangs Feeder', 'https://mundyball.com/feeder-home']]], ['Follow Us', [['Twitter / X', 'https://x.com/LSLegendsHoops'], ['Instagram', 'https://www.instagram.com/coachgiopag/'], ['LinkedIn', 'https://www.linkedin.com/in/gio-paganis/']]], ['Resources', [['Contact Us', 'contact.html'], ['Code of Conduct', 'codes.html'], ['Forms', '#'], ['FAQs', 'contact.html']]]];
   return /*#__PURE__*/React.createElement("footer", {
     className: "lsl-footer"
   }, /*#__PURE__*/React.createElement("div", {
@@ -266,22 +279,30 @@ function Footer() {
     className: "lsl-footer__logoside"
   }), /*#__PURE__*/React.createElement("div", {
     className: "lsl-footer__cols"
-  }, cols.map(([h, links]) => /*#__PURE__*/React.createElement("div", {
-    key: h,
-    className: "lsl-footer__col"
-  }, /*#__PURE__*/React.createElement("h4", {
-    className: "lsl-footer__h"
-  }, h), links.map(([l, href]) => {
-    const ext = href && href.startsWith('http');
-    return /*#__PURE__*/React.createElement("a", _extends({
-      key: l,
-      className: "lsl-footer__link",
-      href: href || '#'
-    }, ext ? {
-      target: '_blank',
-      rel: 'noopener'
-    } : {}), l);
-  })))), /*#__PURE__*/React.createElement("img", {
+  }, cols.map(_ref8 => {
+    var _ref9 = _slicedToArray(_ref8, 2),
+      h = _ref9[0],
+      links = _ref9[1];
+    return /*#__PURE__*/React.createElement("div", {
+      key: h,
+      className: "lsl-footer__col"
+    }, /*#__PURE__*/React.createElement("h4", {
+      className: "lsl-footer__h"
+    }, h), links.map(_ref0 => {
+      var _ref1 = _slicedToArray(_ref0, 2),
+        l = _ref1[0],
+        href = _ref1[1];
+      var ext = href && href.startsWith('http');
+      return /*#__PURE__*/React.createElement("a", _extends({
+        key: l,
+        className: "lsl-footer__link",
+        href: href || '#'
+      }, ext ? {
+        target: '_blank',
+        rel: 'noopener'
+      } : {}), l);
+    }));
+  })), /*#__PURE__*/React.createElement("img", {
     src: "assets/mark-spire-stars.png",
     alt: "LakeShore Legends Spire",
     className: "lsl-footer__logoside"

@@ -127,7 +127,7 @@ function CTA({ title = 'Turn Your Athlete Into a Legend', sub = 'Get in touch to
 function Footer() {
   const cols = [
     ['Quick Links', [['Meet Our Coaches', 'about.html'], ['Training Programs', 'training.html'], ['Alumni Success Stories', 'alumni.html'], ['Jr. Mustangs Feeder', 'https://mundyball.com/feeder-home']]],
-    ['Follow Us', [['Twitter / X', 'https://x.com/LSLegendsHoops'], ['Instagram (LakeShore Legends)', 'https://www.instagram.com/lakeshorelegends/'], ['Instagram (CoachGioPag)', 'https://www.instagram.com/coachgiopag/'], ['LinkedIn', 'https://www.linkedin.com/in/gio-paganis/']]],
+    ['Follow Us', [['Twitter / X', 'https://x.com/LSLegendsHoops'], ['Instagram', 'https://www.instagram.com/coachgiopag/'], ['LinkedIn', 'https://www.linkedin.com/in/gio-paganis/']]],
     ['Resources', [['Contact Us', 'contact.html'], ['Code of Conduct', 'codes.html'], ['Forms', '#'], ['FAQs', 'contact.html']]],
   ];
   return (
